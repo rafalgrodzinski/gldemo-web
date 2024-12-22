@@ -15,6 +15,14 @@ class Main {
 
         instance.renderer = await Renderer.create(instance.gl);
 
+        let resizeObserver = new ResizeObserver( entries => {
+            let entry = entries[0];
+            canvas.width = entry.contentRect.width;
+            canvas.height = entry.contentRect.height;
+            instance.renderer.resize(instance.gl, entry.contentRect.width, entry.contentRect.height);
+        });
+        resizeObserver.observe(canvas);
+
         return instance;
     }
 
