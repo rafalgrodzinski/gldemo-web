@@ -27,7 +27,22 @@ class Main {
     }
 
     runLoop() {
-        this.renderer.draw(this.gl);
+        let renderer = this.renderer;
+        let gl = this.gl;
+        let oldTimestamp;
+
+        function nextFrame(timestamp) {
+            if (oldTimestamp == undefined)
+                oldTimestamp = timestamp;
+            let elapsed = timestamp - oldTimestamp;
+            oldTimestamp = timestamp;
+
+            renderer.update(elapsed);
+            renderer.draw(gl);
+
+            requestAnimationFrame(nextFrame);
+        }
+        requestAnimationFrame(nextFrame);
     }
 }
 

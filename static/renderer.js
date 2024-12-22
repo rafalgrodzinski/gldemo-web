@@ -53,6 +53,10 @@ export class Renderer {
         this.draw(gl);
     }
 
+    update(elapsedMiliseconds) {
+        console.log(elapsedMiliseconds);
+    }
+
     draw(gl) {
         gl.clearColor(0, 0, 0, 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
