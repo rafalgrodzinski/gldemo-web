@@ -1,21 +1,27 @@
 import { Renderer } from "/renderer.js";
 
 class Main {
-    constructor() {
+    constructor() { }
+
+    static async create() {
+        let instance = new Main();
+
         let canvas = document.querySelector("#gl-view");
-        this.gl = canvas.getContext("webgl2");
-        if(!this.gl) {
+        instance.gl = canvas.getContext("webgl2");
+        if(!instance.gl) {
             alert("Unable to initialize WebGL");
             throw new Error();
         }
 
-        this.renderer = new Renderer(this.gl);
+        instance.renderer = await Renderer.create(instance.gl);
+
+        return instance;
     }
 
     runLoop() {
-        this.renderer.draw();
+        this.renderer.draw(this.gl);
     }
 }
 
-let main = new Main();
+let main = await Main.create();
 main.runLoop();
