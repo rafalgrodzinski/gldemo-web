@@ -1,5 +1,7 @@
+import { Model } from "/model.js";
+
 export class Renderer {
-    constructor(gl) { }
+    constructor() { }
 
     static async create(gl) {
         let instance = new Renderer();
@@ -11,6 +13,8 @@ export class Renderer {
         let fragmentShader = instance.createShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
 
         instance.program = instance.createProgram(gl, vertexShader, fragmentShader);
+        let awaitingModels = [await Model.create(gl, instance.program, "pyramid")]
+        instance.models = await Promise.all(awaitingModels);
 
         return instance;
     }
@@ -63,7 +67,7 @@ export class Renderer {
 
         gl.useProgram(this.program);
 
-        let positionAttribLocation = gl.getAttribLocation(this.program, "position");
+        /*let positionAttribLocation = gl.getAttribLocation(this.program, "position");
         let positionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
         let positions = [0, 0, 0, 0.5, 0.7, 0];
@@ -79,6 +83,10 @@ export class Renderer {
         gl.enableVertexAttribArray(colorAttribLocation);
         gl.vertexAttribPointer(colorAttribLocation, 4, gl.FLOAT, false, 0, 0);
 
-        gl.drawArrays(gl.TRIANGLES, 0, 3);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);*/
+
+        for (let i=0; i<this.models.length; i++) {
+            this.models[i].draw(gl, this.program);
+        }
     }
 }
