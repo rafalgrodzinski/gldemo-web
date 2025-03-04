@@ -22,5 +22,31 @@ body {
     width: 50%;
     max-width: 300px;
     min-width: 0;
-    background: red;
+    margin: 1rem;
+}
+
+.group-container {
+    border: 0.1rem solid darkgray;
+    border-radius: 16px;
+    padding: 0.5rem;
+    position: relative;
+    margin: 1rem 0;
+}
+
+.group-container-grid {
+    display: grid;
+    grid-template-columns: max-content auto;
+    justify-items: end;
+    gap: 0.5rem;
+}
+
+.group-container-grid > input {
+    width: 100%;
+}
+
+.group-container-title {
+    position: absolute;
+    top: -0.9rem;
+    left: 1rem;
+    background: white;
 }

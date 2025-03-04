@@ -10,7 +10,42 @@
         <div class="container">
             <canvas id="gl-view" class="container-canvas"></canvas>
             <div class="container-prefs">
-                <input type="range" min="0" max="100"/>
+                <!-- Translation -->
+                <div class="group-container">
+                    <span class="group-container-title">Translation</span>
+                    <div class="group-container-grid">
+                        <div>X</div>
+                        <input type="range" min="-1" max="1" step="any"/>
+                        <div>Y</div>
+                        <input type="range" min="-1" max="1" step="any"/>
+                        <div>Z</div>
+                        <input type="range" min="-1" max="1" step="any"/>
+                    </div>
+                </div>
+                <!-- Rotation -->
+                <div class="group-container">
+                    <span class="group-container-title">Rotation</span>
+                    <div class="group-container-grid">
+                        <div>X</div>
+                        <input type="range" min="-1" max="1" step="any"/>
+                        <div>Y</div>
+                        <input type="range" min="-1" max="1" step="any"/>
+                        <div>Z</div>
+                        <input type="range" min="-1" max="1" step="any"/>
+                    </div>
+                </div>
+                <!-- Scale -->
+                <div class="group-container">
+                    <span class="group-container-title">Scale</span>
+                    <div class="group-container-grid">
+                        <div>X</div>
+                        <input type="range" min="-1" max="1" step="any"/>
+                        <div>Y</div>
+                        <input type="range" min="-1" max="1" step="any"/>
+                        <div>Z</div>
+                        <input type="range" min="-1" max="1" step="any"/>
+                    </div>
+                </div>
             </div>
         </div>
     </body>
