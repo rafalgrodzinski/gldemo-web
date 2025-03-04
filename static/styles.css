@@ -1,9 +1,26 @@
-body {
-    margin: 0;
+html {
+    height: 100%;
 }
 
-#gl-view {
-    width: 100vw;
-    height: 100vh;
-    display: block;
+body {
+    margin: 0;
+    height: 100%;
+}
+
+.container {
+    display: flex;
+    height: 100%;
+}
+
+.container-canvas {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.container-prefs {
+    flex-grow: 1;
+    width: 50%;
+    max-width: 300px;
+    min-width: 0;
+    background: red;
 }
