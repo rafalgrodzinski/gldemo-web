@@ -3,7 +3,7 @@ export class Model {
         // Front
         -1, -1, 1, 0, 1, 0, 1, -1, 1,
         // Back
-        1, -1, -1, 0, 1, -1, -1, -1, 0,
+        1, -1, -1, 0, 1, 0, -1, -1, -1,
         // Left
         -1, -1, -1, 0, 1, 0, -1, -1, 1,
         // Right
@@ -39,7 +39,9 @@ export class Model {
 
     draw(gl, programId, modelMatrix) {
         gl.bindVertexArray(this.vertexArray);
-        //let modelMatrixUniformId = gl.getUniformLocation(programId, "u_modelMatrix");
+        let modelMatrixUniformId = gl.getUniformLocation(programId, "u_modelMatrix");
+        gl.uniformMatrix4fv(modelMatrixUniformId, false, modelMatrix.m);
+
         gl.drawArrays(gl.TRIANGLES, 0, this.vertices.length / 3);
     }
 }

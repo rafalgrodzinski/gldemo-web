@@ -1,10 +1,13 @@
 import { Model } from "/model.js";
+import { Matrix } from "/matrix.js";
 
 export class Renderer {
     constructor() { }
 
     static async create(gl) {
         let instance = new Renderer();
+
+        instance.projectionMatrix = Matrix.makePerspective(Math.PI / 2, 1, 0.1, 100);
 
         let vertexSource = await instance.fileContent("shader.vsh");
         let vertexShader = instance.createShader(gl, gl.VERTEX_SHADER, vertexSource);
@@ -53,40 +56,29 @@ export class Renderer {
     }
 
     resize(gl, width, height) {
+        this.projectionMatrix = Matrix.makePerspective(Math.PI / 2, width/height, 0.1, 100);
         gl.viewport(0, 0, width, height);
         this.draw(gl);
     }
 
     update(elapsedMiliseconds) {
-        console.log(elapsedMiliseconds);
+        //console.log(elapsedMiliseconds);
     }
 
     draw(gl) {
         gl.clearColor(0, 0, 0, 1);
-        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.enable(gl.DEPTH_TEST);
 
         gl.useProgram(this.program);
 
-        /*let positionAttribLocation = gl.getAttribLocation(this.program, "position");
-        let positionBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-        let positions = [0, 0, 0, 0.5, 0.7, 0];
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-        gl.enableVertexAttribArray(positionAttribLocation);
-        gl.vertexAttribPointer(positionAttribLocation, 2, gl.FLOAT, false, 0, 0);
+        let projectionMatrixUniformId = gl.getUniformLocation(this.program, "u_projectionMatrix");
+        gl.uniformMatrix4fv(projectionMatrixUniformId, false, this.projectionMatrix.m);
 
-        let colorAttribLocation = gl.getAttribLocation(this.program, "color");
-        let colorBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-        let colors = [Math.random(), Math.random(), Math.random(), 1, Math.random(), Math.random(), Math.random(), 1, Math.random(), Math.random(), Math.random(), 1];
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-        gl.enableVertexAttribArray(colorAttribLocation);
-        gl.vertexAttribPointer(colorAttribLocation, 4, gl.FLOAT, false, 0, 0);
-
-        gl.drawArrays(gl.TRIANGLES, 0, 3);*/
+        let modelMatrix = Matrix.makeTranslate(1.3, -2.3, -4);
 
         for (let i=0; i<this.models.length; i++) {
-            this.models[i].draw(gl, this.program);
+            this.models[i].draw(gl, this.program, modelMatrix);
         }
     }
 }
