@@ -1,4 +1,5 @@
 import { Renderer } from "/renderer.js";
+import { Config } from "/config.js";
 
 class Main {
     constructor() { }
@@ -22,6 +23,11 @@ class Main {
             instance.renderer.resize(instance.gl, entry.contentRect.width, entry.contentRect.height);
         });
         resizeObserver.observe(canvas);
+
+        let translationGroup = document.querySelector("#config-translation");
+        let rotationGroup = document.querySelector("#config-rotation");
+        let scaleGroup = document.querySelector("#config-scale");
+        instance.config = await Config.create(translationGroup, rotationGroup, scaleGroup);
 
         return instance;
     }
