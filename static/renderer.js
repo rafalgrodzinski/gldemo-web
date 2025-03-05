@@ -1,5 +1,6 @@
 import { Model } from "/model.js";
 import { Matrix } from "/matrix.js";
+import { Entity, EntityModel } from "/entity.js";
 
 export class Renderer {
     constructor() { }
@@ -16,8 +17,9 @@ export class Renderer {
         let fragmentShader = instance.createShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
 
         instance.program = instance.createProgram(gl, vertexShader, fragmentShader);
-        let awaitingModels = [await Model.create(gl, instance.program, "pyramid")]
-        instance.models = await Promise.all(awaitingModels);
+
+        let awaitingEntities = [await new EntityModel("pyramid", gl, instance.program)];
+        instance.entities = await Promise.all(awaitingEntities);
 
         return instance;
     }
@@ -75,10 +77,7 @@ export class Renderer {
         let projectionMatrixUniformId = gl.getUniformLocation(this.program, "u_projectionMatrix");
         gl.uniformMatrix4fv(projectionMatrixUniformId, false, this.projectionMatrix.m);
 
-        let modelMatrix = Matrix.makeTranslate(1.3, -2.3, -4);
-
-        for (let i=0; i<this.models.length; i++) {
-            this.models[i].draw(gl, this.program, modelMatrix);
-        }
+        for (let i=0; i<this.entities.length; i++)
+            this.entities[i].draw(gl, this.program);
     }
 }

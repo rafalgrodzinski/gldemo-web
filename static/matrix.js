@@ -1,4 +1,15 @@
 export class Matrix {
+    static makeIdentity() {
+        let instance = new Matrix();
+        instance.m = [
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
+        ]
+        return instance;  
+    }
+
     static makeTranslate(x, y, z) {
         let instance = new Matrix();
         instance.m = [
