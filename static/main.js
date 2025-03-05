@@ -24,10 +24,11 @@ class Main {
         });
         resizeObserver.observe(canvas);
 
+        let entitiesContainer = document.querySelector("#config-entities");
         let translationGroup = document.querySelector("#config-translation");
         let rotationGroup = document.querySelector("#config-rotation");
         let scaleGroup = document.querySelector("#config-scale");
-        instance.config = await new Config(translationGroup, rotationGroup, scaleGroup);
+        instance.config = await new Config(entitiesContainer, translationGroup, rotationGroup, scaleGroup);
         instance.config.entities = instance.renderer.entities;
 
         return instance;

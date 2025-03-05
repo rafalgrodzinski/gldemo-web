@@ -50,3 +50,22 @@ body {
     left: 1rem;
     background: white;
 }
+
+.entities-container {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.entities-entry {
+    border: 0.1rem solid darkgrey;
+    padding: 0.1rem;
+}
+
+.entities-entry:hover {
+    border: 0.1rem solid black;
+}
+
+.entities-entry:active {
+    border: 0.1rem solid black;
+    background: darkgrey;
+}
