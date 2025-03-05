@@ -14,7 +14,7 @@ class Main {
             throw new Error();
         }
 
-        instance.renderer = await Renderer.create(instance.gl);
+        instance.renderer = await new Renderer(instance.gl);
 
         let resizeObserver = new ResizeObserver( entries => {
             let entry = entries[0];
@@ -27,7 +27,8 @@ class Main {
         let translationGroup = document.querySelector("#config-translation");
         let rotationGroup = document.querySelector("#config-rotation");
         let scaleGroup = document.querySelector("#config-scale");
-        instance.config = await Config.create(translationGroup, rotationGroup, scaleGroup);
+        instance.config = await new Config(translationGroup, rotationGroup, scaleGroup);
+        instance.config.entities = instance.renderer.entities;
 
         return instance;
     }

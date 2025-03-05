@@ -1,61 +1,65 @@
 export class Config {
-    constructor() { }
+    #entities = [];
 
-    static async create(translationGroup, rotationGroup, scaleGroup) {
-        let instance = new Config();
+    static translationScale = 10;
+    static rotationScale = Math.PI;
 
-        // Translation
-        instance.translationX = translationGroup.querySelector("#x");
-        instance.translationX.oninput = (event) => {
-            console.log("tx: ", event.target.value);
-        };
+    constructor(translationGroup, rotationGroup, scaleGroup) { 
+        let instance = async () => {
+            // Translation
+            this.translationX = translationGroup.querySelector("#x");
+            this.translationX.oninput = (event) => {
+                this.#entities[0].translation.x = event.target.value * Config.translationScale;
+            };
 
-        instance.translationY = translationGroup.querySelector("#y");
-        instance.translationY.oninput = (event) => {
-            console.log("ty: ", event.target.value);
-        };
+            this.translationY = translationGroup.querySelector("#y");
+            this.translationY.oninput = (event) => {
+                this.#entities[0].translation.y = event.target.value * Config.translationScale;
+            };
 
-        instance.translationZ = translationGroup.querySelector("#z");
-        instance.translationZ.oninput = (event) => {
-            console.log("tz: ", event.target.value);
-        };
+            this.translationZ = translationGroup.querySelector("#z");
+            this.translationZ.oninput = (event) => {
+                this.#entities[0].translation.z = event.target.value * Config.translationScale;
+            };
 
-        // Rotation
-        instance.rotationX = rotationGroup.querySelector("#x");
-        instance.rotationX.oninput = (event) => {
-            console.log("rx: ", event.target.value);
-        };
+            // Rotation
+            this.rotationX = rotationGroup.querySelector("#x");
+            this.rotationX.oninput = (event) => {
+                this.#entities[0].rotation.x = event.target.value * Config.rotationScale;
+            };
 
-        instance.rotationY = rotationGroup.querySelector("#y");
-        instance.rotationY.oninput = (event) => {
-            console.log("ry: ", event.target.value);
-        };
+            this.rotationY = rotationGroup.querySelector("#y");
+            this.rotationY.oninput = (event) => {
+                this.#entities[0].rotation.y = event.target.value * Config.rotationScale;
+            };
 
-        instance.rotationZ = rotationGroup.querySelector("#z");
-        instance.rotationZ.oninput = (event) => {
-            console.log("rz: ", event.target.value);
-        };
+            this.rotationZ = rotationGroup.querySelector("#z");
+            this.rotationZ.oninput = (event) => {
+                this.#entities[0].rotation.z = event.target.value * Config.rotationScale;
+            };
 
-        // Scale
-        instance.scaleX = scaleGroup.querySelector("#x");
-        instance.scaleX.oninput = (event) => {
-            console.log("sx: ", event.target.value);
-        };
+            // Scale
+            this.scaleX = scaleGroup.querySelector("#x");
+            this.scaleX.oninput = (event) => {
+                this.#entities[0].scale.x = event.target.value;
+            };
 
-        instance.scaleY = scaleGroup.querySelector("#y");
-        instance.scaleY.oninput = (event) => {
-            console.log("sy: ", event.target.value);
-        };
+            this.scaleY = scaleGroup.querySelector("#y");
+            this.scaleY.oninput = (event) => {
+                this.#entities[0].scale.y = event.target.value
+            };
 
-        instance.scaleZ = scaleGroup.querySelector("#z");
-        instance.scaleZ.oninput = (event) => {
-            console.log("sz: ", event.target.value);
-        };
+            this.scaleZ = scaleGroup.querySelector("#z");
+            this.scaleZ.oninput = (event) => {
+                this.#entities[0].scale.z = event.target.value
+            };
 
-        return instance;
+            return this;
+        }
+        return instance();
     }
 
     set entities(value) {
-
+        this.#entities = value;
     }
 }

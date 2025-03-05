@@ -1,28 +1,26 @@
-import { Model } from "/model.js";
 import { Matrix } from "/matrix.js";
 import { Entity, EntityModel } from "/entity.js";
 
 export class Renderer {
-    constructor() { }
+    constructor(gl) {
+        let instance = async () => {
+            this.projectionMatrix = Matrix.makePerspective(Math.PI / 2, 1, 0.1, 100);
 
-    static async create(gl) {
-        let instance = new Renderer();
+            let vertexSource = await this.fileContent("shader.vsh");
+            let vertexShader = this.createShader(gl, gl.VERTEX_SHADER, vertexSource);
+    
+            let fragmentSource = await this.fileContent("shader.fsh");
+            let fragmentShader = this.createShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
+    
+            this.program = this.createProgram(gl, vertexShader, fragmentShader);
+    
+            let awaitingEntities = [await new EntityModel("pyramid", gl, this.program)];
+            this.entities = await Promise.all(awaitingEntities);
 
-        instance.projectionMatrix = Matrix.makePerspective(Math.PI / 2, 1, 0.1, 100);
-
-        let vertexSource = await instance.fileContent("shader.vsh");
-        let vertexShader = instance.createShader(gl, gl.VERTEX_SHADER, vertexSource);
-
-        let fragmentSource = await instance.fileContent("shader.fsh");
-        let fragmentShader = instance.createShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
-
-        instance.program = instance.createProgram(gl, vertexShader, fragmentShader);
-
-        let awaitingEntities = [await new EntityModel("pyramid", gl, instance.program)];
-        instance.entities = await Promise.all(awaitingEntities);
-
-        return instance;
-    }
+            return this;
+        };
+        return instance();
+     }
 
     async fileContent(fileName) {
         let content = await fetch(fileName)
