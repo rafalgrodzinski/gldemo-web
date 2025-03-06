@@ -58,14 +58,32 @@ body {
 
 .entities-entry {
     border: 0.1rem solid darkgrey;
-    padding: 0.1rem;
+    padding: 0.2rem;
+    margin: 0.1rem;
+    border-radius: 8px;
 }
 
 .entities-entry:hover {
-    border: 0.1rem solid black;
+    border: 0.2rem solid darkgrey;
+    margin: 0;
 }
 
 .entities-entry:active {
+    background: lightgray;
+}
+
+.entities-entry-selected {
     border: 0.1rem solid black;
-    background: darkgrey;
+    padding: 0.2rem;
+    margin: 0.1rem;
+    border-radius: 8px;
+}
+
+.entities-entry-selected:hover {
+    border: 0.2rem solid black;
+    margin: 0;
+}
+
+.entities-entry-selected:active {
+    background: lightgray;
 }

@@ -1,62 +1,80 @@
 export class Config {
     #entities = [];
-    #entitiesContainer = null;
     #selectedEntity = null;
 
-    static translationScale = 10;
-    static rotationScale = Math.PI;
+    #entityEntriesContainer = null;
+    #selectedEntityEntry = null;
 
-    constructor(entitiesContainer, translationGroup, rotationGroup, scaleGroup) { 
+    #translationInputs = null;
+    #rotationInputs = null;
+    #scaleInputs = null;
+
+    static translationMultiplier = 10;
+    static rotationMultiplier = Math.PI;
+    static scaleMultiplier = 10;
+
+    constructor(entityEntriesContainer, translationGroup, rotationGroup, scaleGroup) { 
         let instance = async () => {
-            this.#entitiesContainer = entitiesContainer;
+            this.#entityEntriesContainer = entityEntriesContainer;
 
             // Translation
-            this.translationX = translationGroup.querySelector("#x");
-            this.translationX.oninput = (event) => {
-                this.#selectedEntity.translation.x = event.target.value * Config.translationScale;
+            this.#translationInputs = {
+                x: translationGroup.querySelector("#x"),
+                y: translationGroup.querySelector("#y"),
+                z: translationGroup.querySelector("#z")
+            }
+
+            this.#translationInputs.x.oninput = (event) => {
+                this.#selectedEntity.translation.x = event.target.value * Config.translationMultiplier;
             };
 
-            this.translationY = translationGroup.querySelector("#y");
-            this.translationY.oninput = (event) => {
-                this.#selectedEntity.translation.y = event.target.value * Config.translationScale;
+            this.#translationInputs.y.oninput = (event) => {
+                this.#selectedEntity.translation.y = event.target.value * Config.translationMultiplier;
             };
 
-            this.translationZ = translationGroup.querySelector("#z");
-            this.translationZ.oninput = (event) => {
-                this.#selectedEntity.translation.z = event.target.value * Config.translationScale;
+            this.#translationInputs.z.oninput = (event) => {
+                this.#selectedEntity.translation.z = event.target.value * Config.translationMultiplier;
             };
 
             // Rotation
-            this.rotationX = rotationGroup.querySelector("#x");
-            this.rotationX.oninput = (event) => {
-                this.#selectedEntity.rotation.x = event.target.value * Config.rotationScale;
+            this.#rotationInputs = {
+                x: rotationGroup.querySelector("#x"),
+                y: rotationGroup.querySelector("#y"),
+                z: rotationGroup.querySelector("#z")
+            }
+
+            this.#rotationInputs.x.oninput = (event) => {
+                this.#selectedEntity.rotation.x = event.target.value * Config.rotationMultiplier;
             };
 
-            this.rotationY = rotationGroup.querySelector("#y");
-            this.rotationY.oninput = (event) => {
-                this.#selectedEntity.rotation.y = event.target.value * Config.rotationScale;
+            this.#rotationInputs.y.oninput = (event) => {
+                this.#selectedEntity.rotation.y = event.target.value * Config.rotationMultiplier;
             };
 
-            this.rotationZ = rotationGroup.querySelector("#z");
-            this.rotationZ.oninput = (event) => {
-                this.#selectedEntity.rotation.z = event.target.value * Config.rotationScale;
+            this.#rotationInputs.z.oninput = (event) => {
+                this.#selectedEntity.rotation.z = event.target.value * Config.rotationMultiplier;
             };
 
             // Scale
-            this.scaleX = scaleGroup.querySelector("#x");
-            this.scaleX.oninput = (event) => {
-                this.#selectedEntity.scale.x = event.target.value;
+            this.#scaleInputs = {
+                x: scaleGroup.querySelector("#x"),
+                y: scaleGroup.querySelector("#y"),
+                z: scaleGroup.querySelector("#z")
+            }
+
+            this.#scaleInputs.x.oninput = (event) => {
+                this.#selectedEntity.scale.x = event.target.value * Config.scaleMultiplier;
             };
 
-            this.scaleY = scaleGroup.querySelector("#y");
-            this.scaleY.oninput = (event) => {
-                this.#selectedEntity.scale.y = event.target.value
+            this.#scaleInputs.y.oninput = (event) => {
+                this.#selectedEntity.scale.y = event.target.value * Config.scaleMultiplier
             };
 
-            this.scaleZ = scaleGroup.querySelector("#z");
-            this.scaleZ.oninput = (event) => {
-                this.#selectedEntity.scale.z = event.target.value
+            this.#scaleInputs.z.oninput = (event) => {
+                this.#selectedEntity.scale.z = event.target.value * Config.scaleMultiplier
             };
+
+            this.selectedEntity = null;
 
             return this;
         }
@@ -66,19 +84,52 @@ export class Config {
     set entities(value) {
         this.#entities = value;
 
-        this.#entitiesContainer.innerHTML = "";
+        this.#entityEntriesContainer.innerHTML = "";
         for (let i=0; i<this.#entities.length; i++) {
-            //this.#entitiesContainer.innerHTML += `<div id="entity${i}" class="entities-entry">${this.#entities[i].name}</div>`
-            //let entity = this.#entitiesContainer.querySelector(`entity${i}`);
-            let entity = document.createElement("div");
-            entity.classList.add("entities-entry");
-            entity.appendChild(document.createTextNode(this.#entities[i].name))
-            this.#entitiesContainer.appendChild(entity);
+            let entityEntry = document.createElement("div");
+            entityEntry.classList.add("entities-entry");
+            entityEntry.appendChild(document.createTextNode(this.#entities[i].name))
+            this.#entityEntriesContainer.appendChild(entityEntry);
 
-            entity.onclick = () => {
-                console.log("Selected: ", entity);
-                this.#selectedEntity = this.#entities[i];
+            entityEntry.onclick = (event) => {
+                if (this.#selectedEntityEntry != null) {
+                    this.#selectedEntityEntry.classList.remove("entities-entry-selected");
+                    this.#selectedEntityEntry.classList.add("entities-entry");
+                }
+                this.#selectedEntityEntry = event.target;
+                this.#selectedEntityEntry.classList.remove("entities-entry");
+                this.#selectedEntityEntry.classList.add("entities-entry-selected");
+
+                this.selectedEntity = this.#entities[i];
             }
         }
+    }
+
+    set selectedEntity(value) {
+        this.#selectedEntity = value;
+
+        this.#translationInputs.x.value = (value?.translation.x ?? 0) / Config.translationMultiplier;
+        this.#translationInputs.y.value = (value?.translation.y ?? 0) / Config.translationMultiplier;
+        this.#translationInputs.z.value = (value?.translation.z ?? 0) / Config.translationMultiplier;
+
+        this.#rotationInputs.x.value = (value?.rotation.x ?? 0) / Config.rotationMultiplier;
+        this.#rotationInputs.y.value = (value?.rotation.y ?? 0) / Config.rotationMultiplier;
+        this.#rotationInputs.z.value = (value?.rotation.z ?? 0) / Config.rotationMultiplier;
+
+        this.#scaleInputs.x.value = (value?.scale.x ?? 1) / Config.scaleMultiplier;
+        this.#scaleInputs.y.value = (value?.scale.y ?? 1) / Config.scaleMultiplier;
+        this.#scaleInputs.z.value = (value?.scale.z ?? 1) / Config.scaleMultiplier;
+
+        this.#translationInputs.x.disabled = value == null;
+        this.#translationInputs.y.disabled = value == null;
+        this.#translationInputs.z.disabled = value == null;
+
+        this.#rotationInputs.x.disabled = value == null;
+        this.#rotationInputs.y.disabled = value == null;
+        this.#rotationInputs.z.disabled = value == null;
+
+        this.#scaleInputs.x.disabled = value == null;
+        this.#scaleInputs.y.disabled = value == null;
+        this.#scaleInputs.z.disabled = value == null;
     }
 }

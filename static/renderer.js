@@ -16,7 +16,10 @@ export class Renderer {
     
             let awaitingEntities = [
                 await new EntityModel("Pyramid 1", gl, this.program),
-                await new EntityModel("Pyramid 2", gl, this.program)
+                await new EntityModel("Pyramid 2", gl, this.program),
+                await new EntityModel("Pyramid 3", gl, this.program),
+                await new EntityModel("Pyramid 4", gl, this.program),
+                await new EntityModel("Pyramid 5", gl, this.program)
             ];
             this.entities = await Promise.all(awaitingEntities);
 
