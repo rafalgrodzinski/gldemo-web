@@ -14,13 +14,15 @@ export class Entity {
 
     get modelMatrix() {
         let modelMatrix = Matrix.makeScale(this.scale.x, this.scale.y, this.scale.z);
-        modelMatrix = modelMatrix.multiply(Matrix.makeRotateX(this.rotation.x));
-        modelMatrix = modelMatrix.multiply(Matrix.makeRotateY(this.rotation.y));
-        modelMatrix = modelMatrix.multiply(Matrix.makeRotateZ(this.rotation.z));
-        modelMatrix = modelMatrix.multiply(Matrix.makeTranslate(this.translation.x, this.translation.y, this.translation.z));
+        modelMatrix = modelMatrix.multiply(Matrix.makeRotationX(this.rotation.x));
+        modelMatrix = modelMatrix.multiply(Matrix.makeRotationY(this.rotation.y));
+        modelMatrix = modelMatrix.multiply(Matrix.makeRotationZ(this.rotation.z));
+        modelMatrix = modelMatrix.multiply(Matrix.makeTranslation(this.translation.x, this.translation.y, this.translation.z));
         
         return modelMatrix;
     }
+
+    draw() { }
 }
 
 export class EntityModel extends Entity {

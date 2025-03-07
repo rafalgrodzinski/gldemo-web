@@ -10,7 +10,7 @@ export class Matrix {
         return instance;  
     }
 
-    static makeTranslate(x, y, z) {
+    static makeTranslation(x, y, z) {
         let instance = new Matrix();
         instance.m = [
             1, 0, 0, 0,
@@ -21,7 +21,7 @@ export class Matrix {
         return instance;
     }
 
-    static makeRotateX(angle) {
+    static makeRotationX(angle) {
         let instance = new Matrix();
         instance.m = [
             1, 0, 0, 0,
@@ -32,7 +32,7 @@ export class Matrix {
         return instance;
     }
 
-    static makeRotateY(angle) {
+    static makeRotationY(angle) {
         let instance = new Matrix();
         instance.m = [
             Math.cos(angle), 0, Math.sin(angle), 0,
@@ -43,7 +43,7 @@ export class Matrix {
         return instance;
     }
 
-    static makeRotateZ(angle) {
+    static makeRotationZ(angle) {
         let instance = new Matrix();
         instance.m = [
             Math.cos(angle), -Math.sin(angle), 0, 0,
