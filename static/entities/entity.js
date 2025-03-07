@@ -1,4 +1,4 @@
-import { Matrix } from "/matrix.js";
+import { Matrix } from "/utils/matrix.js";
 
 export class Entity {
     constructor(name) {

@@ -1,4 +1,8 @@
 export class Config {
+    static translationMultiplier = 10;
+    static rotationMultiplier = Math.PI;
+    static scaleMultiplier = 10;
+
     #entities = [];
     #selectedEntity = null;
 
@@ -8,10 +12,6 @@ export class Config {
     #translationInputs = null;
     #rotationInputs = null;
     #scaleInputs = null;
-
-    static translationMultiplier = 10;
-    static rotationMultiplier = Math.PI;
-    static scaleMultiplier = 10;
 
     constructor(entityEntriesContainer, translationGroup, rotationGroup, scaleGroup) { 
         let instance = async () => {

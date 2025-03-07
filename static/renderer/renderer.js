@@ -1,15 +1,19 @@
-import { Matrix } from "/matrix.js";
-import { Entity, EntityModel } from "/entity.js";
+import { Matrix } from "/utils/matrix.js";
+import { Entity, EntityModel } from "/entities/entity.js";
 
 export class Renderer {
+    #gl = null;
+
     constructor(gl) {
         let instance = async () => {
+            this.#gl = gl;
+
             this.projectionMatrix = Matrix.makePerspective(Math.PI / 2, 1, 0.1, 100);
 
-            let vertexSource = await this.fileContent("shader.vsh");
+            let vertexSource = await this.fileContent("shaders/shader.vsh");
             let vertexShader = this.createShader(gl, gl.VERTEX_SHADER, vertexSource);
     
-            let fragmentSource = await this.fileContent("shader.fsh");
+            let fragmentSource = await this.fileContent("shaders/shader.fsh");
             let fragmentShader = this.createShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
     
             this.program = this.createProgram(gl, vertexShader, fragmentShader);
@@ -61,17 +65,21 @@ export class Renderer {
         return program;
     }
 
-    resize(gl, width, height) {
+    resize(width, height) {
+        let gl = this.#gl;
+
         this.projectionMatrix = Matrix.makePerspective(Math.PI / 2, width/height, 0.1, 100);
         gl.viewport(0, 0, width, height);
-        this.draw(gl);
+        this.draw();
     }
 
     update(elapsedMiliseconds) {
         //console.log(elapsedMiliseconds);
     }
 
-    draw(gl) {
+    draw() {
+        let gl = this.#gl;
+
         gl.clearColor(0, 0, 0, 1);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.enable(gl.DEPTH_TEST);

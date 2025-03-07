@@ -1,42 +1,43 @@
-import { Renderer } from "/renderer.js";
-import { Config } from "/config.js";
+import { Renderer } from "/renderer/renderer.js";
+import { Config } from "/utils/config.js";
 
 class Main {
-    constructor() { }
+    #renderer = null;
+    #config = null;
 
-    static async create() {
-        let instance = new Main();
-
-        let canvas = document.querySelector("#gl-view");
-        instance.gl = canvas.getContext("webgl2");
-        if(!instance.gl) {
-            alert("Unable to initialize WebGL");
-            throw new Error();
-        }
-
-        instance.renderer = await new Renderer(instance.gl);
-
-        let resizeObserver = new ResizeObserver( entries => {
-            let entry = entries[0];
-            canvas.width = entry.contentRect.width;
-            canvas.height = entry.contentRect.height;
-            instance.renderer.resize(instance.gl, entry.contentRect.width, entry.contentRect.height);
-        });
-        resizeObserver.observe(canvas);
-
-        let entitiesContainer = document.querySelector("#config-entities");
-        let translationGroup = document.querySelector("#config-translation");
-        let rotationGroup = document.querySelector("#config-rotation");
-        let scaleGroup = document.querySelector("#config-scale");
-        instance.config = await new Config(entitiesContainer, translationGroup, rotationGroup, scaleGroup);
-        instance.config.entities = instance.renderer.entities;
-
-        return instance;
+    constructor() { 
+        let instance = async () => {
+            let canvas = document.querySelector("#gl-view");
+            let gl = canvas.getContext("webgl2");
+            if(!gl) {
+                alert("Unable to initialize WebGL");
+                throw new Error();
+            }
+    
+            this.#renderer = await new Renderer(gl);
+    
+            let resizeObserver = new ResizeObserver( entries => {
+                let entry = entries[0];
+                canvas.width = entry.contentRect.width;
+                canvas.height = entry.contentRect.height;
+                this.#renderer.resize(entry.contentRect.width, entry.contentRect.height);
+            });
+            resizeObserver.observe(canvas);
+    
+            let entitiesContainer = document.querySelector("#config-entities");
+            let translationGroup = document.querySelector("#config-translation");
+            let rotationGroup = document.querySelector("#config-rotation");
+            let scaleGroup = document.querySelector("#config-scale");
+            this.#config = await new Config(entitiesContainer, translationGroup, rotationGroup, scaleGroup);
+            this.#config.entities = this.#renderer.entities;
+    
+            return this;
+        };
+        return instance();
     }
 
     runLoop() {
-        let renderer = this.renderer;
-        let gl = this.gl;
+        let renderer = this.#renderer;
         let oldTimestamp;
 
         function nextFrame(timestamp) {
@@ -46,7 +47,7 @@ class Main {
             oldTimestamp = timestamp;
 
             renderer.update(elapsed);
-            renderer.draw(gl);
+            renderer.draw();
 
             requestAnimationFrame(nextFrame);
         }
@@ -54,5 +55,5 @@ class Main {
     }
 }
 
-let main = await Main.create();
+let main = await new Main();
 main.runLoop();
