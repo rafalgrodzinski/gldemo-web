@@ -38,7 +38,7 @@ export class EntityModel extends Entity {
         -1, -1, -1, 1, -1, 1, 1, -1, -1
     ]
 
-    constructor(name, gl, program) {
+    constructor(name, gl, shaderProgram) {
         let instance = super(name)
             .then((that) => {
                 that.vertices = EntityModel.pyramidVertices;
@@ -49,7 +49,7 @@ export class EntityModel extends Entity {
                 gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
                 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(that.vertices), gl.STATIC_DRAW);
 
-                let positionAttribId = gl.getAttribLocation(program, "a_position");
+                let positionAttribId = gl.getAttribLocation(shaderProgram.programId, "a_position");
                 gl.enableVertexAttribArray(positionAttribId);
                 gl.vertexAttribPointer(positionAttribId, 3, gl.FLOAT, false, 0, 0);
 
@@ -58,9 +58,9 @@ export class EntityModel extends Entity {
         return instance;
     }
 
-    draw(gl, programId) {
+    draw(gl, shaderProgram) {
         gl.bindVertexArray(this.vertexArray);
-        let modelMatrixUniformId = gl.getUniformLocation(programId, "u_modelMatrix");
+        let modelMatrixUniformId = gl.getUniformLocation(shaderProgram.programId, "u_modelMatrix");
         gl.uniformMatrix4fv(modelMatrixUniformId, false, this.modelMatrix.m);
 
         gl.drawArrays(gl.TRIANGLES, 0, this.vertices.length / 3);

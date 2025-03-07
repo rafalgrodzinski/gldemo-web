@@ -1,8 +1,10 @@
 import { Matrix } from "/utils/matrix.js";
-import { Entity, EntityModel } from "/entities/entity.js";
+import { Entity, EntityModel } from "/components/entities/entity.js";
+import { ShaderProgram } from "/components/shader_program.js";
 
 export class Renderer {
     #gl = null;
+    #shaderProgram = null;
 
     constructor(gl) {
         let instance = async () => {
@@ -10,20 +12,14 @@ export class Renderer {
 
             this.projectionMatrix = Matrix.makePerspective(Math.PI / 2, 1, 0.1, 100);
 
-            let vertexSource = await this.fileContent("shaders/shader.vsh");
-            let vertexShader = this.createShader(gl, gl.VERTEX_SHADER, vertexSource);
-    
-            let fragmentSource = await this.fileContent("shaders/shader.fsh");
-            let fragmentShader = this.createShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
-    
-            this.program = this.createProgram(gl, vertexShader, fragmentShader);
+            this.#shaderProgram = await new ShaderProgram(gl, "shaders/shader.vsh", "shaders/shader.fsh");
     
             let awaitingEntities = [
-                await new EntityModel("Pyramid 1", gl, this.program),
-                await new EntityModel("Pyramid 2", gl, this.program),
-                await new EntityModel("Pyramid 3", gl, this.program),
-                await new EntityModel("Pyramid 4", gl, this.program),
-                await new EntityModel("Pyramid 5", gl, this.program)
+                await new EntityModel("Pyramid 1", gl, this.#shaderProgram),
+                await new EntityModel("Pyramid 2", gl, this.#shaderProgram),
+                await new EntityModel("Pyramid 3", gl, this.#shaderProgram),
+                await new EntityModel("Pyramid 4", gl, this.#shaderProgram),
+                await new EntityModel("Pyramid 5", gl, this.#shaderProgram)
             ];
             this.entities = await Promise.all(awaitingEntities);
 
@@ -31,39 +27,6 @@ export class Renderer {
         };
         return instance();
      }
-
-    async fileContent(fileName) {
-        let content = await fetch(fileName)
-            .then(response => response.text())
-        return content;
-    }
-
-    createShader(gl, type, source) {
-        let shader = gl.createShader(type);
-        gl.shaderSource(shader, source);
-        gl.compileShader(shader);
-        let success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
-        if(!success) {
-            console.log(gl.getShaderInfoLog(shader));
-            gl.deleteShader(shader);
-            throw new Error();
-        }
-        return shader;
-    }
-
-    createProgram(gl, vertexShader, fragmentShader) {
-        let program = gl.createProgram();
-        gl.attachShader(program, vertexShader);
-        gl.attachShader(program, fragmentShader);
-        gl.linkProgram(program);
-        let success = gl.getProgramParameter(program, gl.LINK_STATUS);
-        if(!success) {
-            console.log(gl.getProgramInfoLog(program));
-            gl.deleteProgram(program);
-            throw new Error();
-        }
-        return program;
-    }
 
     resize(width, height) {
         let gl = this.#gl;
@@ -84,12 +47,12 @@ export class Renderer {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.enable(gl.DEPTH_TEST);
 
-        gl.useProgram(this.program);
+        gl.useProgram(this.#shaderProgram.programId);
 
-        let projectionMatrixUniformId = gl.getUniformLocation(this.program, "u_projectionMatrix");
+        let projectionMatrixUniformId = gl.getUniformLocation(this.#shaderProgram.programId, "u_projectionMatrix");
         gl.uniformMatrix4fv(projectionMatrixUniformId, false, this.projectionMatrix.m);
 
         for (let i=0; i<this.entities.length; i++)
-            this.entities[i].draw(gl, this.program);
+            this.entities[i].draw(gl, this.#shaderProgram);
     }
 }
