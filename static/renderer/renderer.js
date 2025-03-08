@@ -12,15 +12,12 @@ export class Renderer {
             this.#gl = gl;
 
             this.#shaderProgram = await new ShaderProgram(gl, "shaders/shader.vsh", "shaders/shader.fsh");
-            this.#camera = await new EntityCamera("Camera #1", gl, this.#shaderProgram);
+            this.#camera = await EntityCamera.create("Camera #1");
             this.#camera.translation.z = 4;
     
             let awaitingEntities = [
-                await new EntityModel("Pyramid 1", gl, this.#shaderProgram),
-                await new EntityModel("Pyramid 2", gl, this.#shaderProgram),
-                await new EntityModel("Pyramid 3", gl, this.#shaderProgram),
-                await new EntityModel("Pyramid 4", gl, this.#shaderProgram),
-                await new EntityModel("Pyramid 5", gl, this.#shaderProgram)
+                await EntityModel.create("Pyramid #1", gl, this.#shaderProgram),
+                await EntityModel.create("Pyramid #2", gl, this.#shaderProgram)
             ];
             this.entities = await Promise.all(awaitingEntities);
             this.entities.push(this.#camera);
