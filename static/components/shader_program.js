@@ -1,18 +1,19 @@
 export class ShaderProgram {
-    constructor(gl, vertexShaderFileName, fragmentShaderFileName) {
-        let instance = async () => {
-            let vertexSource = await this.fileContent(vertexShaderFileName);
-            let vertexShader = this.shader(gl, gl.VERTEX_SHADER, vertexSource);
-    
-            let fragmentSource = await this.fileContent(fragmentShaderFileName);
-            let fragmentShader = this.shader(gl, gl.FRAGMENT_SHADER, fragmentSource);
+    static async create(gl, vertexShaderFileName, fragmentShaderFileName) {
+        return await new ShaderProgram().init(gl, vertexShaderFileName, fragmentShaderFileName);
+    }
 
-            let program = this.program(gl, vertexShader, fragmentShader);
-            this.programId = program;
+    async init(gl, vertexShaderFileName, fragmentShaderFileName) {
+        let vertexSource = await this.fileContent(vertexShaderFileName);
+        let vertexShader = this.shader(gl, gl.VERTEX_SHADER, vertexSource);
 
-            return this;
-        }
-        return instance();
+        let fragmentSource = await this.fileContent(fragmentShaderFileName);
+        let fragmentShader = this.shader(gl, gl.FRAGMENT_SHADER, fragmentSource);
+
+        let program = this.program(gl, vertexShader, fragmentShader);
+        this.programId = program;
+
+        return this;
     }
 
     async fileContent(fileName) {

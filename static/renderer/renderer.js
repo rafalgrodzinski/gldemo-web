@@ -7,24 +7,25 @@ export class Renderer {
     #shaderProgram = null;
     #camera = null;
 
-    constructor(gl) {
-        let instance = async () => {
-            this.#gl = gl;
+     static async create(gl) {
+        return await new Renderer().init(gl);
+     }
 
-            this.#shaderProgram = await new ShaderProgram(gl, "shaders/shader.vsh", "shaders/shader.fsh");
-            this.#camera = await EntityCamera.create("Camera #1");
-            this.#camera.translation.z = 4;
-    
-            let awaitingEntities = [
-                await EntityModel.create("Pyramid #1", gl, this.#shaderProgram),
-                await EntityModel.create("Pyramid #2", gl, this.#shaderProgram)
-            ];
-            this.entities = await Promise.all(awaitingEntities);
-            this.entities.push(this.#camera);
+     async init(gl) {
+        this.#gl = gl;
 
-            return this;
-        };
-        return instance();
+        this.#shaderProgram = await ShaderProgram.create(gl, "shaders/shader.vsh", "shaders/shader.fsh");
+        this.#camera = await EntityCamera.create("Camera #1");
+        this.#camera.translation.z = 4;
+
+        let awaitingEntities = [
+            await EntityModel.create("Pyramid #1", gl, this.#shaderProgram),
+            await EntityModel.create("Pyramid #2", gl, this.#shaderProgram)
+        ];
+        this.entities = await Promise.all(awaitingEntities);
+        this.entities.push(this.#camera);
+
+        return this;
      }
 
     resize(width, height) {

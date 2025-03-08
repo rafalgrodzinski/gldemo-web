@@ -2,7 +2,7 @@ import { Entity } from "/components/entities/entity.js";
 import { Matrix } from "/utils/Matrix.js";
 
 export class EntityCamera extends Entity {
-    #projectionMatrix;
+    #projectionMatrix = null;
 
     static async create(name) {
         return await new EntityCamera().init(name);

@@ -13,72 +13,73 @@ export class Config {
     #rotationInputs = null;
     #scaleInputs = null;
 
-    constructor(entityEntriesContainer, translationGroup, rotationGroup, scaleGroup) { 
-        let instance = async () => {
-            this.#entityEntriesContainer = entityEntriesContainer;
+    static async create(entityEntriesContainer, translationGroup, rotationGroup, scaleGroup) {
+        return await new Config().init(entityEntriesContainer, translationGroup, rotationGroup, scaleGroup);
+    }
 
-            // Translation
-            this.#translationInputs = {
-                x: translationGroup.querySelector("#x"),
-                y: translationGroup.querySelector("#y"),
-                z: translationGroup.querySelector("#z")
-            }
+    async init(entityEntriesContainer, translationGroup, rotationGroup, scaleGroup) {
+        this.#entityEntriesContainer = entityEntriesContainer;
 
-            this.#translationInputs.x.oninput = (event) => {
-                this.#selectedEntity.translation.x = event.target.value * Config.translationMultiplier;
-            };
-
-            this.#translationInputs.y.oninput = (event) => {
-                this.#selectedEntity.translation.y = event.target.value * Config.translationMultiplier;
-            };
-
-            this.#translationInputs.z.oninput = (event) => {
-                this.#selectedEntity.translation.z = event.target.value * Config.translationMultiplier;
-            };
-
-            // Rotation
-            this.#rotationInputs = {
-                x: rotationGroup.querySelector("#x"),
-                y: rotationGroup.querySelector("#y"),
-                z: rotationGroup.querySelector("#z")
-            }
-
-            this.#rotationInputs.x.oninput = (event) => {
-                this.#selectedEntity.rotation.x = event.target.value * Config.rotationMultiplier;
-            };
-
-            this.#rotationInputs.y.oninput = (event) => {
-                this.#selectedEntity.rotation.y = event.target.value * Config.rotationMultiplier;
-            };
-
-            this.#rotationInputs.z.oninput = (event) => {
-                this.#selectedEntity.rotation.z = event.target.value * Config.rotationMultiplier;
-            };
-
-            // Scale
-            this.#scaleInputs = {
-                x: scaleGroup.querySelector("#x"),
-                y: scaleGroup.querySelector("#y"),
-                z: scaleGroup.querySelector("#z")
-            }
-
-            this.#scaleInputs.x.oninput = (event) => {
-                this.#selectedEntity.scale.x = event.target.value * Config.scaleMultiplier;
-            };
-
-            this.#scaleInputs.y.oninput = (event) => {
-                this.#selectedEntity.scale.y = event.target.value * Config.scaleMultiplier
-            };
-
-            this.#scaleInputs.z.oninput = (event) => {
-                this.#selectedEntity.scale.z = event.target.value * Config.scaleMultiplier
-            };
-
-            this.selectedEntity = null;
-
-            return this;
+        // Translation
+        this.#translationInputs = {
+            x: translationGroup.querySelector("#x"),
+            y: translationGroup.querySelector("#y"),
+            z: translationGroup.querySelector("#z")
         }
-        return instance();
+
+        this.#translationInputs.x.oninput = (event) => {
+            this.#selectedEntity.translation.x = event.target.value * Config.translationMultiplier;
+        };
+
+        this.#translationInputs.y.oninput = (event) => {
+            this.#selectedEntity.translation.y = event.target.value * Config.translationMultiplier;
+        };
+
+        this.#translationInputs.z.oninput = (event) => {
+            this.#selectedEntity.translation.z = event.target.value * Config.translationMultiplier;
+        };
+
+        // Rotation
+        this.#rotationInputs = {
+            x: rotationGroup.querySelector("#x"),
+            y: rotationGroup.querySelector("#y"),
+            z: rotationGroup.querySelector("#z")
+        }
+
+        this.#rotationInputs.x.oninput = (event) => {
+            this.#selectedEntity.rotation.x = event.target.value * Config.rotationMultiplier;
+        };
+
+        this.#rotationInputs.y.oninput = (event) => {
+            this.#selectedEntity.rotation.y = event.target.value * Config.rotationMultiplier;
+        };
+
+        this.#rotationInputs.z.oninput = (event) => {
+            this.#selectedEntity.rotation.z = event.target.value * Config.rotationMultiplier;
+        };
+
+        // Scale
+        this.#scaleInputs = {
+            x: scaleGroup.querySelector("#x"),
+            y: scaleGroup.querySelector("#y"),
+            z: scaleGroup.querySelector("#z")
+        }
+
+        this.#scaleInputs.x.oninput = (event) => {
+            this.#selectedEntity.scale.x = event.target.value * Config.scaleMultiplier;
+        };
+
+        this.#scaleInputs.y.oninput = (event) => {
+            this.#selectedEntity.scale.y = event.target.value * Config.scaleMultiplier
+        };
+
+        this.#scaleInputs.z.oninput = (event) => {
+            this.#selectedEntity.scale.z = event.target.value * Config.scaleMultiplier
+        };
+
+        this.selectedEntity = null;
+
+        return this;
     }
 
     set entities(value) {
