@@ -1,5 +1,6 @@
-import { Entity, EntityModel } from "/components/entities/entity.js";
-import { EntityCamera } from "/components/entities/camera.js";
+import { Entity } from "/components/entities/entity.js";
+import { EntityModel } from "/components/entities/entity_model.js";
+import { EntityCamera } from "/components/entities/entity_camera.js";
 import { ShaderProgram } from "/components/shader_program.js";
 
 export class Renderer {
@@ -8,10 +9,10 @@ export class Renderer {
     #camera = null;
 
      static async create(gl) {
-        return await new Renderer().init(gl);
+        return await new Renderer()._init(gl);
      }
 
-     async init(gl) {
+     async _init(gl) {
         this.#gl = gl;
 
         this.#shaderProgram = await ShaderProgram.create(gl, "shaders/shader.vsh", "shaders/shader.fsh");
