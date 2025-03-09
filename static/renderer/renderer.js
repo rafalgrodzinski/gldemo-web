@@ -39,6 +39,7 @@ export class Renderer {
 
     update(elapsedMiliseconds, input) {
         this.#camera.update(elapsedMiliseconds, input);
+        input.resetState();
     }
 
     draw() {

@@ -4,6 +4,8 @@ import { Vector3 } from "/utils/vector.js";
 import { Util } from "/utils/util.js";
 
 export class EntityCamera extends Entity {
+    static movementMultiplier = 0.1;
+
     #projectionMatrix = null;
 
     static async create(name) {
@@ -82,6 +84,7 @@ export class EntityCamera extends Entity {
         let positionMatrix = Matrix.makeRotationY(yAngle);
         positionMatrix = positionMatrix.multiply(Matrix.makeRotationX(xAngle));
         let originVector = new Vector3(0, 0, new Vector3(this.translation.x, this.translation.y, this.translation.z).length());
+        originVector.z += input.look.zoom;
         this.translation = positionMatrix.multiplyVector3(originVector);
     }
 
@@ -90,8 +93,10 @@ export class EntityCamera extends Entity {
         this.rotation.x = Util.clamp(this.rotation.x, -Math.PI/2 + 0.01, Math.PI/2 + 0.01)
         this.rotation.y -= input.look.horizontal;
 
-        this.translation.x += input.movement.right * Math.cos(this.rotation.y) + input.movement.forward * Math.sin(this.rotation.y);
-        this.translation.y += input.movement.up
-        this.translation.z += input.movement.forward * Math.cos(this.rotation.y) * Math.cos(this.rotation.x) - input.movement.right * Math.sin(this.rotation.y) * Math.cos(this.rotation.x);
+        this.translation.x += input.movement.right * EntityCamera.movementMultiplier * Math.cos(this.rotation.y) +
+            input.movement.forward * EntityCamera.movementMultiplier * Math.sin(this.rotation.y);
+        this.translation.y += input.movement.up * EntityCamera.movementMultiplier
+        this.translation.z += input.movement.forward * EntityCamera.movementMultiplier * Math.cos(this.rotation.y) * Math.cos(this.rotation.x) -
+            input.movement.right * EntityCamera.movementMultiplier * Math.sin(this.rotation.y) * Math.cos(this.rotation.x);
     }
 }

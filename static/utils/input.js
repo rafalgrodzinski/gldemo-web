@@ -1,3 +1,5 @@
+import { Util } from "/utils/util.js";
+
 export class Input {
     static forwardKey = "KeyW";
     static backKey = "KeyS";
@@ -13,7 +15,7 @@ export class Input {
 
     async _init(container) {
         this.movement = {forward: 0, right: 0, up: 0};
-        this.look = {horizontal: 0, vertical: 0};
+        this.look = {horizontal: 0, vertical: 0, zoom: 0};
         this.mouse = {isLeft: false, isRight: false};
 
         // Disable context menu
@@ -96,8 +98,8 @@ export class Input {
 
         container.addEventListener("mousemove", (event) => {
             if (document.pointerLockElement == container) {
-                this.look.horizontal = event.movementX / container.width;
-                this.look.vertical = event.movementY / container.height;
+                this.look.horizontal += event.movementX / 500;
+                this.look.vertical += event.movementY / 500;
             }
         });
 
@@ -108,6 +110,16 @@ export class Input {
             }
         });
 
+        // Mouse wheel
+        container.addEventListener("wheel", event => {
+            if (document.pointerLockElement == container)
+                this.look.zoom = Util.clamp(event.deltaY / 100, -1, 1);
+        });
+
         return this;
+    }
+
+    resetState() {
+        this.look = {horizontal: 0, vertical: 0, zoom: 0};
     }
 }
