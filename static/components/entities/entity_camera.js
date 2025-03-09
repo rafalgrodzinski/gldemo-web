@@ -1,5 +1,7 @@
 import { Entity } from "/components/entities/entity.js";
-import { Matrix } from "/utils/Matrix.js";
+import { Matrix } from "/utils/matrix.js";
+import { Vector3 } from "/utils/vector.js";
+import { Util } from "/utils/util.js";
 
 export class EntityCamera extends Entity {
     #projectionMatrix = null;
@@ -16,9 +18,10 @@ export class EntityCamera extends Entity {
     }
 
     get viewMatrix() {
-        let viewMatrix = Matrix.makeRotationX(this.rotation.x);
+        let viewMatrix = Matrix.makeTranslation(-this.translation.x, -this.translation.y, -this.translation.z);
+        
         viewMatrix = viewMatrix.multiply(Matrix.makeRotationY(this.rotation.y));
-        viewMatrix = viewMatrix.multiply(Matrix.makeTranslation(-this.translation.x, -this.translation.y, -this.translation.z));
+        viewMatrix = viewMatrix.multiply(Matrix.makeRotationX(this.rotation.x));
         return viewMatrix;
     }
 
@@ -32,5 +35,63 @@ export class EntityCamera extends Entity {
 
         let viewMatrixId = gl.getUniformLocation(shaderProgram.programId, "u_viewMatrix");
         gl.uniformMatrix4fv(viewMatrixId, false, this.viewMatrix.m)
+    }
+
+    update(elapsedMiliseconds, input) {
+        if (input.mouse.isLeft) {
+            this.#arcballUpdate(input);
+        } else if (!input.mouse.isLeft && !input.mouse.isRight) {
+            this.#flybyUpdate(elapsedMiliseconds, input);
+        }
+    }
+
+    #arcballUpdate(input) {
+        // X Angle
+        let xAngle = Math.acos(
+            new Vector3(this.translation.x, 0, this.translation.z)
+                .normalized()
+                .dot(
+                    new Vector3(this.translation.x, this.translation.y, this.translation.z)
+                        .normalized()
+                )
+        );
+
+        if (this.translation.y > 0)
+            xAngle = -xAngle;
+
+        xAngle += input.look.vertical;
+        xAngle = Util.clamp(xAngle, -Math.PI/2, Math.PI/2);
+
+        // Y Angle
+        let yAngle = Math.acos(
+            new Vector3(0, 0, 1)
+                .dot(
+                    new Vector3(this.translation.x, 0, this.translation.z)
+                        .normalized()
+                )
+        );
+        if (this.translation.x < 0)
+            yAngle = Math.PI * 2 - yAngle;
+        yAngle -= input.look.horizontal;
+
+        // Rotation
+        this.rotation.x = xAngle;
+        this.rotation.y = yAngle;
+
+        // Translation
+        let positionMatrix = Matrix.makeRotationY(yAngle);
+        positionMatrix = positionMatrix.multiply(Matrix.makeRotationX(xAngle));
+        let originVector = new Vector3(0, 0, new Vector3(this.translation.x, this.translation.y, this.translation.z).length());
+        this.translation = positionMatrix.multiplyVector3(originVector);
+    }
+
+    #flybyUpdate(elapsedMiliseconds, input) {
+        this.rotation.x -= input.look.vertical;
+        this.rotation.x = Util.clamp(this.rotation.x, -Math.PI/2 + 0.01, Math.PI/2 + 0.01)
+        this.rotation.y -= input.look.horizontal;
+
+        this.translation.x += input.movement.right * Math.cos(this.rotation.y) + input.movement.forward * Math.sin(this.rotation.y);
+        this.translation.y += input.movement.up
+        this.translation.z += input.movement.forward * Math.cos(this.rotation.y) * Math.cos(this.rotation.x) - input.movement.right * Math.sin(this.rotation.y) * Math.cos(this.rotation.x);
     }
 }

@@ -1,3 +1,5 @@
+import { Vector3 } from "/utils/vector.js";
+
 export class Matrix {
     static makeIdentity() {
         let instance = new Matrix();
@@ -132,5 +134,27 @@ export class Matrix {
             l30 * r00 + l31 * r10 + l32 * r20 + l33 * r30, l30 * r01 + l31 * r11 + l32 * r21 + l33 * r31, l30 * r02 + l31 * r12 + l32 * r22 + l33 * r32, l30 * r03 + l31 * r13 + l32 * r23 + l33 * r33,
         ];
         return instance;  
+    }
+
+    multiplyVector3(vector) {
+        // This
+        let l00 = this.m[4 * 0 + 0];
+        let l01 = this.m[4 * 0 + 1];
+        let l02 = this.m[4 * 0 + 2];
+
+        let l10 = this.m[4 * 1 + 0];
+        let l11 = this.m[4 * 1 + 1];
+        let l12 = this.m[4 * 1 + 2];
+
+        let l20 = this.m[4 * 2 + 0];
+        let l21 = this.m[4 * 2 + 1];
+        let l22 = this.m[4 * 2 + 2];
+
+        return new Vector3(
+            l00 * vector.x + l01 * vector.y + l02 * vector.z,
+            l10 * vector.x + l11 * vector.y + l12 * vector.z,
+            l20 * vector.x + l21 * vector.y + l22 * vector.z,
+            0
+        );
     }
 }

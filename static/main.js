@@ -1,9 +1,11 @@
 import { Renderer } from "/renderer/renderer.js";
 import { Config } from "/utils/config.js";
+import { Input } from "/utils/input.js";
 
 class Main {
     #renderer = null;
     #config = null;
+    #input = null;
 
     static async create() {
         return await new Main().init();
@@ -18,6 +20,7 @@ class Main {
         }
 
         this.#renderer = await Renderer.create(gl);
+        this.#input = await Input.create(canvas);
 
         let resizeObserver = new ResizeObserver( entries => {
             let entry = entries[0];
@@ -40,6 +43,7 @@ class Main {
     runLoop() {
         let renderer = this.#renderer;
         let oldTimestamp;
+        let input = this.#input
 
         function nextFrame(timestamp) {
             if (oldTimestamp == undefined)
@@ -47,7 +51,7 @@ class Main {
             let elapsed = timestamp - oldTimestamp;
             oldTimestamp = timestamp;
 
-            renderer.update(elapsed);
+            renderer.update(elapsed, input);
             renderer.draw();
 
             requestAnimationFrame(nextFrame);

@@ -7,7 +7,7 @@ export class Entity {
 
     async _init(name) {
         this.name = name;
-        this.translation = { x: 1.3, y: -2.3, z: -4 };
+        this.translation = { x: 0, y: 0, z: 0 };
         this.rotation = { x: 0, y: 0, z: 0 };
         this.scale = { x: 1, y: 1, z: 1 };
         return this;

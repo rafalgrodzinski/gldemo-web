@@ -37,8 +37,8 @@ export class Renderer {
         this.draw();
     }
 
-    update(elapsedMiliseconds) {
-        //console.log(elapsedMiliseconds);
+    update(elapsedMiliseconds, input) {
+        this.#camera.update(elapsedMiliseconds, input);
     }
 
     draw() {
