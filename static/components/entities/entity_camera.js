@@ -40,9 +40,9 @@ export class EntityCamera extends Entity {
     }
 
     update(elapsedMiliseconds, input) {
-        if (input.mouse.isLeft) {
+        if (input.actions.primary) {
             this.#arcballUpdate(input);
-        } else if (!input.mouse.isLeft && !input.mouse.isRight) {
+        } else if (!input.actions.primary && !input.actions.secondary) {
             this.#flybyUpdate(elapsedMiliseconds, input);
         }
     }
