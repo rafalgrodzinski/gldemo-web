@@ -13,7 +13,7 @@ export class EntityCamera extends Entity {
     }
 
     async _init(name) {
-        await super._init(name);
+        await super._init(Entity.CAMERA, name);
 
         this.#projectionMatrix = Matrix.makeIdentity();
         return this;

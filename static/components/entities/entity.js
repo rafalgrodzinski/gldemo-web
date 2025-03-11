@@ -2,11 +2,17 @@ import { Matrix } from "/utils/matrix.js";
 import { Vector3 } from "/utils/vector.js";
 
 export class Entity {
+    static NODE="node";
+    static LIGHT="light";
+    static CAMERA="camera";
+    static MODEL="model";
+
     static async create(name) {
-        return await new Entity().init(name);
+        return await new Entity().init(Entity.NODE, name);
     }
 
-    async _init(name) {
+    async _init(kind, name) {
+        this.kind = kind;
         this.name = name;
         this.translation = { x: 0, y: 0, z: 0 };
         this.rotation = { x: 0, y: 0, z: 0 };

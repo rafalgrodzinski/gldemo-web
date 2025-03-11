@@ -31,10 +31,11 @@ class Main {
         resizeObserver.observe(canvas);
 
         let entitiesContainer = document.querySelector("#config-entities");
+        let infoContainer = document.querySelector("#config-info");
         let translationGroup = document.querySelector("#config-translation");
         let rotationGroup = document.querySelector("#config-rotation");
         let scaleGroup = document.querySelector("#config-scale");
-        this.#config = await Config.create(entitiesContainer, translationGroup, rotationGroup, scaleGroup);
+        this.#config = await Config.create(entitiesContainer, infoContainer, translationGroup, rotationGroup, scaleGroup);
         this.#config.entities = this.#renderer.entities;
 
         return this;

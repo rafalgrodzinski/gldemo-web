@@ -18,7 +18,7 @@ export class EntityLight extends Entity {
     }
 
     async _init(name, kind, config) {
-        await super._init(name);
+        await super._init(Entity.LIGHT, name);
 
         if (EntityLight.#lightsCount >= EntityLight.#MAX_LIGHTS) {
             alert("Exceeded max lights: ", EntityLight.#MAX_LIGHTS);

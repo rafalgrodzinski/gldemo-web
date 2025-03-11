@@ -1,3 +1,5 @@
+import { Entity } from "/components/entities/entity.js";
+
 export class Config {
     static translationMultiplier = 10;
     static rotationMultiplier = Math.PI;
@@ -9,23 +11,37 @@ export class Config {
     #entityEntriesContainer = null;
     #selectedEntityEntry = null;
 
+    #info = null;
     #translationInputs = null;
     #rotationInputs = null;
     #scaleInputs = null;
 
-    static async create(entityEntriesContainer, translationGroup, rotationGroup, scaleGroup) {
-        return await new Config().init(entityEntriesContainer, translationGroup, rotationGroup, scaleGroup);
+    #translationGroup = null;
+    #rotationGroup = null;
+    #scaleGroup = null;
+
+    static async create(entityEntriesContainer, infoContainer, translationGroup, rotationGroup, scaleGroup) {
+        return await new Config().init(entityEntriesContainer, infoContainer, translationGroup, rotationGroup, scaleGroup);
     }
 
-    async init(entityEntriesContainer, translationGroup, rotationGroup, scaleGroup) {
+    async init(entityEntriesContainer, infoContainer, translationGroup, rotationGroup, scaleGroup) {
         this.#entityEntriesContainer = entityEntriesContainer;
+        this.#translationGroup = translationGroup;
+        this.#rotationGroup = rotationGroup;
+        this.#scaleGroup = scaleGroup;
+
+        // Info
+        this.#info = {
+            name: infoContainer.querySelector("#name"),
+            kind: infoContainer.querySelector("#kind")
+        };
 
         // Translation
         this.#translationInputs = {
             x: translationGroup.querySelector("#x"),
             y: translationGroup.querySelector("#y"),
             z: translationGroup.querySelector("#z")
-        }
+        };
 
         this.#translationInputs.x.oninput = (event) => {
             this.#selectedEntity.translation.x = event.target.value * Config.translationMultiplier;
@@ -109,6 +125,9 @@ export class Config {
     set selectedEntity(value) {
         this.#selectedEntity = value;
 
+        this.#info.name.innerHTML = value?.name ?? "";
+        this.#info.kind.innerHTML = value?.kind ?? "";
+
         this.#translationInputs.x.value = (value?.translation.x ?? 0) / Config.translationMultiplier;
         this.#translationInputs.y.value = (value?.translation.y ?? 0) / Config.translationMultiplier;
         this.#translationInputs.z.value = (value?.translation.z ?? 0) / Config.translationMultiplier;
@@ -121,16 +140,31 @@ export class Config {
         this.#scaleInputs.y.value = (value?.scale.y ?? 1) / Config.scaleMultiplier;
         this.#scaleInputs.z.value = (value?.scale.z ?? 1) / Config.scaleMultiplier;
 
-        this.#translationInputs.x.disabled = value == null;
-        this.#translationInputs.y.disabled = value == null;
-        this.#translationInputs.z.disabled = value == null;
-
-        this.#rotationInputs.x.disabled = value == null;
-        this.#rotationInputs.y.disabled = value == null;
-        this.#rotationInputs.z.disabled = value == null;
-
-        this.#scaleInputs.x.disabled = value == null;
-        this.#scaleInputs.y.disabled = value == null;
-        this.#scaleInputs.z.disabled = value == null;
+        switch (value?.kind) {
+            case Entity.NODE:
+                this.#translationGroup.hidden = false;
+                this.#rotationGroup.hidden = false;
+                this.#scaleGroup.hidden = false;
+                break;
+            case Entity.MODEL:
+                this.#translationGroup.hidden = false;
+                this.#rotationGroup.hidden = false;
+                this.#scaleGroup.hidden = false;
+                break;
+            case Entity.LIGHT:
+                this.#translationGroup.hidden = true;
+                this.#rotationGroup.hidden = false;
+                this.#scaleGroup.hidden = true;
+                break;
+            case Entity.CAMERA:
+                this.#translationGroup.hidden = false;
+                this.#rotationGroup.hidden = false;
+                this.#scaleGroup.hidden = true;
+                break;
+            default:
+                this.#translationGroup.hidden = true;
+                this.#rotationGroup.hidden = true;
+                this.#scaleGroup.hidden = true;
+        }
     }
 }

@@ -36,7 +36,7 @@ export class EntityModel extends Entity {
     }
 
     async _init(name, gl, shaderProgram) {
-        await super._init(name);
+        await super._init(Entity.MODEL, name);
 
         this.#vertices = EntityModel.#pyramidVertices;
 

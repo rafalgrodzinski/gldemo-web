@@ -36,7 +36,7 @@ body {
 .group-container-grid {
     display: grid;
     grid-template-columns: max-content auto;
-    justify-items: end;
+    justify-items:stretch;
     gap: 0.5rem;
 }
 
