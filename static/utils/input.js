@@ -18,6 +18,9 @@ export class Input {
     #mouseLook = {horizontal: 0, vertical: 0, zoom: 0};
     #gamepadLook = {horizontal: 0, vertical: 0, zoom: 0};
 
+    #shouldReleaseOnMouseUp = false;
+    #shouldIgnoreClick = false;
+
     get movement() {
         let values = {
             forward: this.#keyboardMovement.forward,
@@ -140,19 +143,32 @@ export class Input {
         container.addEventListener("mouseup", (event) => {
             this.#mouseActions.primary = (event.buttons & 1) != 0;
             this.#mouseActions.secondary = (event.buttons & 2) != 0;
+
+            if (!this.#mouseActions.primary && this.#shouldReleaseOnMouseUp) {
+                this.#shouldReleaseOnMouseUp = false;
+                this.#shouldIgnoreClick = true;
+                document.exitPointerLock();
+            }
         });
 
         // Mouse lock & move
         container.addEventListener("click", (event) => {
-            this.#mouseActions.primary = false;
-            this.#mouseActions.secondary = false;
-
-            if (!document.pointerLockElement)
+            console.log("click")
+            if (!document.pointerLockElement && !this.#shouldIgnoreClick) {
+                this.#mouseActions.primary = false;
+                this.#mouseActions.secondary = false;        
                 container.requestPointerLock();
+            }
+            this.#shouldIgnoreClick = false;
         });
 
         container.addEventListener("mousemove", (event) => {
-            if (document.pointerLockElement == container) {
+            if (this.#mouseActions.primary && !document.pointerLockElement) {
+                this.#mouseLook.horizontal += event.movementX / 500;
+                this.#mouseLook.vertical += event.movementY / 500;
+                this.#shouldReleaseOnMouseUp = true;
+                container.requestPointerLock();
+            } else if (document.pointerLockElement == container) {
                 this.#mouseLook.horizontal += event.movementX / 500;
                 this.#mouseLook.vertical += event.movementY / 500;
             }
