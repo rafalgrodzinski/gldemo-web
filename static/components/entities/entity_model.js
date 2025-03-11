@@ -1,19 +1,35 @@
 import { Entity } from "/components/entities/entity.js";
+import { Vertex } from "/utils/vertex.js";
 
 export class EntityModel extends Entity {
-    static pyramidVertices = [
+    static #pyramidVertices = [
         // Front
-        -1, -1, 1, 0, 1, 0, 1, -1, 1,
+        new Vertex({ x: -1, y: -1, z: 1 }, { x: 0, y: 1, z: 1 }),
+        new Vertex({ x: 0, y: 1, z: 0 }, { x: 0, y: 1, z: 1 }),
+        new Vertex({ x: 1, y: -1, z: 1 }, { x: 0, y: 1, z: 1 }),
         // Back
-        1, -1, -1, 0, 1, 0, -1, -1, -1,
+        new Vertex({ x: 1, y: -1, z: -1 }, { x: 0, y: 1, z: -1 }),
+        new Vertex({ x: 0, y: 1, z: 0 }, { x: 0, y: 1, z: -1 }),
+        new Vertex({ x: -1, y: -1, z: -1 }, { x: 0, y: 1, z: -1 }),
         // Left
-        -1, -1, -1, 0, 1, 0, -1, -1, 1,
+        new Vertex({ x: -1, y: -1, z: -1 }, { x: -1, y: 1, z: 0 }),
+        new Vertex({ x: 0, y: 1, z: 0 }, { x: -1, y: 1, z: 0 }),
+        new Vertex({ x: -1, y: -1, z: 1 }, { x: -1, y: 1, z: 0 }),
         // Right
-        1, -1, 1, 0, 1, 0, 1, -1, -1,
+        new Vertex({ x: 1, y: -1, z: 1 }, { x: 1, y: 1, z: 0 }),
+        new Vertex({ x: 0, y: 1, z: 0 }, { x: 1, y: 1, z: 0 }),
+        new Vertex({ x: 1, y: -1, z: -1 }, { x: 1, y: 1, z: 0 }),
         // Bottom
-        -1, -1, 1, 1, -1, 1, -1, -1, -1,
-        -1, -1, -1, 1, -1, 1, 1, -1, -1
-    ]
+        new Vertex({ x: -1, y: -1, z: 1 }, { x: 0, y: -1, z: 0 }),
+        new Vertex({ x: 1, y: -1, z: 1 }, { x: 0, y: -1, z: 0 }),
+        new Vertex({ x: -1, y: -1, z: -1 }, { x: 0, y: -1, z: 0 }),
+        new Vertex({ x: -1, y: -1, z: -1 }, { x: 0, y: -1, z: 0 }),
+        new Vertex({ x: 1, y: -1, z: 1 }, { x: 0, y: -1, z: 0 }),
+        new Vertex({ x: 1, y: -1, z: -1 }, { x: 0, y: -1, z: 0 }),
+    ];
+
+    #vertices;
+    #vertexArray;
 
     static async create(name, gl, shaderProgram) {
         return await new EntityModel()._init(name, gl, shaderProgram);
@@ -22,26 +38,43 @@ export class EntityModel extends Entity {
     async _init(name, gl, shaderProgram) {
         await super._init(name);
 
-        this.vertices = EntityModel.pyramidVertices;
-        this.vertexArray = gl.createVertexArray();
-        gl.bindVertexArray(this.vertexArray);
+        this.#vertices = EntityModel.#pyramidVertices;
+
+        this.#vertexArray = gl.createVertexArray();
+        gl.bindVertexArray(this.#vertexArray);
+
+        let data =  new Float32Array(6 * this.#vertices.length);
+        for (let i=0; i<this.#vertices.length; i++) {
+            data[i*6 + 0] = this.#vertices[i].position.x;
+            data[i*6 + 1] = this.#vertices[i].position.y;
+            data[i*6 + 2] = this.#vertices[i].position.z;
+            data[i*6 + 3] = this.#vertices[i].normal.x;
+            data[i*6 + 4] = this.#vertices[i].normal.y;
+            data[i*6 + 5] = this.#vertices[i].normal.z;
+        }
 
         let buffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 
-        let positionAttribId = gl.getAttribLocation(shaderProgram.programId, "a_position");
-        gl.enableVertexAttribArray(positionAttribId);
-        gl.vertexAttribPointer(positionAttribId, 3, gl.FLOAT, false, 0, 0);
+        let positionId = gl.getAttribLocation(shaderProgram.program, "a_position");
+        gl.enableVertexAttribArray(positionId);
+        gl.vertexAttribPointer(positionId, 3, gl.FLOAT, false, Vertex.STRIDE, Vertex.POSITION_OFFSET);
+
+        let normalId = gl.getAttribLocation(shaderProgram.program, "a_normal");
+        gl.enableVertexAttribArray(normalId);
+        gl.vertexAttribPointer(normalId, 3, gl.FLOAT, false, Vertex.STRIDE, Vertex.NORMAL_OFFSET);
+
+        gl.bindVertexArray(null);
 
         return this;
     }
 
     draw(gl, shaderProgram) {
-        gl.bindVertexArray(this.vertexArray);
-        let modelMatrixUniformId = gl.getUniformLocation(shaderProgram.programId, "u_modelMatrix");
-        gl.uniformMatrix4fv(modelMatrixUniformId, false, this.modelMatrix.m);
+        let modelMatrixId = gl.getUniformLocation(shaderProgram.program, "u_modelMatrix");
+        gl.uniformMatrix4fv(modelMatrixId, false, this.modelMatrix.m);
 
-        gl.drawArrays(gl.TRIANGLES, 0, this.vertices.length / 3);
+        gl.bindVertexArray(this.#vertexArray);
+        gl.drawArrays(gl.TRIANGLES, 0, this.#vertices.length);
     }
 }

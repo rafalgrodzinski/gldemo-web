@@ -32,10 +32,10 @@ export class EntityCamera extends Entity {
     }
 
     prepareForDraw(gl, shaderProgram) {
-        let projectionMatrixId = gl.getUniformLocation(shaderProgram.programId, "u_projectionMatrix");
+        let projectionMatrixId = gl.getUniformLocation(shaderProgram.program, "u_projectionMatrix");
         gl.uniformMatrix4fv(projectionMatrixId, false, this.#projectionMatrix.m);
 
-        let viewMatrixId = gl.getUniformLocation(shaderProgram.programId, "u_viewMatrix");
+        let viewMatrixId = gl.getUniformLocation(shaderProgram.program, "u_viewMatrix");
         gl.uniformMatrix4fv(viewMatrixId, false, this.viewMatrix.m)
     }
 

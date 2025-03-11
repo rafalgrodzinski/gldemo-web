@@ -1,28 +1,29 @@
 export class ShaderProgram {
+    program;
+
     static async create(gl, vertexShaderFileName, fragmentShaderFileName) {
         return await new ShaderProgram().init(gl, vertexShaderFileName, fragmentShaderFileName);
     }
 
     async init(gl, vertexShaderFileName, fragmentShaderFileName) {
-        let vertexSource = await this.fileContent(vertexShaderFileName);
-        let vertexShader = this.shader(gl, gl.VERTEX_SHADER, vertexSource);
+        let vertexSource = await this.#fileContent(vertexShaderFileName);
+        let vertexShader = this.#shader(gl, gl.VERTEX_SHADER, vertexSource);
 
-        let fragmentSource = await this.fileContent(fragmentShaderFileName);
-        let fragmentShader = this.shader(gl, gl.FRAGMENT_SHADER, fragmentSource);
+        let fragmentSource = await this.#fileContent(fragmentShaderFileName);
+        let fragmentShader = this.#shader(gl, gl.FRAGMENT_SHADER, fragmentSource);
 
-        let program = this.program(gl, vertexShader, fragmentShader);
-        this.programId = program;
+        this.program = this.#program(gl, vertexShader, fragmentShader);
 
         return this;
     }
 
-    async fileContent(fileName) {
+    async #fileContent(fileName) {
         let content = await fetch(fileName)
             .then(response => response.text())
         return content;
     }
 
-    shader(gl, type, source) {
+    #shader(gl, type, source) {
         let shader = gl.createShader(type);
         gl.shaderSource(shader, source);
         gl.compileShader(shader);
@@ -35,7 +36,7 @@ export class ShaderProgram {
         return shader;
     }
 
-    program(gl, vertexShader, fragmentShader) {
+    #program(gl, vertexShader, fragmentShader) {
         let program = gl.createProgram();
         gl.attachShader(program, vertexShader);
         gl.attachShader(program, fragmentShader);

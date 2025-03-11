@@ -1,0 +1,13 @@
+export class Vertex {
+    static STRIDE = Float32Array.BYTES_PER_ELEMENT * 6;
+    static POSITION_OFFSET = 0;
+    static NORMAL_OFFSET = Float32Array.BYTES_PER_ELEMENT * 3;
+
+    position = {x: 0, y: 0, z: 0};
+    normal = {x: 0, y: 0, z: 0};
+
+    constructor(position, normal) {
+        this.position = position;
+        this.normal = normal;
+    }
+}
