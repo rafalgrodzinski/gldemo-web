@@ -8,7 +8,8 @@ export class Renderer {
     #gl = null;
     #shaderProgram = null;
     #camera = null;
-    #light = null;
+    #light1 = null;
+    #light2 = null;
 
      static async create(gl) {
         return await new Renderer()._init(gl);
@@ -29,8 +30,10 @@ export class Renderer {
         this.#camera.translation.z = 4;
         this.entities.push(this.#camera);
 
-        this.#light = await EntityLight.create("Light #1", EntityLight.DIRECTIONAL, {intensity: 0.5});
-        this.entities.push(this.#light);
+        this.#light1 = await EntityLight.create("Light #1", EntityLight.DIRECTIONAL, {color: {r: 1, g: 0, b: 0}, intensity: 1});
+        this.#light2 = await EntityLight.create("Light #2", EntityLight.DIRECTIONAL, {color: {r: 0, g: 1, b: 0}, intensity: 1})
+        this.entities.push(this.#light1);
+        this.entities.push(this.#light2);
 
         return this;
      }
@@ -57,7 +60,8 @@ export class Renderer {
 
         gl.useProgram(this.#shaderProgram.program);
         this.#camera.prepareForDraw(gl, this.#shaderProgram);
-        this.#light.prepareForDraw(gl, this.#shaderProgram);
+        this.#light1.prepareForDraw(gl, this.#shaderProgram);
+        this.#light2.prepareForDraw(gl, this.#shaderProgram);
 
         for (let i=0; i<this.entities.length; i++)
             this.entities[i].draw(gl, this.#shaderProgram);

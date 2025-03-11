@@ -4,28 +4,28 @@ import { Vertex } from "/utils/vertex.js";
 export class EntityModel extends Entity {
     static #pyramidVertices = [
         // Front
-        new Vertex({ x: -1, y: -1, z: 1 }, { x: 0, y: 1, z: 1 }),
-        new Vertex({ x: 0, y: 1, z: 0 }, { x: 0, y: 1, z: 1 }),
-        new Vertex({ x: 1, y: -1, z: 1 }, { x: 0, y: 1, z: 1 }),
+        new Vertex({ x: -1, y: -0.75, z: 1 }, { x: 0, y: 0.4264, z: 0.6396 }),
+        new Vertex({ x: 0, y: 0.75, z: 0 }, { x: 0, y: 0.4264, z: 0.6396 }),
+        new Vertex({ x: 1, y: -0.75, z: 1 }, { x: 0, y: 0.4264, z: 0.6396 }),
         // Back
-        new Vertex({ x: 1, y: -1, z: -1 }, { x: 0, y: 1, z: -1 }),
-        new Vertex({ x: 0, y: 1, z: 0 }, { x: 0, y: 1, z: -1 }),
-        new Vertex({ x: -1, y: -1, z: -1 }, { x: 0, y: 1, z: -1 }),
+        new Vertex({ x: 1, y: -0.75, z: -1 }, { x: 0, y: 0.4264, z: -0.6396 }),
+        new Vertex({ x: 0, y: 0.75, z: 0 }, { x: 0, y: 0.4264, z: -0.6396 }),
+        new Vertex({ x: -1, y: -0.75, z: -1 }, { x: 0, y: 0.4264, z: -0.6396 }),
         // Left
-        new Vertex({ x: -1, y: -1, z: -1 }, { x: -1, y: 1, z: 0 }),
-        new Vertex({ x: 0, y: 1, z: 0 }, { x: -1, y: 1, z: 0 }),
-        new Vertex({ x: -1, y: -1, z: 1 }, { x: -1, y: 1, z: 0 }),
+        new Vertex({ x: -1, y: -0.75, z: -1 }, { x: -0.6396, y: 0.4264, z: 0 }),
+        new Vertex({ x: 0, y: 0.75, z: 0 }, { x: -0.6396, y: 0.4264, z: 0 }),
+        new Vertex({ x: -1, y: -0.75, z: 1 }, { x: -0.6396, y: 0.4264, z: 0 }),
         // Right
-        new Vertex({ x: 1, y: -1, z: 1 }, { x: 1, y: 1, z: 0 }),
-        new Vertex({ x: 0, y: 1, z: 0 }, { x: 1, y: 1, z: 0 }),
-        new Vertex({ x: 1, y: -1, z: -1 }, { x: 1, y: 1, z: 0 }),
+        new Vertex({ x: 1, y: -0.75, z: 1 }, { x: 0.6396, y: 0.4264, z: 0 }),
+        new Vertex({ x: 0, y: 0.75, z: 0 }, { x: 0.6396, y: 0.4264, z: 0 }),
+        new Vertex({ x: 1, y: -0.75, z: -1 }, { x: 0.6396, y: 0.4264, z: 0 }),
         // Bottom
-        new Vertex({ x: -1, y: -1, z: 1 }, { x: 0, y: -1, z: 0 }),
-        new Vertex({ x: 1, y: -1, z: 1 }, { x: 0, y: -1, z: 0 }),
-        new Vertex({ x: -1, y: -1, z: -1 }, { x: 0, y: -1, z: 0 }),
-        new Vertex({ x: -1, y: -1, z: -1 }, { x: 0, y: -1, z: 0 }),
-        new Vertex({ x: 1, y: -1, z: 1 }, { x: 0, y: -1, z: 0 }),
-        new Vertex({ x: 1, y: -1, z: -1 }, { x: 0, y: -1, z: 0 }),
+        new Vertex({ x: -1, y: -0.75, z: 1 }, { x: 0, y: -1, z: 0 }),
+        new Vertex({ x: 1, y: -0.75, z: 1 }, { x: 0, y: -1, z: 0 }),
+        new Vertex({ x: -1, y: -0.75, z: -1 }, { x: 0, y: -1, z: 0 }),
+        new Vertex({ x: -1, y: -0.75, z: -1 }, { x: 0, y: -1, z: 0 }),
+        new Vertex({ x: 1, y: -0.75, z: 1 }, { x: 0, y: -1, z: 0 }),
+        new Vertex({ x: 1, y: -0.75, z: -1 }, { x: 0, y: -1, z: 0 }),
     ];
 
     #vertices;

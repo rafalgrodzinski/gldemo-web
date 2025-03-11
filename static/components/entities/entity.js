@@ -1,4 +1,5 @@
 import { Matrix } from "/utils/matrix.js";
+import { Vector3 } from "/utils/vector.js";
 
 export class Entity {
     static async create(name) {
@@ -21,6 +22,18 @@ export class Entity {
         modelMatrix = modelMatrix.multiply(Matrix.makeTranslation(this.translation.x, this.translation.y, this.translation.z));
         
         return modelMatrix;
+    }
+
+    get position() {
+        return this.translation;
+    }
+
+    get direction() {
+        let direction = new Vector3(0, 0, -1);
+        direction = Matrix.makeRotationX(this.rotation.x).multiplyVector3(direction);
+        direction = Matrix.makeRotationY(this.rotation.y).multiplyVector3(direction);
+        direction = Matrix.makeRotationZ(this.rotation.z).multiplyVector3(direction);
+        return direction;
     }
 
     draw() { }

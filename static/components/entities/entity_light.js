@@ -1,6 +1,4 @@
 import { Entity } from "/components/entities/entity.js";
-import { Vector3 } from "/utils/vector.js";
-import { Matrix } from "/utils/matrix.js";
 
 export class EntityLight extends Entity {
     static DIRECTIONAL = 1 << 0;
@@ -11,7 +9,7 @@ export class EntityLight extends Entity {
     #index;
     #kind;
     config = {
-        direction: null,
+        color: null,
         intensity: null
      };
 
@@ -31,15 +29,7 @@ export class EntityLight extends Entity {
         EntityLight.#lightsCount++;
 
         this.#kind = kind;
-        Object.defineProperty(this.config, "direction", { 
-            get: () => {
-                let direction = new Vector3(0, -1, 0);
-                direction = Matrix.makeRotationX(this.rotation.x).multiplyVector3(direction);
-                direction = Matrix.makeRotationY(this.rotation.y).multiplyVector3(direction);
-                direction = Matrix.makeRotationZ(this.rotation.z).multiplyVector3(direction);
-                return direction;
-            }
-        });
+        this.config.color = config.color ?? {r: 0, g: 0, b: 0};
         this.config.intensity = config.intensity ?? 0;
 
         return this;
@@ -53,10 +43,15 @@ export class EntityLight extends Entity {
 
         switch (this.#kind) {
             case EntityLight.DIRECTIONAL:
+                let colorId = gl.getUniformLocation(shaderProgram.program, idPrefix + "color");
+                gl.uniform3f(colorId, this.config.color.r, this.config.color.g, this.config.color.b);
+
                 let directionId = gl.getUniformLocation(shaderProgram.program, idPrefix + "direction");
-                gl.uniform3f(directionId, this.config.direction.x, this.config.direction.y, this.config.direction.z);
+                gl.uniform3f(directionId, this.direction.x, this.direction.y, this.direction.z);
+
                 let intensityId = gl.getUniformLocation(shaderProgram.program, idPrefix + "intensity");
                 gl.uniform1f(intensityId, this.config.intensity);
+
                 break;
         }
     }

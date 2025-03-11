@@ -37,6 +37,9 @@ export class EntityCamera extends Entity {
 
         let viewMatrixId = gl.getUniformLocation(shaderProgram.program, "u_viewMatrix");
         gl.uniformMatrix4fv(viewMatrixId, false, this.viewMatrix.m)
+
+        let cameraPositionId = gl.getUniformLocation(shaderProgram.program, "u_cameraPosition");
+        gl.uniform3f(cameraPositionId, this.position.x, this.position.y, this.position.z);
     }
 
     update(elapsedMiliseconds, input) {
