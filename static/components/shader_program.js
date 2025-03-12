@@ -1,4 +1,7 @@
 export class ShaderProgram {
+    static A_POSITION = 0;
+    static A_NORMAL = 1;
+
     program;
 
     static async create(gl, vertexShaderFileName, fragmentShaderFileName) {

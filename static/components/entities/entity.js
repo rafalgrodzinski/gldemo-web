@@ -7,16 +7,17 @@ export class Entity {
     static CAMERA="camera";
     static MODEL="model";
 
-    static async create(name) {
-        return await new Entity().init(Entity.NODE, name);
-    }
+    phases = null;
+    name = null;
+    kind = null;
+    translation = { x: 0, y: 0, z: 0 };
+    rotation = { x: 0, y: 0, z: 0 };
+    scale = { x: 1, y: 1, z: 1 };
 
-    async _init(kind, name) {
-        this.kind = kind;
+    async _init(phases, name, kind) {
+        this.phases = phases;
         this.name = name;
-        this.translation = { x: 0, y: 0, z: 0 };
-        this.rotation = { x: 0, y: 0, z: 0 };
-        this.scale = { x: 1, y: 1, z: 1 };
+        this.kind = kind;
         return this;
     }
 
@@ -42,5 +43,8 @@ export class Entity {
         return direction;
     }
 
-    draw() { }
+    resize(width, height) { }
+    update(elapsedMiliseconds, input) { }
+    prepareForDraw(gl, shaderProgram) { }
+    draw(gl, shaderProgram) { }
 }

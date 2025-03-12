@@ -13,12 +13,12 @@ export class EntityLight extends Entity {
         intensity: null
      };
 
-    static async create(name, kind, config) {
-        return await new EntityLight()._init(name, kind, config);
+    static async create(phases, name, kind, config) {
+        return await new EntityLight()._init(phases, name, kind, config);
     }
 
-    async _init(name, kind, config) {
-        await super._init(Entity.LIGHT, name);
+    async _init(phases, name, kind, config) {
+        await super._init(phases, name, Entity.LIGHT);
 
         if (EntityLight.#lightsCount >= EntityLight.#MAX_LIGHTS) {
             alert("Exceeded max lights: ", EntityLight.#MAX_LIGHTS);

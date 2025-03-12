@@ -1,7 +1,9 @@
+import { RenderPass } from "/renderer/render_pass.js";
+import { Renderer } from "/renderer/renderer.js";
 import { ShaderProgram } from "/components/shader_program.js";
 import { Util } from "/utils/util.js";
 
-export class RenderPassGrid {
+export class RenderPassGrid extends RenderPass {
     static #gridVertices = [
         -1, 0, 1,
         -1, 0, -1,
@@ -21,6 +23,8 @@ export class RenderPassGrid {
     }
 
     async _init(gl) {
+        await super._init(Renderer.PHASE_PASS_GRID);
+
         // Grid
         this.#gridShaderProgram = await ShaderProgram.create(gl, "shaders/grid/grid_vertex.glsl", "shaders/grid/grid_fragment.glsl");
 
@@ -35,9 +39,8 @@ export class RenderPassGrid {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gridIndicesBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Int32Array(RenderPassGrid.#gridIndices), gl.STATIC_DRAW);
 
-        let gridPositionId = gl.getAttribLocation(this.#gridShaderProgram.program, "a_position");
-        gl.enableVertexAttribArray(gridPositionId);
-        gl.vertexAttribPointer(gridPositionId, 3, gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT*3, 0);
+        gl.enableVertexAttribArray(ShaderProgram.A_POSITION);
+        gl.vertexAttribPointer(ShaderProgram.A_POSITION, 3, gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT*3, 0);
 
         this.#gridTexture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, this.#gridTexture);
@@ -61,7 +64,7 @@ export class RenderPassGrid {
         return this;
     }
 
-    draw(gl, cam) {
+    draw(gl, entities) {
         gl.depthMask(true);
         gl.enable(gl.DEPTH_TEST);
         gl.depthFunc(gl.LEQUAL);
@@ -70,15 +73,20 @@ export class RenderPassGrid {
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         //gl.enable(gl.LINE_SMOOTH);
 
+        // Grid
         gl.useProgram(this.#gridShaderProgram.program);
-        cam.prepareForDraw(gl, this.#gridShaderProgram);
-        gl.bindVertexArray(this.#gridVertexArray);
+        entities.forEach(entity => {
+            entity.prepareForDraw(gl, this.#gridShaderProgram);
+        });
 
+        gl.bindVertexArray(this.#gridVertexArray);
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, this.#gridTexture);
         let samplerId = gl.getUniformLocation(this.#gridShaderProgram.program, "u_sampler");
         gl.uniform1i(samplerId, 0);
 
         gl.drawElements(gl.TRIANGLES, RenderPassGrid.#gridIndices.length, gl.UNSIGNED_INT, null);
+
+        // Axes
     }
 }

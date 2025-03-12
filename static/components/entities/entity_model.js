@@ -1,3 +1,4 @@
+import { ShaderProgram } from "/components/shader_program.js";
 import { Entity } from "/components/entities/entity.js";
 import { Vertex } from "/utils/vertex.js";
 
@@ -31,12 +32,12 @@ export class EntityModel extends Entity {
     #vertices;
     #vertexArray;
 
-    static async create(name, gl, shaderProgram) {
-        return await new EntityModel()._init(name, gl, shaderProgram);
+    static async create(phases, name, gl) {
+        return await new EntityModel()._init(phases, name, gl);
     }
 
-    async _init(name, gl, shaderProgram) {
-        await super._init(Entity.MODEL, name);
+    async _init(phases, name, gl) {
+        await super._init(phases, name, Entity.MODEL);
 
         this.#vertices = EntityModel.#pyramidVertices;
 
@@ -57,13 +58,11 @@ export class EntityModel extends Entity {
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
         gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 
-        let positionId = gl.getAttribLocation(shaderProgram.program, "a_position");
-        gl.enableVertexAttribArray(positionId);
-        gl.vertexAttribPointer(positionId, 3, gl.FLOAT, false, Vertex.STRIDE, Vertex.POSITION_OFFSET);
+        gl.enableVertexAttribArray(ShaderProgram.A_POSITION);
+        gl.vertexAttribPointer(ShaderProgram.A_POSITION, 3, gl.FLOAT, false, Vertex.STRIDE, Vertex.POSITION_OFFSET);
 
-        let normalId = gl.getAttribLocation(shaderProgram.program, "a_normal");
-        gl.enableVertexAttribArray(normalId);
-        gl.vertexAttribPointer(normalId, 3, gl.FLOAT, false, Vertex.STRIDE, Vertex.NORMAL_OFFSET);
+        gl.enableVertexAttribArray(ShaderProgram.A_NORMAL);
+        gl.vertexAttribPointer(ShaderProgram.A_NORMAL, 3, gl.FLOAT, false, Vertex.STRIDE, Vertex.NORMAL_OFFSET);
 
         gl.bindVertexArray(null);
 
