@@ -20,4 +20,14 @@ export class Util {
                 return 0;
         return number;
     }
+
+    static async texture(fileName) {
+        return new Promise((resolve, reject) => {
+            let image = new Image();
+            image.src = fileName;
+            image.addEventListener("load", () => {
+                resolve(image);
+            });
+        });
+    }
 }

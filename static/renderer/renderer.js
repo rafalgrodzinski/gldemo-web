@@ -3,6 +3,7 @@ import { EntityModel } from "/components/entities/entity_model.js";
 import { EntityCamera } from "/components/entities/entity_camera.js";
 import { EntityLight } from "/components/entities/entity_light.js"
 import { ShaderProgram } from "/components/shader_program.js";
+import { RenderPassGrid } from "./render_pass_grid.js";
 
 export class Renderer {
     #gl = null;
@@ -10,6 +11,7 @@ export class Renderer {
     #camera = null;
     #light1 = null;
     #light2 = null;
+    #renderPassGrid = null;
 
      static async create(gl) {
         return await new Renderer()._init(gl);
@@ -34,6 +36,8 @@ export class Renderer {
         this.#light2 = await EntityLight.create("Light #2", EntityLight.DIRECTIONAL, {color: {r: 0, g: 1, b: 0}, intensity: 1})
         this.entities.push(this.#light1);
         this.entities.push(this.#light2);
+
+        this.#renderPassGrid = await RenderPassGrid.create(gl);
 
         return this;
      }
@@ -65,5 +69,7 @@ export class Renderer {
 
         for (let i=0; i<this.entities.length; i++)
             this.entities[i].draw(gl, this.#shaderProgram);
+
+        this.#renderPassGrid.draw(gl, this.#camera);
     }
 }
