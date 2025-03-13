@@ -153,7 +153,6 @@ export class Input {
 
         // Mouse lock & move
         container.addEventListener("click", (event) => {
-            console.log("click")
             if (!document.pointerLockElement && !this.#shouldIgnoreClick) {
                 this.#mouseActions.primary = false;
                 this.#mouseActions.secondary = false;        

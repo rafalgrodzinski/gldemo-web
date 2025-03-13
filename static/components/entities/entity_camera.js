@@ -52,14 +52,17 @@ export class EntityCamera extends Entity {
 
     #arcballUpdate(input) {
         // X Angle
-        let xAngle = Math.acos(
-            new Vector3(this.translation.x, 0, this.translation.z)
-                .normalized()
-                .dot(
-                    new Vector3(this.translation.x, this.translation.y, this.translation.z)
-                        .normalized()
-                )
-        );
+        let xAngle = this.rotation.x;
+        if (this.translation.x != 0 || this.translation.y != 0 || this.translation.z != 0) {
+            xAngle = Math.acos(
+                new Vector3(this.translation.x, 0, this.translation.z)
+                    .normalized()
+                    .dot(
+                        new Vector3(this.translation.x, this.translation.y, this.translation.z)
+                            .normalized()
+                    )
+            );
+        }
 
         if (this.translation.y > 0)
             xAngle = -xAngle;
@@ -68,13 +71,16 @@ export class EntityCamera extends Entity {
         xAngle = Util.clamp(xAngle, -Math.PI/2, Math.PI/2);
 
         // Y Angle
-        let yAngle = Math.acos(
-            new Vector3(0, 0, 1)
-                .dot(
-                    new Vector3(this.translation.x, 0, this.translation.z)
-                        .normalized()
-                )
-        );
+        let yAngle = this.rotation.y;
+        if (this.translation.x != 0 || this.translation.y != 0 || this.translation.z != 0) {
+            yAngle = Math.acos(
+                new Vector3(0, 0, 1)
+                    .dot(
+                        new Vector3(this.translation.x, 0, this.translation.z)
+                            .normalized()
+                    )
+            );
+        }
         if (this.translation.x < 0)
             yAngle = Math.PI * 2 - yAngle;
         yAngle -= input.look.horizontal;

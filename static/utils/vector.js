@@ -11,6 +11,8 @@ export class Vector3 {
 
     normalized() {
         let length = this.length();
+        if (length == 0)
+            return this;
         return new Vector3(this.x / length, this.y / length, this.z / length);
     }
 
