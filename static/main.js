@@ -36,7 +36,7 @@ class Main {
         let rotationGroup = document.querySelector("#config-rotation");
         let scaleGroup = document.querySelector("#config-scale");
         this.#config = await Config.create(entitiesContainer, infoContainer, translationGroup, rotationGroup, scaleGroup);
-        this.#config.entities = this.#renderer.entities;
+        this.#config.entities = this.#renderer.rootEntity.children;
 
         return this;
     }

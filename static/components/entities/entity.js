@@ -10,9 +10,14 @@ export class Entity {
     phases = null;
     name = null;
     kind = null;
+    children = [];
     translation = { x: 0, y: 0, z: 0 };
     rotation = { x: 0, y: 0, z: 0 };
     scale = { x: 1, y: 1, z: 1 };
+
+    static async create(phases, name, gl, children) {
+        return await new Entity()._init(phases, name, gl, children);
+    }
 
     async _init(phases, name, kind) {
         this.phases = phases;
@@ -43,8 +48,28 @@ export class Entity {
         return direction;
     }
 
+    addChild(child) {
+        this.children.push(child);
+    }
+
+    entitiesForPhase(phase) {
+        let entities = [];
+
+        if (this.phases.includes(phase))
+            entities.push(this);
+
+        this.children.forEach(child => {
+            entities = entities.concat(child.entitiesForPhase(phase));
+        });
+
+        return entities;
+    }
+
     resize(width, height) { }
+
     update(elapsedMiliseconds, input) { }
+
     prepareForDraw(gl, shaderProgram) { }
+
     draw(gl, shaderProgram) { }
 }

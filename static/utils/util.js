@@ -30,11 +30,4 @@ export class Util {
             });
         });
     }
-
-    static runPhase(entities, phase, callback) {
-        let filteredEntities = entities.filter(entity => {
-            return entity.phases.includes(phase);
-        });
-        filteredEntities.forEach(callback);
-    }
 }

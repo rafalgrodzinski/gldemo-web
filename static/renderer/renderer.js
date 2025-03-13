@@ -1,9 +1,9 @@
+import { Entity } from "/components/entities/entity.js";
 import { EntityModel } from "/components/entities/entity_model.js";
 import { EntityCamera } from "/components/entities/entity_camera.js";
 import { EntityLight } from "/components/entities/entity_light.js"
 import { RenderPassPhong } from "./render_pass_phong.js";
 import { RenderPassGrid } from "./render_pass_grid.js";
-import { Util } from "/utils/util.js";
 
 export class Renderer {
     static PHASE_RESIZE;
@@ -13,7 +13,7 @@ export class Renderer {
 
     #gl = null;
     #renderPasses = [];
-    entities = [];
+    rootEntity = null;
 
      static async create(gl) {
         return await new Renderer()._init(gl);
@@ -27,36 +27,50 @@ export class Renderer {
             await RenderPassGrid.create(gl)
         ]);
 
-        this.entities = await Promise.all([
-            await EntityCamera.create(
-                [Renderer.PHASE_RESIZE, Renderer.PHASE_UPDATE, Renderer.PHASE_PASS_PHONG, Renderer.PHASE_PASS_GRID],
-                "Camera #1"
-            ), 
-            await EntityLight.create(
-                [Renderer.PHASE_PASS_PHONG],
-                "Light #1",
-                EntityLight.DIRECTIONAL,
-                {color: {r: 1, g: 0, b: 0},
-                intensity: 1}
-            ),
-            await EntityLight.create(
-                [Renderer.PHASE_PASS_PHONG],
-                "Light #2",
-                EntityLight.DIRECTIONAL,
-                {color: {r: 0, g: 1, b: 0},
-                intensity: 1}
-            ),
-            await EntityModel.create(
-                [Renderer.PHASE_PASS_PHONG],
-                "Pyramid #2",
-                gl
-            ),
-            await EntityModel.create(
-                [Renderer.PHASE_PASS_PHONG],
-                "Pyramid #2",
-                gl
-            )
-        ]);
+        this.rootEntity = await Entity.create([], "Root", gl);
+
+         this.rootEntity.addChild(
+             await EntityCamera.create(
+                 [Renderer.PHASE_RESIZE, Renderer.PHASE_UPDATE, Renderer.PHASE_PASS_PHONG, Renderer.PHASE_PASS_GRID],
+                 "Camera #1"
+             )
+         );
+         this.rootEntity.addChild(
+             await EntityLight.create(
+                 [Renderer.PHASE_PASS_PHONG],
+                 "Light #1",
+                 EntityLight.DIRECTIONAL,
+                 {
+                     color: { r: 1, g: 0, b: 0 },
+                     intensity: 1
+                 }
+             )
+         );
+         this.rootEntity.addChild(
+             await EntityLight.create(
+                 [Renderer.PHASE_PASS_PHONG],
+                 "Light #2",
+                 EntityLight.DIRECTIONAL,
+                 {
+                     color: { r: 0, g: 1, b: 0 },
+                     intensity: 1
+                 }
+             )
+         );
+         this.rootEntity.addChild(
+             await EntityModel.create(
+                 [Renderer.PHASE_PASS_PHONG],
+                 "Pyramid #1",
+                 gl
+             )
+         );
+         this.rootEntity.addChild(
+             await EntityModel.create(
+                 [Renderer.PHASE_PASS_PHONG],
+                 "Pyramid #2",
+                 gl
+             )
+         );
 
         return this;
      }
@@ -64,16 +78,18 @@ export class Renderer {
     resize(width, height) {
         let gl = this.#gl;
 
-        Util.runPhase(this.entities, Renderer.PHASE_RESIZE, entity => {
+        let entities = this.rootEntity.entitiesForPhase(Renderer.PHASE_RESIZE);
+        entities.forEach(entity => {
             entity.resize(width, height);
-        })
+        });
 
         gl.viewport(0, 0, width, height);
         this.draw();
     }
 
     update(elapsedMiliseconds, input) {
-        Util.runPhase(this.entities, Renderer.PHASE_UPDATE, entity => {
+        let entities = this.rootEntity.entitiesForPhase(Renderer.PHASE_UPDATE);
+        entities.forEach(entity => {
             entity.update(elapsedMiliseconds, input);
         });
         input.resetState();
@@ -87,10 +103,8 @@ export class Renderer {
         gl.enable(gl.DEPTH_TEST);
 
         this.#renderPasses.forEach(renderPass => {
-            let filteredEntities = this.entities.filter(entity => {
-                return entity.phases.includes(renderPass.phase);
-            });
-            renderPass.draw(gl, filteredEntities);
+            let entities = this.rootEntity.entitiesForPhase(renderPass.phase);
+            renderPass.draw(gl, entities);
         });
     }
 }
