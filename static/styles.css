@@ -7,22 +7,95 @@ body {
     height: 100%;
 }
 
+/* Top container */
 .container {
     display: flex;
     height: 100%;
 }
 
+/* Canvas */
 .container-canvas {
     flex-grow: 1;
     min-width: 0;
 }
 
+/* Prefs */
 .container-prefs {
     flex-grow: 1;
     width: 50%;
     max-width: 300px;
     min-width: 0;
-    margin: 1rem;
+    margin: 0 0.5rem;
+}
+
+/* Entities */
+.container-entities {
+    max-height: 50%;
+    overflow: scroll;
+}
+
+.entities-entry-item {
+    display: flex;
+    gap: 0.5em;
+}
+
+.entities-entry-button {
+    width: 1em;
+}
+
+.entities-entry {
+    border: 0.1rem solid darkgrey;
+    padding: 0 0.2rem;
+    margin: 0.1rem;
+    border-radius: 8px;
+}
+
+.entities-entry:hover {
+    border: 0.2rem solid darkgrey;
+    margin: 0 0.1rem;
+    padding: 0 0.1rem;
+}
+
+.entities-entry:active {
+    background: lightgray;
+}
+
+.entities-entry-active {
+    border: 0.1rem solid black;
+}
+
+.entities-entry-active:hover {
+    border: 0.2rem solid black;
+}
+
+.entities-entry-active:active {
+    background: lightgray;
+}
+
+.entities-parrent-button::before {
+    content: "\25B6";
+    display: inline-block;
+}
+
+.entities-parrent-button-active::before {
+    transform: rotate(90deg);
+}
+
+.entities-group {
+    list-style-type: none;
+    margin: 0;
+    display: none;
+    padding-left: 1em;
+}
+
+.entities-group-active {
+    display: block;
+}
+
+/* Configs */
+.container-configs {
+    max-height: 50%;
+    overflow: scroll;
 }
 
 .group-container {
@@ -49,44 +122,4 @@ body {
     top: -0.9rem;
     left: 1rem;
     background: white;
-}
-
-.entities-container {
-    display: flex;
-    gap: 0.5rem;
-    overflow-x: auto;
-}
-
-.entities-entry {
-    border: 0.1rem solid darkgrey;
-    padding: 0.2rem;
-    margin: 0.1rem;
-    border-radius: 8px;
-    flex-shrink: 0;
-}
-
-.entities-entry:hover {
-    border: 0.2rem solid darkgrey;
-    margin: 0;
-}
-
-.entities-entry:active {
-    background: lightgray;
-}
-
-.entities-entry-selected {
-    border: 0.1rem solid black;
-    padding: 0.2rem;
-    margin: 0.1rem;
-    border-radius: 8px;
-    flex-shrink: 0;
-}
-
-.entities-entry-selected:hover {
-    border: 0.2rem solid black;
-    margin: 0;
-}
-
-.entities-entry-selected:active {
-    background: lightgray;
 }

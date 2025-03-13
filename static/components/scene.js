@@ -49,10 +49,16 @@ export class Scene {
                 gl
             )
         );
-        this.rootEntity.addChild(
+        let pyramid2 = await EntityModel.create(
+            [Renderer.PHASE_PASS_PHONG],
+            "Pyramid #2",
+            gl
+        )
+        this.rootEntity.addChild(pyramid2);
+        pyramid2.addChild(
             await EntityModel.create(
                 [Renderer.PHASE_PASS_PHONG],
-                "Pyramid #2",
+                "Pyramid #3",
                 gl
             )
         );

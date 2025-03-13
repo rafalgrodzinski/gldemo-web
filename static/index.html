@@ -12,51 +12,54 @@
             <canvas id="gl-view" class="container-canvas"></canvas>
             <div class="container-prefs">
                 <!-- Entities -->
-                <div id="config-entities" class="entities-container">
-                    <div>Hello</div>
-                    <div>Whatever</div>
-                </div>
-                <!-- Info -->
-                <div id="config-info" class="group-container-grid">
-                    <div>Name:</div>
-                    <div id="name"></div>
-                    <div>Kind:</div>
-                    <div id="kind"></div>
-                </div>
-                <!-- Translation -->
-                <div id="config-translation" class="group-container">
-                    <span class="group-container-title">Translation</span>
-                    <div class="group-container-grid">
-                        <div>X:</div>
-                        <input id="x" type="range" min="-1" max="1" step="any"/>
-                        <div>Y:</div>
-                        <input id="y" type="range" min="-1" max="1" step="any"/>
-                        <div>Z:</div>
-                        <input id="z" type="range" min="-1" max="1" step="any"/>
-                    </div>
-                </div>
-                <!-- Rotation -->
                 <div id="config-rotation" class="group-container">
-                    <span class="group-container-title">Rotation</span>
-                    <div class="group-container-grid">
-                        <div>X:</div>
-                        <input id="x" type="range" min="-1" max="1" step="any"/>
-                        <div>Y:</div>
-                        <input id="y" type="range" min="-1" max="1" step="any"/>
-                        <div>Z:</div>
-                        <input id="z" type="range" min="-1" max="1" step="any"/>
-                    </div>
+                    <span class="group-container-title">Scene</span>
+                    <div id="config-entities" class="container-entities"></div>
                 </div>
-                <!-- Scale -->
-                <div id="config-scale" class="group-container">
-                    <span class="group-container-title">Scale</span>
-                    <div class="group-container-grid">
-                        <div>X:</div>
-                        <input id="x" type="range" min="-1" max="1" step="any"/>
-                        <div>Y:</div>
-                        <input id="y" type="range" min="-1" max="1" step="any"/>
-                        <div>Z:</div>
-                        <input id="z" type="range" min="-1" max="1" step="any"/>
+                <!-- Configs -->
+                <div class="container-configs">
+                    <!-- Info -->
+                    <div id="config-info" class="group-container-grid">
+                        <div>Name:</div>
+                        <div id="name"></div>
+                        <div>Kind:</div>
+                        <div id="kind"></div>
+                    </div>
+                    <!-- Translation -->
+                    <div id="config-translation" class="group-container">
+                        <span class="group-container-title">Translation</span>
+                        <div class="group-container-grid">
+                            <div>X:</div>
+                            <input id="x" type="range" min="-1" max="1" step="any" />
+                            <div>Y:</div>
+                            <input id="y" type="range" min="-1" max="1" step="any" />
+                            <div>Z:</div>
+                            <input id="z" type="range" min="-1" max="1" step="any" />
+                        </div>
+                    </div>
+                    <!-- Rotation -->
+                    <div id="config-rotation" class="group-container">
+                        <span class="group-container-title">Rotation</span>
+                        <div class="group-container-grid">
+                            <div>X:</div>
+                            <input id="x" type="range" min="-1" max="1" step="any" />
+                            <div>Y:</div>
+                            <input id="y" type="range" min="-1" max="1" step="any" />
+                            <div>Z:</div>
+                            <input id="z" type="range" min="-1" max="1" step="any" />
+                        </div>
+                    </div>
+                    <!-- Scale -->
+                    <div id="config-scale" class="group-container">
+                        <span class="group-container-title">Scale</span>
+                        <div class="group-container-grid">
+                            <div>X:</div>
+                            <input id="x" type="range" min="-1" max="1" step="any" />
+                            <div>Y:</div>
+                            <input id="y" type="range" min="-1" max="1" step="any" />
+                            <div>Z:</div>
+                            <input id="z" type="range" min="-1" max="1" step="any" />
+                        </div>
                     </div>
                 </div>
             </div>

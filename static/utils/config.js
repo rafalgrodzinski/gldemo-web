@@ -5,7 +5,7 @@ export class Config {
     static rotationMultiplier = Math.PI;
     static scaleMultiplier = 10;
 
-    #entities = [];
+    //#entities = [];
     #selectedEntity = null;
 
     #entityEntriesContainer = null;
@@ -30,7 +30,8 @@ export class Config {
         this.#rotationGroup = rotationGroup;
         this.#scaleGroup = scaleGroup;
 
-        this.entities = scene.rootEntity.children;
+        // Hierarchy
+        this.#renderHierarchyLevel(entityEntriesContainer, scene.rootEntity);
 
         // Info
         this.#info = {
@@ -100,28 +101,51 @@ export class Config {
         return this;
     }
 
-    set entities(value) {
-        this.#entities = value;
+    #renderHierarchyLevel(container, entity) {
+        // Entity
+        let entityEntryItem = document.createElement("li");
+        entityEntryItem.classList.add("entities-entry-item");
+        container.appendChild(entityEntryItem);
 
-        this.#entityEntriesContainer.innerHTML = "";
-        for (let i=0; i<this.#entities.length; i++) {
-            let entityEntry = document.createElement("div");
-            entityEntry.classList.add("entities-entry");
-            entityEntry.appendChild(document.createTextNode(this.#entities[i].name))
-            this.#entityEntriesContainer.appendChild(entityEntry);
+        let entityEntryButton = document.createElement("div");
+        entityEntryButton.classList.add("entities-entry-button");
+        entityEntryItem.appendChild(entityEntryButton);
 
-            entityEntry.onclick = (event) => {
-                if (this.#selectedEntityEntry != null) {
-                    this.#selectedEntityEntry.classList.remove("entities-entry-selected");
-                    this.#selectedEntityEntry.classList.add("entities-entry");
-                }
-                this.#selectedEntityEntry = event.target;
-                this.#selectedEntityEntry.classList.remove("entities-entry");
-                this.#selectedEntityEntry.classList.add("entities-entry-selected");
+        let entityEntry = document.createElement("div");
+        entityEntry.classList.add("entities-entry");
+        entityEntry.appendChild(document.createTextNode(entity.name));
+        entityEntryItem.appendChild(entityEntry);
 
-                this.selectedEntity = this.#entities[i];
-            }
+        // Children
+        let childrenContainer = null;
+        if (entity.children.length > 0) {
+            // Button for children
+            entityEntryButton.classList.add("entities-parrent-button");
+
+            // Children
+            childrenContainer = document.createElement("ul");
+            childrenContainer.classList.add("entities-group");
+            container.appendChild(childrenContainer);
+            entity.children.forEach(child => {
+                this.#renderHierarchyLevel(childrenContainer, child);
+            });
         }
+
+        entityEntryButton.onclick = (event) => {
+            if (childrenContainer != null) {
+                childrenContainer.classList.toggle("entities-group-active");
+                event.target.classList.toggle("entities-parrent-button-active");
+            }
+        };
+
+        entityEntry.onclick = event => {
+            if (this.#selectedEntityEntry != null)
+                this.#selectedEntityEntry.classList.remove("entities-entry-active");
+
+            this.#selectedEntityEntry = event.target;
+            this.#selectedEntityEntry.classList.add("entities-entry-active");
+            this.selectedEntity = entity;
+        };
     }
 
     set selectedEntity(value) {
