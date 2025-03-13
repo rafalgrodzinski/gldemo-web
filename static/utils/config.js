@@ -20,15 +20,17 @@ export class Config {
     #rotationGroup = null;
     #scaleGroup = null;
 
-    static async create(entityEntriesContainer, infoContainer, translationGroup, rotationGroup, scaleGroup) {
-        return await new Config().init(entityEntriesContainer, infoContainer, translationGroup, rotationGroup, scaleGroup);
+    static async create(entityEntriesContainer, infoContainer, translationGroup, rotationGroup, scaleGroup, scene) {
+        return await new Config().init(entityEntriesContainer, infoContainer, translationGroup, rotationGroup, scaleGroup, scene);
     }
 
-    async init(entityEntriesContainer, infoContainer, translationGroup, rotationGroup, scaleGroup) {
+    async init(entityEntriesContainer, infoContainer, translationGroup, rotationGroup, scaleGroup, scene) {
         this.#entityEntriesContainer = entityEntriesContainer;
         this.#translationGroup = translationGroup;
         this.#rotationGroup = rotationGroup;
         this.#scaleGroup = scaleGroup;
+
+        this.entities = scene.rootEntity.children;
 
         // Info
         this.#info = {

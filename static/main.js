@@ -1,8 +1,11 @@
+import { Scene } from "/components/scene.js";
 import { Renderer } from "/renderer/renderer.js";
 import { Config } from "/utils/config.js";
 import { Input } from "/utils/input.js";
 
 class Main {
+    #gl = null;
+    #scene = null;
     #renderer = null;
     #config = null;
     #input = null;
@@ -13,20 +16,21 @@ class Main {
 
     async init() {
         let canvas = document.querySelector("#gl-view");
-        let gl = canvas.getContext("webgl2");
-        if(!gl) {
+        this.#gl = canvas.getContext("webgl2");
+        if(!this.#gl) {
             alert("Unable to initialize WebGL");
             throw new Error();
         }
 
-        this.#renderer = await Renderer.create(gl);
+        this.#scene = await Scene.create(this.#gl);
+        this.#renderer = await Renderer.create(this.#gl, this.#scene);
         this.#input = await Input.create(canvas);
 
         let resizeObserver = new ResizeObserver( entries => {
             let entry = entries[0];
             canvas.width = entry.contentRect.width;
             canvas.height = entry.contentRect.height;
-            this.#renderer.resize(entry.contentRect.width, entry.contentRect.height);
+            this.#renderer.resize(this.#gl, entry.contentRect.width, entry.contentRect.height);
         });
         resizeObserver.observe(canvas);
 
@@ -35,13 +39,14 @@ class Main {
         let translationGroup = document.querySelector("#config-translation");
         let rotationGroup = document.querySelector("#config-rotation");
         let scaleGroup = document.querySelector("#config-scale");
-        this.#config = await Config.create(entitiesContainer, infoContainer, translationGroup, rotationGroup, scaleGroup);
-        this.#config.entities = this.#renderer.rootEntity.children;
+        this.#config = await Config.create(entitiesContainer, infoContainer, translationGroup, rotationGroup, scaleGroup, this.#scene);
+        //this.#config.entities = this.#renderer.rootEntity.children;
 
         return this;
     }
 
     runLoop() {
+        let gl = this.#gl;
         let renderer = this.#renderer;
         let oldTimestamp;
         let input = this.#input
@@ -53,7 +58,7 @@ class Main {
             oldTimestamp = timestamp;
 
             renderer.update(elapsed, input);
-            renderer.draw();
+            renderer.draw(gl);
 
             requestAnimationFrame(nextFrame);
         }
