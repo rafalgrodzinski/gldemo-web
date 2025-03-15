@@ -4,6 +4,7 @@ import { ShaderProgram } from "/components/shader_program.js";
 import { Util } from "/utils/util.js";
 
 export class RenderPassGrid extends RenderPass {
+    // Grid
     static #gridVertices = [
         -1, 0, 1,
         -1, 0, -1,
@@ -17,6 +18,18 @@ export class RenderPassGrid extends RenderPass {
     #gridShaderProgram;
     #gridVertexArray;
     #gridTexture;
+
+    // Axis
+    static #axisVertices = [
+        0, 0, 0,
+        1, 0, 0,
+        0, 0, 0,
+        0, 1, 0,
+        0, 0, 0,
+        0, 0, 1
+    ];
+    #axisShaderProgram;
+    #axisVertexArray;
 
     static async create(gl) {
         return await new RenderPassGrid()._init(gl);
@@ -56,7 +69,18 @@ export class RenderPassGrid extends RenderPass {
         let maxAnisotropy = gl.getParameter(glExt.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
         gl.texParameteri(gl.TEXTURE_2D, glExt.TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy);
 
-        // Axes
+        // Axis
+        this.#axisShaderProgram = await ShaderProgram.create(gl, "shaders/grid/axis_vertex.glsl", "shaders/grid/axis_fragment.glsl");
+
+        this.#axisVertexArray = gl.createVertexArray();
+        gl.bindVertexArray(this.#axisVertexArray);
+
+        let axisVerticesBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, axisVerticesBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(RenderPassGrid.#axisVertices), gl.STATIC_DRAW);
+
+        gl.enableVertexAttribArray(ShaderProgram.A_POSITION);
+        gl.vertexAttribPointer(ShaderProgram.A_POSITION, 3, gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT*3, 0);
 
         gl.bindTexture(gl.TEXTURE_2D, null);
         gl.bindVertexArray(null);
@@ -71,7 +95,7 @@ export class RenderPassGrid extends RenderPass {
 
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-        //gl.enable(gl.LINE_SMOOTH);
+        gl.enable(gl.LINE_SMOOTH);
 
         // Grid
         gl.useProgram(this.#gridShaderProgram.program);
@@ -87,6 +111,23 @@ export class RenderPassGrid extends RenderPass {
 
         gl.drawElements(gl.TRIANGLES, RenderPassGrid.#gridIndices.length, gl.UNSIGNED_INT, null);
 
-        // Axes
+        // Axis
+        gl.useProgram(this.#axisShaderProgram.program);
+        entities.forEach(entity => {
+            entity.prepareForDraw(gl, this.#axisShaderProgram);
+        });
+
+        gl.bindVertexArray(this.#axisVertexArray);
+
+        let axisDirectionId = gl.getUniformLocation(this.#axisShaderProgram.program, "u_axisDirection");
+        // X
+        gl.uniform1i(axisDirectionId, 0);
+        gl.drawArrays(gl.LINES, 0, 2);
+        // Y
+        gl.uniform1i(axisDirectionId, 1);
+        gl.drawArrays(gl.LINES, 2, 2);
+        // Z
+        gl.uniform1i(axisDirectionId, 2);
+        gl.drawArrays(gl.LINES, 4, 2);
     }
 }
