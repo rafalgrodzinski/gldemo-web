@@ -1,3 +1,5 @@
+import { Util } from "/utils/util.js";
+
 export class Vector3 {
     constructor(x, y, z) {
         this.x = x;
@@ -16,7 +18,16 @@ export class Vector3 {
         return new Vector3(this.x / length, this.y / length, this.z / length);
     }
 
+    add(other) {
+        return new Vector3(this.x + other.x, this.y + other.y, this.z + other.z);
+    }
+
+    multiply(other) {
+        return new Vector3(this.x * other.x, this.y * other.y, this.z * other.z);
+    }
+
     dot(otherVector) {
-        return this.x * otherVector.x + this.y * otherVector.y + this.z * otherVector.z;
+        let value = this.x * otherVector.x + this.y * otherVector.y + this.z * otherVector.z;
+        return Util.clamp(value, -1, 1);
     }
 }

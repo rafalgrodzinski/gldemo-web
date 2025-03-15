@@ -153,8 +153,7 @@ export class Matrix {
         return new Vector3(
             l00 * vector.x + l01 * vector.y + l02 * vector.z,
             l10 * vector.x + l11 * vector.y + l12 * vector.z,
-            l20 * vector.x + l21 * vector.y + l22 * vector.z,
-            0
+            l20 * vector.x + l21 * vector.y + l22 * vector.z
         );
     }
 }

@@ -20,10 +20,9 @@ export class EntityCamera extends Entity {
     }
 
     get viewMatrix() {
-        let viewMatrix = Matrix.makeTranslation(-this.translation.x, -this.translation.y, -this.translation.z);
-        
-        viewMatrix = viewMatrix.multiply(Matrix.makeRotationY(this.rotation.y));
-        viewMatrix = viewMatrix.multiply(Matrix.makeRotationX(this.rotation.x));
+        let viewMatrix = Matrix.makeTranslation(-this.translationGlobal.x, -this.translationGlobal.y, -this.translationGlobal.z);
+        viewMatrix = viewMatrix.multiply(Matrix.makeRotationY(-this.rotationGlobal.y));
+        viewMatrix = viewMatrix.multiply(Matrix.makeRotationX(-this.rotationGlobal.x));
         return viewMatrix;
     }
 
@@ -39,7 +38,7 @@ export class EntityCamera extends Entity {
         gl.uniformMatrix4fv(viewMatrixId, false, this.viewMatrix.m)
 
         let cameraPositionId = gl.getUniformLocation(shaderProgram.program, "u_cameraPosition");
-        gl.uniform3f(cameraPositionId, this.position.x, this.position.y, this.position.z);
+        gl.uniform3f(cameraPositionId, this.translationGlobal.x, this.translationGlobal.y, this.translationGlobal.z);
     }
 
     update(elapsedMiliseconds, input) {
@@ -63,7 +62,7 @@ export class EntityCamera extends Entity {
                     )
             );
         }
-
+        
         if (this.translation.y > 0)
             xAngle = -xAngle;
 
@@ -81,13 +80,15 @@ export class EntityCamera extends Entity {
                     )
             );
         }
+
         if (this.translation.x < 0)
             yAngle = Math.PI * 2 - yAngle;
-        yAngle -= input.look.horizontal;
+
+        yAngle += input.look.horizontal;
 
         // Rotation
-        this.rotation.x = xAngle;
-        this.rotation.y = yAngle;
+        this.rotation.x = -xAngle;
+        this.rotation.y = -yAngle;
 
         // Translation
         let positionMatrix = Matrix.makeRotationY(yAngle);
@@ -98,14 +99,14 @@ export class EntityCamera extends Entity {
     }
 
     #flybyUpdate(elapsedMiliseconds, input) {
-        this.rotation.x -= input.look.vertical;
+        this.rotation.x += input.look.vertical;
         this.rotation.x = Util.clamp(this.rotation.x, -Math.PI/2 + 0.01, Math.PI/2 + 0.01)
-        this.rotation.y -= input.look.horizontal;
+        this.rotation.y += input.look.horizontal;
 
-        this.translation.x += input.movement.right * EntityCamera.movementMultiplier * Math.cos(this.rotation.y) +
+        this.translation.x += input.movement.right * EntityCamera.movementMultiplier * Math.cos(this.rotation.y) -
             input.movement.forward * EntityCamera.movementMultiplier * Math.sin(this.rotation.y);
         this.translation.y += input.movement.up * EntityCamera.movementMultiplier
-        this.translation.z += input.movement.forward * EntityCamera.movementMultiplier * Math.cos(this.rotation.y) * Math.cos(this.rotation.x) -
+        this.translation.z += input.movement.forward * EntityCamera.movementMultiplier * Math.cos(this.rotation.y) * Math.cos(this.rotation.x) +
             input.movement.right * EntityCamera.movementMultiplier * Math.sin(this.rotation.y) * Math.cos(this.rotation.x);
     }
 }

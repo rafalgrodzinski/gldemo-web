@@ -71,7 +71,7 @@ export class EntityModel extends Entity {
 
     draw(gl, shaderProgram) {
         let modelMatrixId = gl.getUniformLocation(shaderProgram.program, "u_modelMatrix");
-        gl.uniformMatrix4fv(modelMatrixId, false, this.modelMatrix.m);
+        gl.uniformMatrix4fv(modelMatrixId, false, this.modelMatrixGlobal.m);
 
         gl.bindVertexArray(this.#vertexArray);
         gl.drawArrays(gl.TRIANGLES, 0, this.#vertices.length);

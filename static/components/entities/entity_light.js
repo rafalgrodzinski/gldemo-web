@@ -1,9 +1,9 @@
 import { Entity } from "/components/entities/entity.js";
 
 export class EntityLight extends Entity {
-    static DIRECTIONAL = 1 << 0;
-    static POINT = 1 << 1;
-    static SPOT = 1 << 2;
+    static DIRECTIONAL = 1;
+    static POINT = 2;
+    static SPOT = 3;
     static #MAX_LIGHTS = 8;
     static #lightsCount = 0;
     #index;
@@ -45,13 +45,12 @@ export class EntityLight extends Entity {
             case EntityLight.DIRECTIONAL:
                 let colorId = gl.getUniformLocation(shaderProgram.program, idPrefix + "color");
                 gl.uniform3f(colorId, this.config.color.r, this.config.color.g, this.config.color.b);
-
+                
                 let directionId = gl.getUniformLocation(shaderProgram.program, idPrefix + "direction");
-                gl.uniform3f(directionId, this.direction.x, this.direction.y, this.direction.z);
+                gl.uniform3f(directionId, this.directionGlobal.x, this.directionGlobal.y, this.directionGlobal.z);
 
                 let intensityId = gl.getUniformLocation(shaderProgram.program, idPrefix + "intensity");
                 gl.uniform1f(intensityId, this.config.intensity);
-
                 break;
         }
     }

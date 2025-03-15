@@ -12,12 +12,12 @@ export class Entity {
     kind = null;
     parent = null;
     children = [];
-    translation = { x: 0, y: 0, z: 0 };
-    rotation = { x: 0, y: 0, z: 0 };
-    scale = { x: 1, y: 1, z: 1 };
+    translation = new Vector3(0, 0, 0);
+    rotation = new Vector3(0, 0, 0);
+    scale = new Vector3(1, 1, 1);
 
-    static async create(phases, name, gl) {
-        return await new Entity()._init(phases, name, gl);
+    static async create(name) {
+        return await new Entity()._init([], name, Entity.NODE);
     }
 
     async _init(phases, name, kind) {
@@ -28,37 +28,80 @@ export class Entity {
     }
 
     get modelMatrix() {
-        let modelMatrix = Matrix.makeScale(this.scale.x, this.scale.y, this.scale.z);
-        modelMatrix = modelMatrix.multiply(Matrix.makeRotationX(this.rotation.x));
-        modelMatrix = modelMatrix.multiply(Matrix.makeRotationY(this.rotation.y));
+        let modelMatrix = Matrix.makeIdentity();
+        modelMatrix = modelMatrix.multiply(Matrix.makeScale(this.scale.x, this.scale.y, this.scale.z));
         modelMatrix = modelMatrix.multiply(Matrix.makeRotationZ(this.rotation.z));
+        modelMatrix = modelMatrix.multiply(Matrix.makeRotationY(this.rotation.y));
+        modelMatrix = modelMatrix.multiply(Matrix.makeRotationX(this.rotation.x));
         modelMatrix = modelMatrix.multiply(Matrix.makeTranslation(this.translation.x, this.translation.y, this.translation.z));
-
-        if (this.parent != null) {
-            let parentModelMatrix = this.parent.modelMatrix;
-            modelMatrix = modelMatrix.multiply(parentModelMatrix);
-        }
-        
         return modelMatrix;
     }
 
-    get position() {
-        return this.translation;
+    get modelMatrixGlobal() {
+        if (this.parent != null)
+            return this.modelMatrix.multiply(this.parent.modelMatrixGlobal);
+        else
+            return this.modelMatrix;
+    }
+
+    get unscaledModelMatrix() {
+        let modelMatrix = Matrix.makeIdentity();
+        modelMatrix = modelMatrix.multiply(Matrix.makeRotationZ(this.rotation.z));
+        modelMatrix = modelMatrix.multiply(Matrix.makeRotationY(this.rotation.y));
+        modelMatrix = modelMatrix.multiply(Matrix.makeRotationX(this.rotation.x));
+        modelMatrix = modelMatrix.multiply(Matrix.makeTranslation(this.translation.x, this.translation.y, this.translation.z));
+        return modelMatrix;
+    }
+
+    get unscaledModelMatrixGlobal() {
+        if (this.parent != null)
+            return this.unscaledModelMatrix.multiply(this.parent.unscaledModelMatrixGlobal);
+        else
+            return this.unscaledModelMatrix;
+    }
+
+    get translationGlobal() {
+        let modelMatrix = this.unscaledModelMatrixGlobal;
+        let x = modelMatrix.m[4 * 3 + 0];
+        let y = modelMatrix.m[4 * 3 + 1];
+        let z = modelMatrix.m[4 * 3 + 2];
+        return new Vector3(x, y, z);
+    }
+
+    get rotationGlobal() {
+        if (this.parent != null)
+            return this.rotation.add(this.parent.rotationGlobal);
+        else 
+            return this.rotation;
+    }
+
+    get scaleGlobal() {
+        if (this.parent != null)
+            return this.scale.multiply(this.parent.scaleGlobal);
+        else 
+            return this.scale;
     }
 
     get direction() {
         let direction = new Vector3(0, 0, -1);
-        direction = Matrix.makeRotationX(this.rotation.x).multiplyVector3(direction);
-        direction = Matrix.makeRotationY(this.rotation.y).multiplyVector3(direction);
-        direction = Matrix.makeRotationZ(this.rotation.z).multiplyVector3(direction);
 
-        if (this.parent != null) {
-            direction = Matrix.makeRotationX(this.parent.rotation.x).multiplyVector3(direction);
-            direction = Matrix.makeRotationY(this.parent.rotation.y).multiplyVector3(direction);
-            direction = Matrix.makeRotationZ(this.parent.rotation.z).multiplyVector3(direction);
-        }
+        let rotationMatrix = Matrix.makeIdentity();
+        rotationMatrix = rotationMatrix.multiply(Matrix.makeRotationX(-this.rotation.x));
+        rotationMatrix = rotationMatrix.multiply(Matrix.makeRotationY(-this.rotation.y));
+        rotationMatrix = rotationMatrix.multiply(Matrix.makeRotationZ(this.rotation.z));
 
-        return direction;
+        return rotationMatrix.multiplyVector3(direction);
+    }
+
+    get directionGlobal() {
+        let direction = new Vector3(0, 0, -1);
+
+        let rotationMatrix = Matrix.makeIdentity();
+        rotationMatrix = rotationMatrix.multiply(Matrix.makeRotationX(-this.rotationGlobal.x));
+        rotationMatrix = rotationMatrix.multiply(Matrix.makeRotationY(-this.rotationGlobal.y));
+        rotationMatrix = rotationMatrix.multiply(Matrix.makeRotationZ(this.rotationGlobal.z));
+
+        return rotationMatrix.multiplyVector3(direction);
     }
 
     addChild(child) {
