@@ -52,6 +52,7 @@ export class Scene {
         );
 
         let lightNode = await Entity.create("Light Node");
+        lightNode.translation.y = 5;
         this.rootEntity.addChild(lightNode);
 
         let lightNodeModel = await EntityModel.create([Renderer.PHASE_PASS_PHONG], "Light Model", gl, EntityModel.KIND_PYRAMID);
@@ -70,12 +71,14 @@ export class Scene {
         );
         lightNode.addChild(lightNodeLight);
 
-        this.rootEntity.addChild(await EntityModel.create(
+        let cube = await EntityModel.create(
             [Renderer.PHASE_PASS_PHONG],
             "Cube",
             gl,
             EntityModel.KIND_CUBE
-        ));
+        );
+        cube.translation.z = -5;
+        this.rootEntity.addChild(cube);
 
         let sphere = await EntityModel.create([Renderer.PHASE_PASS_PHONG], "Sphere", gl, EntityModel.KIND_SPHERE);
         sphere.translation.x += 3;
