@@ -10,7 +10,7 @@ export class RenderPassPhong extends RenderPass {
     }
 
     async _init(gl) {
-        await super._init(Renderer.PHASE_PHONG);
+        await super._init(Renderer.PHASE_PASS_PHONG);
 
         this.#shaderProgram = await ShaderProgram.create(gl, "shaders/phong/phong_vertex.glsl", "shaders/phong/phong_fragment.glsl");
         return this;

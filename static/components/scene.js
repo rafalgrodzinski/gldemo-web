@@ -14,28 +14,18 @@ export class Scene {
 
     async _init(gl) {
         this.rootEntity = await Entity.create("Root");
-
-        /*this.rootEntity.addChild(
-            await EntityLight.create(
-                [Renderer.PHASE_PASS_PHONG],
-                "Light #2",
-                EntityLight.DIRECTIONAL,
-                {
-                    color: { r: 0, g: 1, b: 0 },
-                    intensity: 1
-                }
-            )
-        );*/
         
         let pyramid1_1 = await EntityModel.create(
             [Renderer.PHASE_PASS_PHONG],
             "Pyramid #1.1",
-            gl
+            gl,
+            EntityModel.KIND_PYRAMID
         );
         let pyramid1_2 = await EntityModel.create(
             [Renderer.PHASE_PASS_PHONG],
             "Pyramid #1.2",
-            gl
+            gl,
+            EntityModel.KIND_PYRAMID
         );
         let camera = await EntityCamera.create(
             [Renderer.PHASE_RESIZE, Renderer.PHASE_UPDATE, Renderer.PHASE_PASS_PHONG, Renderer.PHASE_PASS_GRID],
@@ -48,21 +38,23 @@ export class Scene {
         let pyramid2 = await EntityModel.create(
             [Renderer.PHASE_PASS_PHONG],
             "Pyramid #2",
-            gl
+            gl,
+            EntityModel.KIND_PYRAMID
         )
         this.rootEntity.addChild(pyramid2);
         pyramid2.addChild(
             await EntityModel.create(
                 [Renderer.PHASE_PASS_PHONG],
                 "Pyramid #3",
-                gl
+                gl,
+                EntityModel.KIND_PYRAMID
             )
         );
 
         let lightNode = await Entity.create("Light Node");
         this.rootEntity.addChild(lightNode);
 
-        let lightNodeModel = await EntityModel.create([Renderer.PHASE_PASS_PHONG], "Light Model", gl);
+        let lightNodeModel = await EntityModel.create([Renderer.PHASE_PASS_PHONG], "Light Model", gl, EntityModel.KIND_PYRAMID);
         lightNodeModel.rotation.x = Math.PI/2;
         lightNodeModel.scale = new Vector3(0.5, 0.5, 0.5);
         lightNode.addChild(lightNodeModel);
@@ -77,6 +69,19 @@ export class Scene {
             }
         );
         lightNode.addChild(lightNodeLight);
+
+        this.rootEntity.addChild(await EntityModel.create(
+            [Renderer.PHASE_PASS_PHONG],
+            "Cube",
+            gl,
+            EntityModel.KIND_CUBE
+        ));
+
+        let sphere = await EntityModel.create([Renderer.PHASE_PASS_PHONG], "Sphere", gl, EntityModel.KIND_SPHERE);
+        sphere.translation.x += 3;
+        sphere.translation.y += 2;
+        sphere.translation.z += 1;
+        this.rootEntity.addChild(sphere);
 
         return this;
     }

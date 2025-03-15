@@ -2,10 +2,10 @@ import { RenderPassPhong } from "./render_pass_phong.js";
 import { RenderPassGrid } from "./render_pass_grid.js";
 
 export class Renderer {
-    static PHASE_RESIZE;
-    static PHASE_UPDATE;
-    static PHASE_PASS_PHONG;
-    static PHASE_PASS_GRID;
+    static PHASE_RESIZE = "phase_resize";
+    static PHASE_UPDATE = "phase_update";
+    static PHASE_PASS_PHONG = "phase_pass_phong";
+    static PHASE_PASS_GRID = "phase_pass_grid";
 
     scene = null;
     #renderPasses = [];

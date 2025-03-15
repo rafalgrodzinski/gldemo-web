@@ -58,7 +58,7 @@ void main() {
     material.color = vec3(0.6, 0.6, 0.6);
     material.ambientIntensity = 0.1;
     material.diffuseIntensity = 1.0;
-    material.specularIntensity = 2.0;
+    material.specularIntensity = 8.0;
 
     for (int i=0; i<8; i++) {
         if (u_lights[i].kind == LightKindDirectional)
