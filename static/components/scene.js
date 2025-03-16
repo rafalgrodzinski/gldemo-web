@@ -5,6 +5,7 @@ import { EntityCamera } from "/components/entities/entity_camera.js";
 import { EntityLight } from "/components/entities/entity_light.js"
 import { Vector } from "/utils/vector.js";
 import { Material } from "/utils/material.js";
+import { Light } from "/utils/light.js";
 
 export class Scene {
     rootEntity = null;
@@ -73,11 +74,7 @@ export class Scene {
         let lightNodeLight = await EntityLight.create(
             [Renderer.PHASE_PASS_PHONG],
             "Light #2",
-            EntityLight.DIRECTIONAL,
-            {
-                color: new Vector(1, 1, 1),
-                intensity: 1
-            }
+            new Light(Light.KIND_DIRECTIONAL, new Vector(1, 1, 1), 1)
         );
         lightNode.addChild(lightNodeLight);
 
@@ -96,6 +93,25 @@ export class Scene {
         sphere.translation.y += 2;
         sphere.translation.z += 1;
         this.rootEntity.addChild(sphere);
+
+        // Point light
+        let pointLightNode = await Entity.create("Point light node");
+        pointLightNode.translation.x = 5;
+        pointLightNode.translation.y = 5;
+        pointLightNode.translation.z = 5;
+        this.rootEntity.addChild(pointLightNode);
+
+        let pointLightMaterial = new Material(new Vector(0.5, 0.5, 1), 0, 0, 0, true);
+        let pointLightModel = await EntityModel.create([Renderer.PHASE_PASS_PHONG], "Point light model", gl, EntityModel.KIND_CUBE, pointLightMaterial);
+        pointLightModel.scale = new Vector(0.5, 0.5, 0.5);
+        pointLightNode.addChild(pointLightModel);
+
+        let pointLight = await EntityLight.create([Renderer.PHASE_PASS_PHONG], "Point light", new Light(Light.KIND_POINT, new Vector(0.5, 0.5, 1), 1, 0.07, 0.017));
+        pointLightNode.addChild(pointLight);
+
+        // Ambient light
+        let ambientLight = await EntityLight.create([Renderer.PHASE_PASS_PHONG], "Ambient light", new Light(Light.KIND_AMBIENT, new Vector(1, 1, 1), 1));
+        this.rootEntity.addChild(ambientLight);
 
         return this;
     }
