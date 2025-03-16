@@ -1,6 +1,7 @@
 export class ShaderProgram {
     static A_POSITION = 0;
     static A_NORMAL = 1;
+    static A_TEX_COORDS = 2;
 
     program;
 

@@ -17,9 +17,9 @@ export class Scene {
     async _init(gl) {
         this.rootEntity = await Entity.create("Root");
 
-        let material1 = new Material(new Vector(1, 1, 1), 0.1, 1, 0, false);
-        let material2 = new Material(new Vector(1, 0.5, 0.5), 0.1, 0.5, 2, false);
-        let material3 = new Material(new Vector(0.5, 1, 0.5), 0.1, 0.8, 16, false);
+        let material1 = new Material(new Vector(1, 1, 1), 0.1, 1, 0, false, true);
+        let material2 = new Material(new Vector(1, 0.5, 0.5), 0.1, 0.5, 2, false, true);
+        let material3 = new Material(new Vector(0.5, 1, 0.5), 0.1, 0.8, 16, false, false);
         let material4 = new Material(new Vector(1, 1, 0.5), 0, 0, 0, true);
         
         let pyramid1_1 = await EntityModel.create(

@@ -18,6 +18,7 @@ struct Material {
     float diffuseIntensity;
     float specularIntensity;
     bool isUnshaded;
+    bool hasDiffuseTexture;
 };
 
 const int LightKindAmbient = 1;
@@ -27,7 +28,9 @@ const int LightKindSpot = 4;
 
 in vec3 v_position;
 in vec3 v_normal;
+in vec2 v_texCoords;
 
+uniform sampler2D u_diffuseSampler;
 uniform Light u_lights[8];
 uniform Material u_material;
 uniform vec3 u_cameraPosition;
@@ -89,16 +92,21 @@ vec3 pointLightColor(vec3 position, vec3 normal, vec3 cameraPosition, Light ligh
 void main() {
     vec3 color = vec3(0);
 
+    Material material = u_material;
+    if (material.hasDiffuseTexture) {
+        material.color = vec3(texture(u_diffuseSampler, v_texCoords));
+    }
+
     if (u_material.isUnshaded) {
-        color = u_material.color;
+        color = material.color;
     } else {
         for (int i=0; i<8; i++) {
             if (u_lights[i].kind == LightKindAmbient)
-                color += ambientLightColor(u_lights[i], u_material);
+                color += ambientLightColor(u_lights[i], material);
             else if (u_lights[i].kind == LightKindDirectional)
-                color += directionalLightColor(v_position, v_normal, u_cameraPosition, u_lights[i], u_material);
+                color += directionalLightColor(v_position, v_normal, u_cameraPosition, u_lights[i], material);
             else if (u_lights[i].kind == LightKindPoint)
-                color += pointLightColor(v_position, v_normal, u_cameraPosition, u_lights[i], u_material);
+                color += pointLightColor(v_position, v_normal, u_cameraPosition, u_lights[i], material);
         }
     }
 
