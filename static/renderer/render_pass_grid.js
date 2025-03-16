@@ -95,7 +95,6 @@ export class RenderPassGrid extends RenderPass {
 
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-        gl.enable(gl.LINE_SMOOTH);
 
         // Grid
         gl.useProgram(this.#gridShaderProgram.program);

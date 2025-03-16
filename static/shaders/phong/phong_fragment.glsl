@@ -14,6 +14,7 @@ struct Material {
     float ambientIntensity;
     float diffuseIntensity;
     float specularIntensity;
+    bool isUnshaded;
 };
 
 const int LightKindDirectional = 1;
@@ -24,6 +25,7 @@ in vec3 v_position;
 in vec3 v_normal;
 
 uniform Light u_lights[8];
+uniform Material u_material;
 uniform vec3 u_cameraPosition;
 
 out vec4 o_color;
@@ -42,11 +44,13 @@ vec3 directionalLightColor(vec3 position, vec3 cameraPosition, vec3 normal, Ligh
     color += material.color * light.color * intensity;
 
     // Specular
-    vec3 cameraDirection = normalize(cameraPosition - position);
-    vec3 halfv = normalize(cameraDirection + light.direction);
-    float specularIntensity = dot(normal, -halfv);
-    specularIntensity = clamp(specularIntensity, 0.0, 1.0);
-    color += light.color * pow(specularIntensity, material.specularIntensity) * light.intensity;
+    if (material.specularIntensity > 0.0) {
+       vec3 cameraDirection = normalize(cameraPosition - position);
+        vec3 halfv = normalize(cameraDirection + light.direction);
+        float specularIntensity = dot(normal, -halfv);
+        specularIntensity = clamp(specularIntensity, 0.0, 1.0);
+        color += light.color * pow(specularIntensity, material.specularIntensity) * light.intensity;
+    }
 
     return color;
 }
@@ -54,15 +58,13 @@ vec3 directionalLightColor(vec3 position, vec3 cameraPosition, vec3 normal, Ligh
 void main() {
     vec3 color = vec3(0);
 
-    Material material;
-    material.color = vec3(0.6, 0.6, 0.6);
-    material.ambientIntensity = 0.1;
-    material.diffuseIntensity = 1.0;
-    material.specularIntensity = 8.0;
-
-    for (int i=0; i<8; i++) {
-        if (u_lights[i].kind == LightKindDirectional)
-            color += directionalLightColor(v_position, u_cameraPosition, v_normal, u_lights[i], material);
+    if (u_material.isUnshaded) {
+        color = u_material.color;
+    } else {
+        for (int i=0; i<8; i++) {
+            if (u_lights[i].kind == LightKindDirectional)
+                color += directionalLightColor(v_position, u_cameraPosition, v_normal, u_lights[i], u_material);
+        }
     }
 
     o_color = vec4(color, 1.0);

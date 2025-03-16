@@ -1,5 +1,5 @@
 import { Matrix } from "/utils/matrix.js";
-import { Vector3 } from "/utils/vector.js";
+import { Vector } from "/utils/vector.js";
 
 export class Entity {
     static NODE="node";
@@ -12,9 +12,9 @@ export class Entity {
     kind = null;
     parent = null;
     children = [];
-    translation = new Vector3(0, 0, 0);
-    rotation = new Vector3(0, 0, 0);
-    scale = new Vector3(1, 1, 1);
+    translation = new Vector(0, 0, 0);
+    rotation = new Vector(0, 0, 0);
+    scale = new Vector(1, 1, 1);
 
     static async create(name) {
         return await new Entity()._init([], name, Entity.NODE);
@@ -65,7 +65,7 @@ export class Entity {
         let x = modelMatrix.m[4 * 3 + 0];
         let y = modelMatrix.m[4 * 3 + 1];
         let z = modelMatrix.m[4 * 3 + 2];
-        return new Vector3(x, y, z);
+        return new Vector(x, y, z);
     }
 
     get rotationGlobal() {
@@ -83,25 +83,25 @@ export class Entity {
     }
 
     get direction() {
-        let direction = new Vector3(0, 0, -1);
+        let direction = new Vector(0, 0, -1);
 
         let rotationMatrix = Matrix.makeIdentity();
         rotationMatrix = rotationMatrix.multiply(Matrix.makeRotationX(-this.rotation.x));
         rotationMatrix = rotationMatrix.multiply(Matrix.makeRotationY(-this.rotation.y));
         rotationMatrix = rotationMatrix.multiply(Matrix.makeRotationZ(this.rotation.z));
 
-        return rotationMatrix.multiplyVector3(direction);
+        return rotationMatrix.multiplyVector(direction);
     }
 
     get directionGlobal() {
-        let direction = new Vector3(0, 0, -1);
+        let direction = new Vector(0, 0, -1);
 
         let rotationMatrix = Matrix.makeIdentity();
         rotationMatrix = rotationMatrix.multiply(Matrix.makeRotationX(-this.rotationGlobal.x));
         rotationMatrix = rotationMatrix.multiply(Matrix.makeRotationY(-this.rotationGlobal.y));
         rotationMatrix = rotationMatrix.multiply(Matrix.makeRotationZ(this.rotationGlobal.z));
 
-        return rotationMatrix.multiplyVector3(direction);
+        return rotationMatrix.multiplyVector(direction);
     }
 
     addChild(child) {

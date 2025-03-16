@@ -1,4 +1,4 @@
-import { Vector3 } from "/utils/vector.js";
+import { Vector } from "/utils/vector.js";
 
 export class Matrix {
     static makeIdentity() {
@@ -136,7 +136,7 @@ export class Matrix {
         return instance;  
     }
 
-    multiplyVector3(vector) {
+    multiplyVector(vector) {
         // This
         let l00 = this.m[4 * 0 + 0];
         let l01 = this.m[4 * 0 + 1];
@@ -150,7 +150,7 @@ export class Matrix {
         let l21 = this.m[4 * 2 + 1];
         let l22 = this.m[4 * 2 + 2];
 
-        return new Vector3(
+        return new Vector(
             l00 * vector.x + l01 * vector.y + l02 * vector.z,
             l10 * vector.x + l11 * vector.y + l12 * vector.z,
             l20 * vector.x + l21 * vector.y + l22 * vector.z

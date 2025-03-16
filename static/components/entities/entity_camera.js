@@ -1,6 +1,6 @@
 import { Entity } from "/components/entities/entity.js";
 import { Matrix } from "/utils/matrix.js";
-import { Vector3 } from "/utils/vector.js";
+import { Vector } from "/utils/vector.js";
 import { Util } from "/utils/util.js";
 
 export class EntityCamera extends Entity {
@@ -38,7 +38,8 @@ export class EntityCamera extends Entity {
         gl.uniformMatrix4fv(viewMatrixId, false, this.viewMatrix.m)
 
         let cameraPositionId = gl.getUniformLocation(shaderProgram.program, "u_cameraPosition");
-        gl.uniform3f(cameraPositionId, this.translationGlobal.x, this.translationGlobal.y, this.translationGlobal.z);
+        //gl.uniform3f(cameraPositionId, this.translationGlobal.x, this.translationGlobal.y, this.translationGlobal.z);
+        gl.uniform3fv(cameraPositionId, this.translationGlobal.m);
     }
 
     update(elapsedMiliseconds, input) {
@@ -54,15 +55,15 @@ export class EntityCamera extends Entity {
         let xAngle = this.rotation.x;
         if (this.translation.x != 0 || this.translation.y != 0 || this.translation.z != 0) {
             xAngle = Math.acos(
-                new Vector3(this.translation.x, 0, this.translation.z)
+                new Vector(this.translation.x, 0, this.translation.z)
                     .normalized()
                     .dot(
-                        new Vector3(this.translation.x, this.translation.y, this.translation.z)
+                        new Vector(this.translation.x, this.translation.y, this.translation.z)
                             .normalized()
                     )
             );
         }
-        
+
         if (this.translation.y > 0)
             xAngle = -xAngle;
 
@@ -73,9 +74,9 @@ export class EntityCamera extends Entity {
         let yAngle = this.rotation.y;
         if (this.translation.x != 0 || this.translation.y != 0 || this.translation.z != 0) {
             yAngle = Math.acos(
-                new Vector3(0, 0, 1)
+                new Vector(0, 0, 1)
                     .dot(
-                        new Vector3(this.translation.x, 0, this.translation.z)
+                        new Vector(this.translation.x, 0, this.translation.z)
                             .normalized()
                     )
             );
@@ -93,9 +94,9 @@ export class EntityCamera extends Entity {
         // Translation
         let positionMatrix = Matrix.makeRotationY(yAngle);
         positionMatrix = positionMatrix.multiply(Matrix.makeRotationX(xAngle));
-        let originVector = new Vector3(0, 0, new Vector3(this.translation.x, this.translation.y, this.translation.z).length());
+        let originVector = new Vector(0, 0, new Vector(this.translation.x, this.translation.y, this.translation.z).length());
         originVector.z += input.look.zoom;
-        this.translation = positionMatrix.multiplyVector3(originVector);
+        this.translation = positionMatrix.multiplyVector(originVector);
     }
 
     #flybyUpdate(elapsedMiliseconds, input) {

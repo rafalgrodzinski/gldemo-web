@@ -1,7 +1,7 @@
 import { ShaderProgram } from "/components/shader_program.js";
 import { Entity } from "/components/entities/entity.js";
 import { Vertex } from "/utils/vertex.js";
-import { Vector3 } from "/utils/vector.js";
+import { Vector } from "/utils/vector.js";
 
 export class EntityModel extends Entity {
     static KIND_CUBE = "cube";
@@ -80,13 +80,16 @@ export class EntityModel extends Entity {
 
     #vertices;
     #vertexArray;
+    #material;
 
-    static async create(phases, name, gl, kind) {
-        return await new EntityModel()._init(phases, name, gl, kind);
+    static async create(phases, name, gl, kind, material) {
+        return await new EntityModel()._init(phases, name, gl, kind, material);
     }
 
-    async _init(phases, name, gl, kind) {
+    async _init(phases, name, gl, kind, material) {
         await super._init(phases, name, Entity.MODEL);
+
+        this.#material = material;
 
         switch (kind) {
             case EntityModel.KIND_CUBE:
@@ -115,10 +118,10 @@ export class EntityModel extends Entity {
                         let z3 = Math.sin(iy / segments * Math.PI) * Math.cos((ix + 1) / segments * Math.PI * 2);
                         let z4 = Math.sin(iy / segments * Math.PI) * Math.cos(ix / segments * Math.PI * 2);
 
-                        let n1 = new Vector3(x1, y1, z1).normalized();
-                        let n2 = new Vector3(x2, y2, z2).normalized();
-                        let n3 = new Vector3(x3, y3, z3).normalized();
-                        let n4 = new Vector3(x4, y4, z4).normalized();
+                        let n1 = new Vector(x1, y1, z1).normalized();
+                        let n2 = new Vector(x2, y2, z2).normalized();
+                        let n3 = new Vector(x3, y3, z3).normalized();
+                        let n4 = new Vector(x4, y4, z4).normalized();
 
                         this.#vertices.push(new Vertex({x: x1, y: y1, z: z1}, n1));
                         this.#vertices.push(new Vertex({x: x2, y: y2, z: z2}, n2));
@@ -163,6 +166,21 @@ export class EntityModel extends Entity {
     draw(gl, shaderProgram) {
         let modelMatrixId = gl.getUniformLocation(shaderProgram.program, "u_modelMatrix");
         gl.uniformMatrix4fv(modelMatrixId, false, this.modelMatrixGlobal.m);
+
+        let materialColorId = gl.getUniformLocation(shaderProgram.program, "u_material.color");
+        gl.uniform3fv(materialColorId, this.#material.color.m);
+
+        let materialAmbientIntensityId = gl.getUniformLocation(shaderProgram.program, "u_material.ambientIntensity");
+        gl.uniform1f(materialAmbientIntensityId, this.#material.ambientIntensity);
+
+        let materialDiffuseIntensityId = gl.getUniformLocation(shaderProgram.program, "u_material.diffuseIntensity");
+        gl.uniform1f(materialDiffuseIntensityId, this.#material.diffuseIntensity);
+
+        let materialSpecularIntensityId = gl.getUniformLocation(shaderProgram.program, "u_material.specularIntensity");
+        gl.uniform1f(materialSpecularIntensityId, this.#material.specularIntensity);
+
+        let materialIsUnshadedId = gl.getUniformLocation(shaderProgram.program, "u_material.isUnshaded");
+        gl.uniform1i(materialIsUnshadedId, this.#material.isUnshaded);
 
         gl.bindVertexArray(this.#vertexArray);
         gl.drawArrays(gl.TRIANGLES, 0, this.#vertices.length);

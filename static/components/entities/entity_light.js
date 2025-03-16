@@ -29,7 +29,7 @@ export class EntityLight extends Entity {
         EntityLight.#lightsCount++;
 
         this.#kind = kind;
-        this.config.color = config.color ?? {r: 0, g: 0, b: 0};
+        this.config.color = config.color ?? Vector(0, 0, 0);
         this.config.intensity = config.intensity ?? 0;
 
         return this;
@@ -44,10 +44,10 @@ export class EntityLight extends Entity {
         switch (this.#kind) {
             case EntityLight.DIRECTIONAL:
                 let colorId = gl.getUniformLocation(shaderProgram.program, idPrefix + "color");
-                gl.uniform3f(colorId, this.config.color.r, this.config.color.g, this.config.color.b);
+                gl.uniform3fv(colorId, this.config.color.m);
                 
                 let directionId = gl.getUniformLocation(shaderProgram.program, idPrefix + "direction");
-                gl.uniform3f(directionId, this.directionGlobal.x, this.directionGlobal.y, this.directionGlobal.z);
+                gl.uniform3fv(directionId, this.directionGlobal.m);
 
                 let intensityId = gl.getUniformLocation(shaderProgram.program, idPrefix + "intensity");
                 gl.uniform1f(intensityId, this.config.intensity);
