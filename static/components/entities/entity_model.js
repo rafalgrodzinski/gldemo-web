@@ -99,7 +99,7 @@ export class EntityModel extends Entity {
                 this.#vertices = EntityModel.#pyramidVertices;
                 break;
             case EntityModel.KIND_SPHERE:
-                let segments = 8;
+                let segments = 32;
                 this.#vertices = [];
                 for (let iy=0; iy<segments; iy++) {
                     for (let ix=0; ix<segments; ix++) {

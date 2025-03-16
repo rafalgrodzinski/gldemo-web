@@ -30,7 +30,7 @@ uniform vec3 u_cameraPosition;
 
 out vec4 o_color;
 
-vec3 directionalLightColor(vec3 position, vec3 cameraPosition, vec3 normal, Light light, Material material) {
+vec3 directionalLightColor(vec3 position, vec3 normal, vec3 cameraPosition,Light light, Material material) {
     vec3 color = vec3(0);
     
     // Ambient & Diffuse
@@ -45,9 +45,9 @@ vec3 directionalLightColor(vec3 position, vec3 cameraPosition, vec3 normal, Ligh
 
     // Specular
     if (material.specularIntensity > 0.0) {
-       vec3 cameraDirection = normalize(cameraPosition - position);
-        vec3 halfv = normalize(cameraDirection + light.direction);
-        float specularIntensity = dot(normal, -halfv);
+        vec3 cameraDirection = normalize(cameraPosition - position);
+        vec3 reflected = reflect(light.direction, normal);
+        float specularIntensity = dot(cameraDirection, reflected);
         specularIntensity = clamp(specularIntensity, 0.0, 1.0);
         color += light.color * pow(specularIntensity, material.specularIntensity) * light.intensity;
     }
@@ -63,7 +63,7 @@ void main() {
     } else {
         for (int i=0; i<8; i++) {
             if (u_lights[i].kind == LightKindDirectional)
-                color += directionalLightColor(v_position, u_cameraPosition, v_normal, u_lights[i], u_material);
+                color += directionalLightColor(v_position, v_normal, u_cameraPosition, u_lights[i], u_material);
         }
     }
 
