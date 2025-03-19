@@ -38,7 +38,6 @@ export class EntityCamera extends Entity {
         gl.uniformMatrix4fv(viewMatrixId, false, this.viewMatrix.m)
 
         let cameraPositionId = gl.getUniformLocation(shaderProgram.program, "u_cameraPosition");
-        //gl.uniform3f(cameraPositionId, this.translationGlobal.x, this.translationGlobal.y, this.translationGlobal.z);
         gl.uniform3fv(cameraPositionId, this.translationGlobal.m);
     }
 

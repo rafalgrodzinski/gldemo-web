@@ -40,28 +40,24 @@ class Main {
         let rotationGroup = document.querySelector("#config-rotation");
         let scaleGroup = document.querySelector("#config-scale");
         this.#config = await Config.create(entitiesContainer, infoContainer, translationGroup, rotationGroup, scaleGroup, this.#scene);
-        //this.#config.entities = this.#renderer.rootEntity.children;
 
         return this;
     }
 
     runLoop() {
-        let gl = this.#gl;
-        let renderer = this.#renderer;
         let oldTimestamp;
-        let input = this.#input
 
-        function nextFrame(timestamp) {
+        let nextFrame = (timestamp) => {
             if (oldTimestamp == undefined)
                 oldTimestamp = timestamp;
             let elapsed = timestamp - oldTimestamp;
             oldTimestamp = timestamp;
 
-            renderer.update(elapsed, input);
-            renderer.draw(gl);
+            this.#renderer.update(elapsed, this.#input);
+            this.#renderer.draw(this.#gl);
 
             requestAnimationFrame(nextFrame);
-        }
+        };
         requestAnimationFrame(nextFrame);
     }
 }
