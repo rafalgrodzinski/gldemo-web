@@ -1,5 +1,5 @@
-import { RenderPassPhong } from "./render_pass_phong.js";
-import { RenderPassGrid } from "./render_pass_grid.js";
+import { RenderPassPhong } from "renderer/render_pass_phong.js";
+import { RenderPassGrid } from "renderer/render_pass_grid.js";
 
 export class Renderer {
     static PHASE_RESIZE = "phase_resize";

@@ -1,5 +1,5 @@
-import { Entity } from "/components/entities/entity.js";
-import { Light } from "/utils/light.js";
+import { Entity } from "components/entities/entity.js";
+import { Light } from "utils/light.js";
 
 export class EntityLight extends Entity {
     static #MAX_LIGHTS = 8;

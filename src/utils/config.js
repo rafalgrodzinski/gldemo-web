@@ -1,4 +1,4 @@
-import { Entity } from "/components/entities/entity.js";
+import { Entity } from "components/entities/entity.js";
 
 export class Config {
     static translationMultiplier = 10;

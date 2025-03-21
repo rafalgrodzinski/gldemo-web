@@ -1,7 +1,7 @@
-import { Scene } from "/components/scene.js";
-import { Renderer } from "/renderer/renderer.js";
-import { Config } from "/utils/config.js";
-import { Input } from "/utils/input.js";
+import { Scene } from "components/scene.js";
+import { Renderer } from "renderer/renderer.js";
+import { Config } from "utils/config.js";
+import { Input } from "utils/input.js";
 
 class Main {
     #gl = null;
@@ -62,5 +62,6 @@ class Main {
     }
 }
 
-let main = await Main.create();
-main.runLoop();
+Main.create().then((main) => {
+    main.runLoop();
+});

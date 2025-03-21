@@ -1,4 +1,4 @@
-import { Util } from "/utils/util.js";
+import { Util } from "utils/util.js";
 
 export class Vector {
     m;

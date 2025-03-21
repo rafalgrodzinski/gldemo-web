@@ -1,7 +1,7 @@
-import { Entity } from "/components/entities/entity.js";
-import { Matrix } from "/utils/matrix.js";
-import { Vector } from "/utils/vector.js";
-import { Util } from "/utils/util.js";
+import { Entity } from "components/entities/entity.js";
+import { Matrix } from "utils/matrix.js";
+import { Vector } from "utils/vector.js";
+import { Util } from "utils/util.js";
 
 export class EntityCamera extends Entity {
     static movementMultiplier = 0.1;

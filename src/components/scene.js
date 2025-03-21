@@ -1,11 +1,11 @@
-import { Renderer } from "/renderer/renderer.js";
-import { Entity } from "/components/entities/entity.js";
-import { EntityModel } from "/components/entities/entity_model.js";
-import { EntityCamera } from "/components/entities/entity_camera.js";
-import { EntityLight } from "/components/entities/entity_light.js"
-import { Vector } from "/utils/vector.js";
-import { Material } from "/utils/material.js";
-import { Light } from "/utils/light.js";
+import { Renderer } from "renderer/renderer.js";
+import { Entity } from "components/entities/entity.js";
+import { EntityModel } from "components/entities/entity_model.js";
+import { EntityCamera } from "components/entities/entity_camera.js";
+import { EntityLight } from "components/entities/entity_light.js"
+import { Vector } from "utils/vector.js";
+import { Material } from "utils/material.js";
+import { Light } from "utils/light.js";
 
 export class Scene {
     rootEntity = null;

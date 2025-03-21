@@ -1,7 +1,7 @@
-import { RenderPass } from "/renderer/render_pass.js";
-import { Renderer } from "/renderer/renderer.js";
-import { ShaderProgram } from "/components/shader_program.js";
-import { Util } from "/utils/util.js";
+import { RenderPass } from "renderer/render_pass.js";
+import { Renderer } from "renderer/renderer.js";
+import { ShaderProgram } from "components/shader_program.js";
+import { Util } from "utils/util.js";
 
 export class RenderPassGrid extends RenderPass {
     // Grid
@@ -39,7 +39,7 @@ export class RenderPassGrid extends RenderPass {
         await super._init(Renderer.PHASE_PASS_GRID);
 
         // Grid
-        this.#gridShaderProgram = await ShaderProgram.create(gl, "shaders/grid/grid_vertex.glsl", "shaders/grid/grid_fragment.glsl");
+        this.#gridShaderProgram = await ShaderProgram.create(gl, "src/shaders/grid/grid_vertex.glsl", "src/shaders/grid/grid_fragment.glsl");
 
         this.#gridVertexArray = gl.createVertexArray();
         gl.bindVertexArray(this.#gridVertexArray);
@@ -70,7 +70,7 @@ export class RenderPassGrid extends RenderPass {
         gl.texParameteri(gl.TEXTURE_2D, glExt.TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy);
 
         // Axis
-        this.#axisShaderProgram = await ShaderProgram.create(gl, "shaders/grid/axis_vertex.glsl", "shaders/grid/axis_fragment.glsl");
+        this.#axisShaderProgram = await ShaderProgram.create(gl, "src/shaders/grid/axis_vertex.glsl", "src/shaders/grid/axis_fragment.glsl");
 
         this.#axisVertexArray = gl.createVertexArray();
         gl.bindVertexArray(this.#axisVertexArray);

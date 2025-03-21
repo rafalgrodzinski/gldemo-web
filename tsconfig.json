@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "outFile": "static/gldemo.js",
+        "target": "es6",
+        "noEmitOnError": true,
+        "allowJs": true,
+        "module": "amd",
+        "sourceMap": true
+    },
+    "include": ["src/**/*"]
+}

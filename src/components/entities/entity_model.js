@@ -1,8 +1,8 @@
-import { ShaderProgram } from "/components/shader_program.js";
-import { Entity } from "/components/entities/entity.js";
-import { Vertex } from "/utils/vertex.js";
-import { Vector } from "/utils/vector.js";
-import { Util } from "/utils/util.js";
+import { ShaderProgram } from "components/shader_program.js";
+import { Entity } from "components/entities/entity.js";
+import { Vertex } from "utils/vertex.js";
+import { Vector } from "utils/vector.js";
+import { Util } from "utils/util.js";
 
 export class EntityModel extends Entity {
     static KIND_CUBE = "cube";

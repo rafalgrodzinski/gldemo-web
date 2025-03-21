@@ -1,6 +1,6 @@
-import { RenderPass } from "/renderer/render_pass.js";
-import { Renderer } from "/renderer/renderer.js";
-import { ShaderProgram } from "/components/shader_program.js";
+import { RenderPass } from "renderer/render_pass.js";
+import { Renderer } from "renderer/renderer.js";
+import { ShaderProgram } from "components/shader_program.js";
 
 export class RenderPassPhong extends RenderPass {
     #shaderProgram = null;
@@ -12,7 +12,7 @@ export class RenderPassPhong extends RenderPass {
     async _init(gl) {
         await super._init(Renderer.PHASE_PASS_PHONG);
 
-        this.#shaderProgram = await ShaderProgram.create(gl, "shaders/phong/phong_vertex.glsl", "shaders/phong/phong_fragment.glsl");
+        this.#shaderProgram = await ShaderProgram.create(gl, "src/shaders/phong/phong_vertex.glsl", "src/shaders/phong/phong_fragment.glsl");
         return this;
     }
 

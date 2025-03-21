@@ -1,5 +1,5 @@
-import { Matrix } from "/utils/matrix.js";
-import { Vector } from "/utils/vector.js";
+import { Matrix } from "utils/matrix.js";
+import { Vector } from "utils/vector.js";
 
 export class Entity {
     static NODE="node";
