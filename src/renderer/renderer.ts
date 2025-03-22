@@ -1,5 +1,8 @@
-import { RenderPassPhong } from "renderer/render_pass_phong.js";
-import { RenderPassGrid } from "renderer/render_pass_grid.js";
+import { RenderPass } from "render_pass";
+import { RenderPassPhong } from "renderer/render_pass_phong";
+import { RenderPassGrid } from "renderer/render_pass_grid";
+import { Scene } from "components/scene";
+import { Input } from "utils/input";
 
 export class Renderer {
     static PHASE_RESIZE = "phase_resize";
@@ -7,14 +10,14 @@ export class Renderer {
     static PHASE_PASS_PHONG = "phase_pass_phong";
     static PHASE_PASS_GRID = "phase_pass_grid";
 
-    scene = null;
-    #renderPasses = [];
+    scene!: Scene;
+    #renderPasses!: Array<RenderPass | RenderPassPhong | RenderPassGrid>;
 
-     static async create(gl, scene) {
+     static async create(gl: WebGL2RenderingContext, scene: Scene) {
         return await new Renderer()._init(gl, scene);
      }
 
-     async _init(gl, scene) {
+     async _init(gl: WebGL2RenderingContext, scene: Scene) {
         this.scene = scene;
 
         this.#renderPasses = await Promise.all([
@@ -25,7 +28,7 @@ export class Renderer {
         return this;
      }
 
-    resize(gl, width, height) {
+    resize(gl: WebGL2RenderingContext, width: number, height: number) {
         let entities = this.scene.rootEntity.entitiesForPhase(Renderer.PHASE_RESIZE);
         entities.forEach(entity => {
             entity.resize(width, height);
@@ -35,7 +38,7 @@ export class Renderer {
         this.draw(gl);
     }
 
-    update(elapsedMiliseconds, input) {
+    update(elapsedMiliseconds: number, input: Input) {
         let entities = this.scene.rootEntity.entitiesForPhase(Renderer.PHASE_UPDATE);
         entities.forEach(entity => {
             entity.update(elapsedMiliseconds, input);
@@ -43,7 +46,7 @@ export class Renderer {
         input.resetState();
     }
 
-    draw(gl) {
+    draw(gl: WebGL2RenderingContext) {
         gl.clearColor(0, 0, 0, 1);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.enable(gl.DEPTH_TEST);
