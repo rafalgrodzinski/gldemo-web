@@ -1,7 +1,7 @@
 import { RenderPass } from "renderer/render_pass.js";
 import { Renderer } from "renderer/renderer.js";
 import { ShaderProgram } from "components/shader_program.js";
-import { Util } from "utils/util.js";
+import { Util } from "utils/util";
 
 export class RenderPassGrid extends RenderPass {
     // Grid

@@ -2,7 +2,7 @@ import { ShaderProgram } from "components/shader_program.js";
 import { Entity } from "components/entities/entity.js";
 import { Vertex } from "utils/vertex.js";
 import { Vector } from "utils/vector.js";
-import { Util } from "utils/util.js";
+import { Util } from "utils/util";
 
 export class EntityModel extends Entity {
     static KIND_CUBE = "cube";
@@ -121,10 +121,10 @@ export class EntityModel extends Entity {
                         let z3 = Math.sin(iy / segments * Math.PI) * Math.cos((ix + 1) / segments * Math.PI * 2);
                         let z4 = Math.sin(iy / segments * Math.PI) * Math.cos(ix / segments * Math.PI * 2);
 
-                        let n1 = new Vector(x1, y1, z1).normalized();
-                        let n2 = new Vector(x2, y2, z2).normalized();
-                        let n3 = new Vector(x3, y3, z3).normalized();
-                        let n4 = new Vector(x4, y4, z4).normalized();
+                        let n1 = new Vector(x1, y1, z1).normalize();
+                        let n2 = new Vector(x2, y2, z2).normalize();
+                        let n3 = new Vector(x3, y3, z3).normalize();
+                        let n4 = new Vector(x4, y4, z4).normalize();
 
                         let s1 = ix/segments;
                         let s2 = (ix+1)/segments;

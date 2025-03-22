@@ -5,7 +5,9 @@
         "noEmitOnError": true,
         "allowJs": true,
         "module": "amd",
-        "sourceMap": true
+        "sourceMap": true,
+        "strictPropertyInitialization": true,
+        "strictNullChecks": true
     },
     "include": ["src/**/*"]
 }

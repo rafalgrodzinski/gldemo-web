@@ -1,7 +1,7 @@
 import { Entity } from "components/entities/entity.js";
 import { Matrix } from "utils/matrix.js";
 import { Vector } from "utils/vector.js";
-import { Util } from "utils/util.js";
+import { Util } from "utils/util";
 
 export class EntityCamera extends Entity {
     static movementMultiplier = 0.1;
@@ -55,10 +55,10 @@ export class EntityCamera extends Entity {
         if (this.translation.x != 0 || this.translation.y != 0 || this.translation.z != 0) {
             xAngle = Math.acos(
                 new Vector(this.translation.x, 0, this.translation.z)
-                    .normalized()
+                    .normalize()
                     .dot(
                         new Vector(this.translation.x, this.translation.y, this.translation.z)
-                            .normalized()
+                            .normalize()
                     )
             );
         }
@@ -76,7 +76,7 @@ export class EntityCamera extends Entity {
                 new Vector(0, 0, 1)
                     .dot(
                         new Vector(this.translation.x, 0, this.translation.z)
-                            .normalized()
+                            .normalize()
                     )
             );
         }
