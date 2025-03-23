@@ -7,6 +7,7 @@ import { EntityLight } from "components/entities/entity_light"
 import { Vector } from "utils/vector";
 import { Material } from "utils/material";
 import { Light, LightKind } from "utils/light";
+import { Util } from "utils/util";
 
 export class Scene {
     rootEntity!: Entity;
@@ -20,10 +21,10 @@ export class Scene {
 
         this.rootEntity = await EntityNode.create("Root");
 
-        let material1 = new Material(new Vector(1, 1, 1), 0.1, 1, 0, false, true);
-        let material2 = new Material(new Vector(1, 0.5, 0.5), 0.1, 0.5, 2, false, true);
-        let material3 = new Material(new Vector(0.5, 1, 0.5), 0.1, 0.8, 16, false, false);
-        let material4 = new Material(new Vector(1, 1, 0.5), 0, 0, 0, true);
+        let material1 = new Material(new Vector(1, 1, 1), 0.1, 1, 0, false, await Util.image("box.jpg"));
+        let material2 = new Material(new Vector(1, 0.5, 0.5), 0.1, 0.5, 2, false, await Util.image("box.jpg"));
+        let material3 = new Material(new Vector(0.5, 1, 0.5), 0.1, 0.8, 16, false, null);
+        let material4 = new Material(new Vector(1, 1, 0.5), 0, 0, 0, true, null);
         
         let pyramid1_1 = await EntityModel.create(
             [Phase.PassPhong],
@@ -104,7 +105,7 @@ export class Scene {
         pointLightNode.translation.z = 5;
         this.rootEntity.addChild(pointLightNode);
 
-        let pointLightMaterial = new Material(new Vector(0.5, 0.5, 1), 0, 0, 0, true);
+        let pointLightMaterial = new Material(new Vector(0.5, 0.5, 1), 0, 0, 0, true, null);
         let pointLightModel = await EntityModel.create([Phase.PassPhong], "Point light model", gl, EntityModel.KIND_CUBE, pointLightMaterial);
         pointLightModel.scale = new Vector(0.5, 0.5, 0.5);
         pointLightNode.addChild(pointLightModel);

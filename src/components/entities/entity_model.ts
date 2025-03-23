@@ -5,6 +5,7 @@ import { Vector } from "utils/vector";
 import { Util } from "utils/util";
 import { Phase } from "renderer/renderer";
 import { EntityKind } from "components/entities/entity";
+import { Material } from "utils/material";
 
 export class EntityModel extends Entity {
     static KIND_CUBE = "cube";
@@ -84,18 +85,18 @@ export class EntityModel extends Entity {
 
     #vertices;
     #vertexArray;
-    #material;
+    private material!: Material;
     #texture;
 
-    static async create(phases: Array<Phase>, name: string, gl: WebGL2RenderingContext, kind, material): Promise<EntityModel> {
+    static async create(phases: Array<Phase>, name: string, gl: WebGL2RenderingContext, kind, material: Material): Promise<EntityModel> {
         return await new EntityModel().init([phases, name, gl, kind, material]);
     }
 
     protected async init(args: Array<any>): Promise<this> {
-        let [phases, name, gl, kind, material] = args
+        let [phases, name, gl, kind, material] = args as [Array<Phase>, string, WebGL2RenderingContext, any, Material];
         await super.init([phases, name, EntityKind.Model]);
 
-        this.#material = material;
+        this.material = material;
 
         switch (kind) {
             case EntityModel.KIND_CUBE:
@@ -174,11 +175,11 @@ export class EntityModel extends Entity {
         gl.enableVertexAttribArray(ShaderAttribute.TexCoords);
         gl.vertexAttribPointer(ShaderAttribute.TexCoords, 2, gl.FLOAT, false, Vertex.STRIDE, Vertex.TEX_COORDS_OFFSET);
 
-        if (material.hasDiffuseTexture) {
+        if (material.diffuseTexture) {
             this.#texture = gl.createTexture();
             gl.bindTexture(gl.TEXTURE_2D, this.#texture);
-            let image = await Util.image("box.jpg");
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+            //let image = await Util.image("box.jpg");
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, material.diffuseTexture);
             gl.generateMipmap(gl.TEXTURE_2D);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
@@ -195,24 +196,24 @@ export class EntityModel extends Entity {
         gl.uniformMatrix4fv(modelMatrixId, false, this.modelMatrixGlobal.m);
 
         let materialColorId = gl.getUniformLocation(shaderProgram.program, "u_material.color");
-        gl.uniform3fv(materialColorId, this.#material.color.m);
+        gl.uniform3fv(materialColorId, this.material.color.m);
 
         let materialAmbientIntensityId = gl.getUniformLocation(shaderProgram.program, "u_material.ambientIntensity");
-        gl.uniform1f(materialAmbientIntensityId, this.#material.ambientIntensity);
+        gl.uniform1f(materialAmbientIntensityId, this.material.ambientIntensity);
 
         let materialDiffuseIntensityId = gl.getUniformLocation(shaderProgram.program, "u_material.diffuseIntensity");
-        gl.uniform1f(materialDiffuseIntensityId, this.#material.diffuseIntensity);
+        gl.uniform1f(materialDiffuseIntensityId, this.material.diffuseIntensity);
 
         let materialSpecularIntensityId = gl.getUniformLocation(shaderProgram.program, "u_material.specularIntensity");
-        gl.uniform1f(materialSpecularIntensityId, this.#material.specularIntensity);
+        gl.uniform1f(materialSpecularIntensityId, this.material.specularIntensity);
 
         let materialIsUnshadedId = gl.getUniformLocation(shaderProgram.program, "u_material.isUnshaded");
-        gl.uniform1i(materialIsUnshadedId, this.#material.isUnshaded);
+        gl.uniform1i(materialIsUnshadedId, this.material.isUnshaded ? 1 : 0);
 
         let materialHasDiffuseTextureId = gl.getUniformLocation(shaderProgram.program, "u_material.hasDiffuseTexture");
-        gl.uniform1i(materialHasDiffuseTextureId, this.#material.hasDiffuseTexture);
+        gl.uniform1i(materialHasDiffuseTextureId, this.material.diffuseTexture ? 1 : 0);
 
-        if (this.#material.hasDiffuseTexture) {
+        if (this.material.diffuseTexture) {
             gl.activeTexture(gl.TEXTURE0);
             gl.bindTexture(gl.TEXTURE_2D, this.#texture);
             let samplerId = gl.getUniformLocation(shaderProgram.program, "u_diffuseSampler");
