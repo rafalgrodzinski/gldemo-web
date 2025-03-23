@@ -1,5 +1,5 @@
 import { RenderPass } from "renderer/render_pass";
-import { Renderer } from "renderer/renderer";
+import { Phase } from "renderer/renderer";
 import { ShaderProgram } from "components/shader_program";
 import { Util } from "utils/util";
 import { Entity } from "components/entities/entity";
@@ -38,7 +38,7 @@ export class RenderPassGrid extends RenderPass {
 
     protected async init(args: Array<any>): Promise<RenderPassGrid> {
         let [gl] = args as [WebGL2RenderingContext];
-        await super.init([Renderer.PHASE_PASS_GRID]);
+        await super.init([Phase.PassGrid]);
 
         // Grid
         this.gridShaderProgram = await ShaderProgram.create(gl, "src/shaders/grid/grid_vertex.glsl", "src/shaders/grid/grid_fragment.glsl");

@@ -1,6 +1,6 @@
-import { RenderPass } from "renderer/render_pass.js";
-import { Renderer } from "renderer/renderer.js";
-import { ShaderProgram } from "components/shader_program.js";
+import { RenderPass } from "renderer/render_pass";
+import { Phase } from "renderer/renderer";
+import { ShaderProgram } from "components/shader_program";
 import { Entity } from "components/entities/entity";
 
 export class RenderPassPhong extends RenderPass {
@@ -12,7 +12,7 @@ export class RenderPassPhong extends RenderPass {
 
     protected async init(args: Array<any>): Promise<RenderPassPhong> {
         let [gl] = args as [WebGL2RenderingContext];
-        await super.init([Renderer.PHASE_PASS_PHONG]);
+        await super.init([Phase.PassPhong]);
 
         this.shaderProgram = await ShaderProgram.create(gl, "src/shaders/phong/phong_vertex.glsl", "src/shaders/phong/phong_fragment.glsl");
         return this
