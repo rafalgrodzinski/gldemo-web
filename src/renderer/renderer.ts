@@ -19,7 +19,7 @@ export class Renderer {
         return await new Renderer().init([gl, scene]);
      }
 
-     protected async init(args: Array<any>) {
+     protected async init(args: Array<any>): Promise<this> {
         let [gl, scene] = args as [WebGL2RenderingContext, Scene];
         this.scene = scene;
 

@@ -21,7 +21,12 @@ export class Util {
         return value;
     }
 
-    static async texture(fileName: string): Promise<HTMLImageElement> {
+    static async text(fileName: string): Promise<string> {
+        return await fetch(fileName)
+            .then(response => response.text())
+    }
+
+    static async image(fileName: string): Promise<HTMLImageElement> {
         return new Promise((resolve, reject) => {
             let image = new Image();
             image.src = fileName;

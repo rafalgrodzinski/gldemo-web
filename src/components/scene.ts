@@ -14,7 +14,7 @@ export class Scene {
         return await new Scene().init([gl]);
     }
 
-    protected async init(args: Array<any>) {
+    protected async init(args: Array<any>): Promise<this> {
         let [gl] = args as [WebGL2RenderingContext];
 
         this.rootEntity = await Entity.create("Root");

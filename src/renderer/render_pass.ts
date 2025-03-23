@@ -4,7 +4,7 @@ import { Entity } from "components/entities/entity";
 export abstract class RenderPass {
     phase!: Phase;
 
-    protected async init(args: Array<any>): Promise<RenderPass> {
+    protected async init(args: Array<any>): Promise<this> {
         let [phase] = args as [Phase];
         this.phase = phase;
         return this;

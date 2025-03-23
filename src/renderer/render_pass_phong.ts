@@ -10,7 +10,7 @@ export class RenderPassPhong extends RenderPass {
         return await new RenderPassPhong().init([gl]);
     }
 
-    protected async init(args: Array<any>): Promise<RenderPassPhong> {
+    protected async init(args: Array<any>): Promise<this> {
         let [gl] = args as [WebGL2RenderingContext];
         await super.init([Phase.PassPhong]);
 

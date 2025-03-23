@@ -1,6 +1,6 @@
 import { RenderPass } from "renderer/render_pass";
 import { Phase } from "renderer/renderer";
-import { ShaderProgram } from "components/shader_program";
+import { ShaderProgram, ShaderAttribute } from "components/shader_program";
 import { Util } from "utils/util";
 import { Entity } from "components/entities/entity";
 
@@ -36,7 +36,7 @@ export class RenderPassGrid extends RenderPass {
         return await new RenderPassGrid().init([gl]);
     }
 
-    protected async init(args: Array<any>): Promise<RenderPassGrid> {
+    protected async init(args: Array<any>): Promise<this> {
         let [gl] = args as [WebGL2RenderingContext];
         await super.init([Phase.PassGrid]);
 
@@ -54,12 +54,12 @@ export class RenderPassGrid extends RenderPass {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gridIndicesBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Int32Array(RenderPassGrid.gridIndices), gl.STATIC_DRAW);
 
-        gl.enableVertexAttribArray(ShaderProgram.A_POSITION);
-        gl.vertexAttribPointer(ShaderProgram.A_POSITION, 3, gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT*3, 0);
+        gl.enableVertexAttribArray(ShaderAttribute.Position);
+        gl.vertexAttribPointer(ShaderAttribute.Position, 3, gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT*3, 0);
 
         this.gridTexture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, this.gridTexture);
-        let image = await Util.texture("grid.png");
+        let image = await Util.image("grid.png");
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
         gl.generateMipmap(gl.TEXTURE_2D);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
@@ -83,8 +83,8 @@ export class RenderPassGrid extends RenderPass {
         gl.bindBuffer(gl.ARRAY_BUFFER, axisVerticesBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(RenderPassGrid.axisVertices), gl.STATIC_DRAW);
 
-        gl.enableVertexAttribArray(ShaderProgram.A_POSITION);
-        gl.vertexAttribPointer(ShaderProgram.A_POSITION, 3, gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT*3, 0);
+        gl.enableVertexAttribArray(ShaderAttribute.Position);
+        gl.vertexAttribPointer(ShaderAttribute.Position, 3, gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT*3, 0);
 
         gl.bindTexture(gl.TEXTURE_2D, null);
         gl.bindVertexArray(null);
