@@ -1,4 +1,4 @@
-import { Entity } from "components/entities/entity.js";
+import { EntityNode } from "../components/entities/entity_node.js";
 
 export class Config {
     static translationMultiplier = 10;
@@ -167,22 +167,22 @@ export class Config {
         this.#scaleInputs.z.value = (value?.scale.z ?? 1) / Config.scaleMultiplier;
 
         switch (value?.kind) {
-            case Entity.NODE:
+            case EntityNode.NODE:
                 this.#translationGroup.hidden = false;
                 this.#rotationGroup.hidden = false;
                 this.#scaleGroup.hidden = false;
                 break;
-            case Entity.MODEL:
+            case EntityNode.MODEL:
                 this.#translationGroup.hidden = false;
                 this.#rotationGroup.hidden = false;
                 this.#scaleGroup.hidden = false;
                 break;
-            case Entity.LIGHT:
+            case EntityNode.LIGHT:
                 this.#translationGroup.hidden = true;
                 this.#rotationGroup.hidden = false;
                 this.#scaleGroup.hidden = true;
                 break;
-            case Entity.CAMERA:
+            case EntityNode.CAMERA:
                 this.#translationGroup.hidden = false;
                 this.#rotationGroup.hidden = false;
                 this.#scaleGroup.hidden = true;

@@ -1,5 +1,5 @@
 import { Phase } from "renderer/renderer";
-import { Entity } from "components/entities/entity";
+import { EntityNode } from "./entities/entity_node";
 import { EntityModel } from "components/entities/entity_model";
 import { EntityCamera } from "components/entities/entity_camera";
 import { EntityLight } from "components/entities/entity_light"
@@ -8,7 +8,7 @@ import { Material } from "utils/material";
 import { Light } from "utils/light";
 
 export class Scene {
-    rootEntity!: Entity;
+    rootEntity!: EntityNode;
 
     static async create(gl: WebGL2RenderingContext) {
         return await new Scene().init([gl]);
@@ -17,7 +17,7 @@ export class Scene {
     protected async init(args: Array<any>): Promise<this> {
         let [gl] = args as [WebGL2RenderingContext];
 
-        this.rootEntity = await Entity.create("Root");
+        this.rootEntity = await EntityNode.create("Root");
 
         let material1 = new Material(new Vector(1, 1, 1), 0.1, 1, 0, false, true);
         let material2 = new Material(new Vector(1, 0.5, 0.5), 0.1, 0.5, 2, false, true);
@@ -64,7 +64,7 @@ export class Scene {
             )
         );
 
-        let lightNode = await Entity.create("Light Node");
+        let lightNode = await EntityNode.create("Light Node");
         lightNode.translation.y = 5;
         this.rootEntity.addChild(lightNode);
 
@@ -97,7 +97,7 @@ export class Scene {
         this.rootEntity.addChild(sphere);
 
         // Point light
-        let pointLightNode = await Entity.create("Point light node");
+        let pointLightNode = await EntityNode.create("Point light node");
         pointLightNode.translation.x = 5;
         pointLightNode.translation.y = 5;
         pointLightNode.translation.z = 5;

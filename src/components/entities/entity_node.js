@@ -1,7 +1,7 @@
 import { Matrix } from "utils/matrix.js";
 import { Vector } from "utils/vector.js";
 
-export class Entity {
+export class EntityNode {
     static NODE="node";
     static LIGHT="light";
     static CAMERA="camera";
@@ -17,7 +17,7 @@ export class Entity {
     scale = new Vector(1, 1, 1);
 
     static async create(name) {
-        return await new Entity()._init([], name, Entity.NODE);
+        return await new EntityNode()._init([], name, EntityNode.NODE);
     }
 
     async _init(phases, name, kind) {

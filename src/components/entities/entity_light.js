@@ -1,7 +1,7 @@
-import { Entity } from "components/entities/entity.js";
+import { EntityNode } from "./entity_node.js";
 import { Light } from "utils/light.js";
 
-export class EntityLight extends Entity {
+export class EntityLight extends EntityNode {
     static #MAX_LIGHTS = 8;
     static #lightsCount = 0;
     #index;
@@ -12,7 +12,7 @@ export class EntityLight extends Entity {
     }
 
     async _init(phases, name, light) {
-        await super._init(phases, name, Entity.LIGHT);
+        await super._init(phases, name, EntityNode.LIGHT);
 
         if (EntityLight.#lightsCount >= EntityLight.#MAX_LIGHTS) {
             alert("Exceeded max lights: ", EntityLight.#MAX_LIGHTS);

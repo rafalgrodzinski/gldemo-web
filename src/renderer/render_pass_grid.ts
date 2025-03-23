@@ -2,7 +2,7 @@ import { RenderPass } from "renderer/render_pass";
 import { Phase } from "renderer/renderer";
 import { ShaderProgram, ShaderAttribute } from "components/shader_program";
 import { Util } from "utils/util";
-import { Entity } from "components/entities/entity";
+import { EntityNode } from "../components/entities/entity_node";
 
 export class RenderPassGrid extends RenderPass {
     // Grid
@@ -92,7 +92,7 @@ export class RenderPassGrid extends RenderPass {
         return this;
     }
 
-    draw(gl: WebGL2RenderingContext, entities: Array<Entity>) {
+    draw(gl: WebGL2RenderingContext, entities: Array<EntityNode>) {
         gl.depthMask(true);
         gl.enable(gl.DEPTH_TEST);
         gl.depthFunc(gl.LEQUAL);

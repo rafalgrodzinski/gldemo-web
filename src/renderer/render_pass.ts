@@ -1,5 +1,5 @@
 import { Phase } from "renderer/renderer"
-import { Entity } from "components/entities/entity";
+import { EntityNode } from "../components/entities/entity_node";
 
 export abstract class RenderPass {
     phase!: Phase;
@@ -10,6 +10,6 @@ export abstract class RenderPass {
         return this;
     }
 
-    prepareForDraw(gl: WebGL2RenderingContext, entities: Array<Entity>) { }
-    draw(gl: WebGL2RenderingContext, entities: Array<Entity>) { }
+    prepareForDraw(gl: WebGL2RenderingContext, entities: Array<EntityNode>) { }
+    draw(gl: WebGL2RenderingContext, entities: Array<EntityNode>) { }
 }

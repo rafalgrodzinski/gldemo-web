@@ -1,9 +1,9 @@
-import { Entity } from "components/entities/entity.js";
+import { EntityNode } from "./entity_node.js";
 import { Matrix } from "utils/matrix.js";
 import { Vector } from "utils/vector.js";
 import { Util } from "utils/util";
 
-export class EntityCamera extends Entity {
+export class EntityCamera extends EntityNode {
     static movementMultiplier = 0.1;
 
     #projectionMatrix = null;
@@ -13,7 +13,7 @@ export class EntityCamera extends Entity {
     }
 
     async _init(phases, name) {
-        await super._init(phases, name, Entity.CAMERA);
+        await super._init(phases, name, EntityNode.CAMERA);
 
         this.#projectionMatrix = Matrix.makeIdentity();
         return this;

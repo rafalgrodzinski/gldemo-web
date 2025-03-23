@@ -1,10 +1,10 @@
 import { ShaderProgram } from "components/shader_program.js";
-import { Entity } from "components/entities/entity.js";
+import { EntityNode } from "./entity_node.js";
 import { Vertex } from "utils/vertex.js";
 import { Vector } from "utils/vector.js";
 import { Util } from "utils/util";
 
-export class EntityModel extends Entity {
+export class EntityModel extends EntityNode {
     static KIND_CUBE = "cube";
     static KIND_PYRAMID = "pyramid";
     static KIND_SPHERE = "sphere";
@@ -90,7 +90,7 @@ export class EntityModel extends Entity {
     }
 
     async _init(phases, name, gl, kind, material) {
-        await super._init(phases, name, Entity.MODEL);
+        await super._init(phases, name, EntityNode.MODEL);
 
         this.#material = material;
 
