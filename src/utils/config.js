@@ -1,4 +1,4 @@
-import { EntityNode } from "../components/entities/entity_node.js";
+import { Entity } from "../components/entities/entity";
 
 export class Config {
     static translationMultiplier = 10;

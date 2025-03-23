@@ -1,7 +1,7 @@
 import { RenderPass } from "renderer/render_pass";
 import { Phase } from "renderer/renderer";
 import { ShaderProgram } from "components/shader_program";
-import { EntityNode } from "../components/entities/entity_node";
+import { Entity } from "../components/entities/entity";
 
 export class RenderPassPhong extends RenderPass {
     private shaderProgram!: ShaderProgram;
@@ -18,7 +18,7 @@ export class RenderPassPhong extends RenderPass {
         return this
     }
 
-    draw(gl: WebGL2RenderingContext, entities: Array<EntityNode>) {
+    draw(gl: WebGL2RenderingContext, entities: Array<Entity>) {
         gl.useProgram(this.shaderProgram.program);
 
         entities.forEach(entity => {

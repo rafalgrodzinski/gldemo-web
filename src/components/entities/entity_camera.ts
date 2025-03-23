@@ -1,38 +1,50 @@
-import { EntityNode } from "./entity_node.js";
-import { Matrix } from "utils/matrix.js";
-import { Vector } from "utils/vector.js";
+import { Entity, EntityKind } from "components/entities/entity";
+import { Matrix } from "utils/matrix";
+import { Vector } from "utils/vector";
 import { Util } from "utils/util";
+import { Phase } from "renderer/renderer";
+import { ShaderProgram } from "components/shader_program";
+import { Input } from "utils/input";
 
-export class EntityCamera extends EntityNode {
-    static movementMultiplier = 0.1;
+export class EntityCamera extends Entity {
+    private static movementMultiplier = 0.1;
 
-    #projectionMatrix = null;
+    private projectionMatrix!: Matrix;
 
-    static async create(phases, name) {
-        return await new EntityCamera()._init(phases, name);
+    static async create(phases: Array<Phase>, name: string): Promise<EntityCamera> {
+        return await new EntityCamera().init([phases, name]);
     }
 
-    async _init(phases, name) {
-        await super._init(phases, name, EntityNode.CAMERA);
+    protected async init(args: Array<any>): Promise<this> {
+        let  [phases, name] = args as [Array<Phase>, string];
+       await super.init([phases, name, EntityKind.Camera]);
 
-        this.#projectionMatrix = Matrix.makeIdentity();
+        this.projectionMatrix = Matrix.makeIdentity();
         return this;
     }
 
-    get viewMatrix() {
+    get viewMatrix(): Matrix {
         let viewMatrix = Matrix.makeTranslation(-this.translationGlobal.x, -this.translationGlobal.y, -this.translationGlobal.z);
         viewMatrix = viewMatrix.multiply(Matrix.makeRotationY(-this.rotationGlobal.y));
         viewMatrix = viewMatrix.multiply(Matrix.makeRotationX(-this.rotationGlobal.x));
         return viewMatrix;
     }
 
-    resize(width, height) {
-        this.#projectionMatrix = Matrix.makePerspective(Math.PI / 2, width/height, 0.1, 100);
+    resize(width: number, height: number) {
+        this.projectionMatrix = Matrix.makePerspective(Math.PI / 2, width/height, 0.1, 100);
     }
 
-    prepareForDraw(gl, shaderProgram) {
+    update(elapsedMiliseconds: number, input: Input ) {
+        if (input.actions.primary) {
+            this.arcballUpdate(input);
+        } else if (!input.actions.primary && !input.actions.secondary) {
+            this.flybyUpdate(elapsedMiliseconds, input);
+        }
+    }
+
+    prepareForDraw(gl: WebGL2RenderingContext, shaderProgram: ShaderProgram) {
         let projectionMatrixId = gl.getUniformLocation(shaderProgram.program, "u_projectionMatrix");
-        gl.uniformMatrix4fv(projectionMatrixId, false, this.#projectionMatrix.m);
+        gl.uniformMatrix4fv(projectionMatrixId, false, this.projectionMatrix.m);
 
         let viewMatrixId = gl.getUniformLocation(shaderProgram.program, "u_viewMatrix");
         gl.uniformMatrix4fv(viewMatrixId, false, this.viewMatrix.m)
@@ -41,15 +53,7 @@ export class EntityCamera extends EntityNode {
         gl.uniform3fv(cameraPositionId, this.translationGlobal.m);
     }
 
-    update(elapsedMiliseconds, input) {
-        if (input.actions.primary) {
-            this.#arcballUpdate(input);
-        } else if (!input.actions.primary && !input.actions.secondary) {
-            this.#flybyUpdate(elapsedMiliseconds, input);
-        }
-    }
-
-    #arcballUpdate(input) {
+    private arcballUpdate(input: Input) {
         // X Angle
         let xAngle = this.rotation.x;
         if (this.translation.x != 0 || this.translation.y != 0 || this.translation.z != 0) {
@@ -98,7 +102,7 @@ export class EntityCamera extends EntityNode {
         this.translation = positionMatrix.multiplyVector(originVector);
     }
 
-    #flybyUpdate(elapsedMiliseconds, input) {
+    private flybyUpdate(elapsedMiliseconds: number, input: Input) {
         this.rotation.x += input.look.vertical;
         this.rotation.x = Util.clamp(this.rotation.x, -Math.PI/2 + 0.01, Math.PI/2 + 0.01)
         this.rotation.y += input.look.horizontal;

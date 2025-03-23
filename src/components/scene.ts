@@ -1,5 +1,6 @@
 import { Phase } from "renderer/renderer";
-import { EntityNode } from "./entities/entity_node";
+import { Entity } from "entities/entity";
+import { EntityNode } from "entities/entity_node";
 import { EntityModel } from "components/entities/entity_model";
 import { EntityCamera } from "components/entities/entity_camera";
 import { EntityLight } from "components/entities/entity_light"
@@ -8,7 +9,7 @@ import { Material } from "utils/material";
 import { Light } from "utils/light";
 
 export class Scene {
-    rootEntity!: EntityNode;
+    rootEntity!: Entity;
 
     static async create(gl: WebGL2RenderingContext) {
         return await new Scene().init([gl]);

@@ -1,10 +1,12 @@
-import { ShaderProgram } from "components/shader_program.js";
-import { EntityNode } from "./entity_node.js";
-import { Vertex } from "utils/vertex.js";
-import { Vector } from "utils/vector.js";
+import { ShaderAttribute, ShaderProgram } from "components/shader_program";
+import { Entity } from "components/entities/entity";
+import { Vertex } from "utils/vertex";
+import { Vector } from "utils/vector";
 import { Util } from "utils/util";
+import { Phase } from "renderer/renderer";
+import { EntityKind } from "components/entities/entity";
 
-export class EntityModel extends EntityNode {
+export class EntityModel extends Entity {
     static KIND_CUBE = "cube";
     static KIND_PYRAMID = "pyramid";
     static KIND_SPHERE = "sphere";
@@ -85,12 +87,13 @@ export class EntityModel extends EntityNode {
     #material;
     #texture;
 
-    static async create(phases, name, gl, kind, material) {
-        return await new EntityModel()._init(phases, name, gl, kind, material);
+    static async create(phases: Array<Phase>, name: string, gl: WebGL2RenderingContext, kind, material): Promise<EntityModel> {
+        return await new EntityModel().init([phases, name, gl, kind, material]);
     }
 
-    async _init(phases, name, gl, kind, material) {
-        await super._init(phases, name, EntityNode.MODEL);
+    protected async init(args: Array<any>): Promise<this> {
+        let [phases, name, gl, kind, material] = args
+        await super.init([phases, name, EntityKind.Model]);
 
         this.#material = material;
 
@@ -162,14 +165,14 @@ export class EntityModel extends EntityNode {
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
         gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 
-        gl.enableVertexAttribArray(ShaderProgram.A_POSITION);
-        gl.vertexAttribPointer(ShaderProgram.A_POSITION, 3, gl.FLOAT, false, Vertex.STRIDE, Vertex.POSITION_OFFSET);
+        gl.enableVertexAttribArray(ShaderAttribute.Position);
+        gl.vertexAttribPointer(ShaderAttribute.Position, 3, gl.FLOAT, false, Vertex.STRIDE, Vertex.POSITION_OFFSET);
 
-        gl.enableVertexAttribArray(ShaderProgram.A_NORMAL);
-        gl.vertexAttribPointer(ShaderProgram.A_NORMAL, 3, gl.FLOAT, false, Vertex.STRIDE, Vertex.NORMAL_OFFSET);
+        gl.enableVertexAttribArray(ShaderAttribute.Normal);
+        gl.vertexAttribPointer(ShaderAttribute.Normal, 3, gl.FLOAT, false, Vertex.STRIDE, Vertex.NORMAL_OFFSET);
 
-        gl.enableVertexAttribArray(ShaderProgram.A_TEX_COORDS);
-        gl.vertexAttribPointer(ShaderProgram.A_TEX_COORDS, 2, gl.FLOAT, false, Vertex.STRIDE, Vertex.TEX_COORDS_OFFSET);
+        gl.enableVertexAttribArray(ShaderAttribute.TexCoords);
+        gl.vertexAttribPointer(ShaderAttribute.TexCoords, 2, gl.FLOAT, false, Vertex.STRIDE, Vertex.TEX_COORDS_OFFSET);
 
         if (material.hasDiffuseTexture) {
             this.#texture = gl.createTexture();
@@ -187,7 +190,7 @@ export class EntityModel extends EntityNode {
         return this;
     }
 
-    draw(gl, shaderProgram) {
+    draw(gl: WebGL2RenderingContext, shaderProgram: ShaderProgram) {
         let modelMatrixId = gl.getUniformLocation(shaderProgram.program, "u_modelMatrix");
         gl.uniformMatrix4fv(modelMatrixId, false, this.modelMatrixGlobal.m);
 
