@@ -35,14 +35,14 @@ class Main {
         let translationGroup = document.querySelector("#config-translation") as HTMLElement;
         let rotationGroup = document.querySelector("#config-rotation") as HTMLElement;
         let scaleGroup = document.querySelector("#config-scale") as HTMLElement;
-        /*this.config = await Config.create(
+        this.config = await Config.create(
             entitiesContainer,
             infoContainer,
             translationGroup,
             rotationGroup,
             scaleGroup,
             this.scene
-        );*/
+        );
 
         return this;
     }
