@@ -6,7 +6,7 @@ import { EntityCamera } from "components/entities/entity_camera";
 import { EntityLight } from "components/entities/entity_light"
 import { Vector } from "utils/vector";
 import { Material } from "utils/material";
-import { Light } from "utils/light";
+import { Light, LightKind } from "utils/light";
 
 export class Scene {
     rootEntity!: Entity;
@@ -77,7 +77,7 @@ export class Scene {
         let lightNodeLight = await EntityLight.create(
             [Phase.PassPhong],
             "Light #2",
-            new Light(Light.KIND_DIRECTIONAL, new Vector(1, 1, 1), 1)
+            new Light(LightKind.Directional, new Vector(1, 1, 1), 1, 0, 0)
         );
         lightNode.addChild(lightNodeLight);
 
@@ -109,11 +109,11 @@ export class Scene {
         pointLightModel.scale = new Vector(0.5, 0.5, 0.5);
         pointLightNode.addChild(pointLightModel);
 
-        let pointLight = await EntityLight.create([Phase.PassPhong], "Point light", new Light(Light.KIND_POINT, new Vector(0.5, 0.5, 1), 1, 0.07, 0.017));
+        let pointLight = await EntityLight.create([Phase.PassPhong], "Point light", new Light(LightKind.Point, new Vector(0.5, 0.5, 1), 1, 0.07, 0.017));
         pointLightNode.addChild(pointLight);
 
         // Ambient light
-        let ambientLight = await EntityLight.create([Phase.PassPhong], "Ambient light", new Light(Light.KIND_AMBIENT, new Vector(1, 1, 1), 1));
+        let ambientLight = await EntityLight.create([Phase.PassPhong], "Ambient light", new Light(LightKind.Ambient, new Vector(1, 1, 1), 1, 0, 0));
         this.rootEntity.addChild(ambientLight);
 
         return this;

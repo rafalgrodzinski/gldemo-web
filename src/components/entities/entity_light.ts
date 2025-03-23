@@ -1,6 +1,6 @@
 import { Phase } from "renderer/renderer";
 import { Entity, EntityKind } from "components/entities/entity";
-import { Light } from "utils/light";
+import { Light, LightKind } from "utils/light";
 import { ShaderProgram } from "components/shader_program";
 
 export class EntityLight extends Entity {
@@ -38,7 +38,7 @@ export class EntityLight extends Entity {
         gl.uniform1i(kindId, this.light.kind);
 
         switch (this.light.kind) {
-            case Light.KIND_AMBIENT: {
+            case LightKind.Ambient: {
                 let colorId = gl.getUniformLocation(shaderProgram.program, idPrefix + "color");
                 gl.uniform3fv(colorId, this.light.color.m);
 
@@ -46,7 +46,7 @@ export class EntityLight extends Entity {
                 gl.uniform1f(intensityId, this.light.intensity);
                 break;
             }
-            case Light.KIND_DIRECTIONAL: {
+            case LightKind.Directional: {
                 let colorId = gl.getUniformLocation(shaderProgram.program, idPrefix + "color");
                 gl.uniform3fv(colorId, this.light.color.m);
 
@@ -57,7 +57,7 @@ export class EntityLight extends Entity {
                 gl.uniform1f(intensityId, this.light.intensity);
                 break;
             }
-            case Light.KIND_POINT: {
+            case LightKind.Point: {
                 let colorId = gl.getUniformLocation(shaderProgram.program, idPrefix + "color");
                 gl.uniform3fv(colorId, this.light.color.m);
 
