@@ -11,7 +11,7 @@ export class Renderer {
     static PHASE_PASS_GRID = "phase_pass_grid";
 
     scene!: Scene;
-    #renderPasses!: Array<RenderPass | RenderPassPhong | RenderPassGrid>;
+    #renderPasses: Array<RenderPass> = [];
 
      static async create(gl: WebGL2RenderingContext, scene: Scene) {
         return await new Renderer()._init(gl, scene);
