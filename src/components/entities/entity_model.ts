@@ -1,9 +1,9 @@
 import { ShaderAttribute, ShaderProgram } from "components/shader_program";
 import { Entity } from "components/entities/entity";
-import { Vertex } from "utils/vertex";
+import { Vertex } from "data/vertex";
 import { Phase } from "renderer/renderer";
 import { EntityKind } from "components/entities/entity";
-import { Model } from "data/model";
+import { Model } from "data/model/model";
 
 export class EntityModel extends Entity {
     private model!: Model;

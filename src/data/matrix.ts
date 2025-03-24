@@ -1,4 +1,4 @@
-import { Vector } from "utils/vector";
+import { Vector } from "data/vector";
 
 export class Matrix {
     m: Array<number>;

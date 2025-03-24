@@ -1,5 +1,5 @@
 import { Phase } from "renderer/renderer"
-import { Entity } from "../components/entities/entity";
+import { Entity } from "components/entities/entity";
 
 export abstract class RenderPass {
     phase!: Phase;

@@ -1,4 +1,4 @@
-import { Vector } from "utils/vector";
+import { Data3 } from "data/data_types";
 
 export enum LightKind {
     Ambient = 1,
@@ -9,12 +9,12 @@ export enum LightKind {
 
 export class Light {
     kind: LightKind;
-    color: Vector;
+    color: Data3;
     intensity: number;
     linearAttenuation: number;
     quadaraticAttenuation: number;
 
-    constructor(kind: LightKind, color: Vector, intensity: number, linearAttenuation: number, quadaraticAttenuation: number) {
+    constructor(kind: LightKind, color: Data3, intensity: number, linearAttenuation: number, quadaraticAttenuation: number) {
         this.kind = kind;
         this.color = color;
         this.intensity = intensity;

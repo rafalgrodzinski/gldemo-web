@@ -1,5 +1,5 @@
-import { Material } from "utils/material";
-import { Vertex } from "utils/vertex";
+import { Material } from "data/material";
+import { Vertex } from "data/vertex";
 
 export abstract class Model {
     verticesData!: Float32Array;

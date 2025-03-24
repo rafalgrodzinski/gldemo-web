@@ -1,8 +1,8 @@
 import { Input } from "utils/input";
 import { ShaderProgram } from "shader_program";
 import { Phase } from "renderer/renderer";
-import { Vector } from "utils/vector";
-import { Matrix } from "utils/matrix";
+import { Vector } from "data/vector";
+import { Matrix } from "data/matrix";
 
 export enum EntityKind {
     Node,

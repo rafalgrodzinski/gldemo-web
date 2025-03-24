@@ -1,6 +1,6 @@
 import { Phase } from "renderer/renderer";
 import { Entity, EntityKind } from "components/entities/entity";
-import { Light, LightKind } from "utils/light";
+import { Light, LightKind } from "../../data/light";
 import { ShaderProgram } from "components/shader_program";
 
 export class EntityLight extends Entity {

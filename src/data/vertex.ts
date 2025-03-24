@@ -1,6 +1,4 @@
-export type Point3 = {x: number, y: number, z: number};
-export type Vec3 = {x: number, y: number, z: number};
-export type TexCoord = {s: number, t: number};
+import { Data2, Data3 } from "data/data_types";
 
 export class Vertex {
     static STRIDE_LENGTH = 3 + 3 + 2;
@@ -9,9 +7,9 @@ export class Vertex {
     static NORMAL_OFFSET: number = Float32Array.BYTES_PER_ELEMENT * 3;
     static TEX_COORDS_OFFSET: number = Float32Array.BYTES_PER_ELEMENT * (3 + 3);
 
-    position: Point3;
-    normal: Vec3;
-    texCoord: TexCoord;
+    position: Data3;
+    normal: Data3;
+    texCoord: Data2;
 
     get m(): Array<number> {
         return [
@@ -21,7 +19,7 @@ export class Vertex {
         ];
     }
 
-    constructor(position: Point3, normal: Vec3, texCoord: TexCoord) {
+    constructor(position: Data3, normal: Data3, texCoord: Data2) {
         this.position = position;
         this.normal = normal;
         this.texCoord = texCoord;

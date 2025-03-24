@@ -32,31 +32,6 @@ export class Vector {
         this.m[2] = value;
     }
 
-    // RGB
-    get r(): number {
-        return this.m[0];
-    }
-
-    set r(value: number) {
-        this.m[0] = value;
-    }
-
-    get g(): number {
-        return this.m[1];
-    }
-
-    set g(value: number) {
-        this.m[1] = value;
-    }
-
-    get b(): number {
-        return this.m[2];
-    }
-
-    set b(value: number) {
-        this.m[2] = value;
-    }
-
     // Operations
     add(other: Vector): Vector {
         return new Vector(this.x + other.x, this.y + other.y, this.z + other.z);

@@ -1,6 +1,6 @@
 import { Entity, EntityKind } from "components/entities/entity";
-import { Matrix } from "utils/matrix";
-import { Vector } from "utils/vector";
+import { Matrix } from "data/matrix";
+import { Vector } from "data/vector";
 import { Util } from "utils/util";
 import { Phase } from "renderer/renderer";
 import { ShaderProgram } from "components/shader_program";

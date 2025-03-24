@@ -1,7 +1,7 @@
 import { RenderPass } from "renderer/render_pass";
 import { Phase } from "renderer/renderer";
 import { ShaderProgram } from "components/shader_program";
-import { Entity } from "../components/entities/entity";
+import { Entity } from "components/entities/entity";
 
 export class RenderPassPhong extends RenderPass {
     private shaderProgram!: ShaderProgram;

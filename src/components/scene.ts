@@ -4,11 +4,12 @@ import { EntityNode } from "entities/entity_node";
 import { EntityModel } from "components/entities/entity_model";
 import { EntityCamera } from "components/entities/entity_camera";
 import { EntityLight } from "components/entities/entity_light"
-import { Vector } from "utils/vector";
-import { Material } from "utils/material";
-import { Light, LightKind } from "utils/light";
+import { Vector } from "data/vector";
+import { Material } from "data/material";
+import { Light, LightKind } from "../data/light";
 import { Util } from "utils/util";
-import { ModelProcedural, ModelProceduralKind } from "data/model_procedural";
+import { ModelProcedural, ModelProceduralKind } from "data/model/model_procedural";
+import { Data } from "data/data_types";
 
 export class Scene {
     rootEntity!: Entity;
@@ -22,11 +23,11 @@ export class Scene {
 
         this.rootEntity = await EntityNode.create("Root");
 
-        let material1 = new Material(new Vector(1, 1, 1), 0.1, 1, 0, false, await Util.image("box.jpg"));
-        let material2 = new Material(new Vector(1, 0.5, 0.5), 0.1, 0.5, 2, false, await Util.image("box.jpg"));
-        let material3 = new Material(new Vector(0.5, 1, 0.5), 0.1, 0.8, 16, false, null);
-        let material4 = new Material(new Vector(1, 1, 0.5), 0, 0, 0, true, null);
-        let pointLightMaterial = new Material(new Vector(0.5, 0.5, 1), 0, 0, 0, true, null);
+        let material1 = new Material(Data.rgb(1, 1, 1), 0.1, 1, 0, false, await Util.image("box.jpg"));
+        let material2 = new Material(Data.rgb(1, 0.5, 0.5), 0.1, 0.5, 2, false, await Util.image("box.jpg"));
+        let material3 = new Material(Data.rgb(0.5, 1, 0.5), 0.1, 0.8, 16, false, null);
+        let material4 = new Material(Data.rgb(1, 1, 0.5), 0, 0, 0, true, null);
+        let pointLightMaterial = new Material(Data.rgb(0.5, 0.5, 1), 0, 0, 0, true, null);
 
         let modelPyramid = await ModelProcedural.create(ModelProceduralKind.Pyramid, material1);
         let modelCube = await ModelProcedural.create(ModelProceduralKind.Cube, material3);
@@ -62,7 +63,7 @@ export class Scene {
         let lightNodeLight = await EntityLight.create(
             [Phase.PassPhong],
             "Light #2",
-            new Light(LightKind.Directional, new Vector(1, 1, 1), 1, 0, 0)
+            new Light(LightKind.Directional, Data.rgb(1, 1, 1), 1, 0, 0)
         );
         lightNode.addChild(lightNodeLight);
 
@@ -87,11 +88,11 @@ export class Scene {
         pointLightModel.scale = new Vector(0.5, 0.5, 0.5);
         pointLightNode.addChild(pointLightModel);
 
-        let pointLight = await EntityLight.create([Phase.PassPhong], "Point light", new Light(LightKind.Point, new Vector(0.5, 0.5, 1), 1, 0.07, 0.017));
+        let pointLight = await EntityLight.create([Phase.PassPhong], "Point light", new Light(LightKind.Point, Data.rgb(0.5, 0.5, 1), 1, 0.07, 0.017));
         pointLightNode.addChild(pointLight);
 
         // Ambient light
-        let ambientLight = await EntityLight.create([Phase.PassPhong], "Ambient light", new Light(LightKind.Ambient, new Vector(1, 1, 1), 1, 0, 0));
+        let ambientLight = await EntityLight.create([Phase.PassPhong], "Ambient light", new Light(LightKind.Ambient, Data.rgb(1, 1, 1), 1, 0, 0));
         this.rootEntity.addChild(ambientLight);
 
         return this;
