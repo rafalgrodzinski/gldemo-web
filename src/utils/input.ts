@@ -14,24 +14,39 @@ export class Input {
     private static releaseKey = "Escape";
 
     private keyboardMovement: InputMovement = {forward: 0, right: 0, up: 0};
+    private touchMovement: InputMovement = {forward: 0, right: 0, up: 0};
     private gamepadMovement: InputMovement = {forward: 0, right: 0, up: 0};
 
     private mouseActions: InputActions = {primary: false, secondary: false};
+    private touchActions: InputActions = {primary: false, secondary: false};
     private gamepadActions: InputActions = {primary: false, secondary: false};
 
     private mouseLook: InputLook = {horizontal: 0, vertical: 0, zoom: 0};
     private gamepadLook: InputLook = {horizontal: 0, vertical: 0, zoom: 0};
+    private touchLook: InputLook = {horizontal: 0, vertical: 0, zoom: 0};
 
     private shouldReleaseOnMouseUp: boolean = false;
     private shouldIgnoreClick: boolean = false;
+    private touchesCount: number = 0;
+    private lastTouch: {x: number, y: number} | null = null;
 
     get movement(): InputMovement {
+        // Keyboard
         let values: InputMovement = {
             forward: this.keyboardMovement.forward,
             right: this.keyboardMovement.right,
             up: this.keyboardMovement.up
         };
 
+        // Touch
+        if (this.touchMovement.forward != 0)
+            values.forward = this.touchMovement.forward;
+        if (this.touchMovement.right != 0)
+            values.right = this.touchMovement.right;
+        if (this.touchMovement.up != 0)
+            values.up = this.touchMovement.up;
+
+        // Gamepad
         if (this.gamepadMovement.forward != 0)
             values.forward = this.gamepadMovement.forward;
         if (this.gamepadMovement.right != 0)
@@ -44,19 +59,28 @@ export class Input {
 
     get actions(): InputActions {
         let values: InputActions = {
-            primary: this.mouseActions.primary || this.gamepadActions.primary,
-            secondary: this.mouseActions.secondary || this.gamepadActions.secondary
+            primary: this.mouseActions.primary || this.touchActions.primary || this.gamepadActions.primary,
+            secondary: this.mouseActions.secondary || this.touchActions.secondary || this.gamepadActions.secondary
         };
 
         return values;
     }
 
     get look(): InputLook {
+        // Mouse
         let values: InputLook = {
             horizontal: this.mouseLook.horizontal,
             vertical: this.mouseLook.vertical,
             zoom: this.mouseLook.zoom
         }
+
+        // Touch
+        if (this.touchLook.horizontal != 0)
+            values.horizontal = this.touchLook.horizontal;
+        if (this.touchLook.vertical != 0)
+            values.vertical = this.touchLook.vertical;
+
+        // Gamepad
         if (this.gamepadLook.horizontal != 0)
             values.horizontal = this.gamepadLook.horizontal
         if (this.gamepadLook.vertical != 0)
@@ -79,6 +103,7 @@ export class Input {
 
         this.initKeyboard();
         this.initMouse(container);
+        this.initTouch(container);
 
         return this;
     }
@@ -191,6 +216,78 @@ export class Input {
         });
     }
 
+    private initTouch(container: HTMLElement) {
+        container.addEventListener("touchstart", (event) => {
+                let x = event.touches[0].clientX;
+                let y = event.touches[0].clientY;
+
+                this.lastTouch = { x: x, y: y };
+
+                this.touchesCount = event.touches.length;
+
+                event.preventDefault();
+        });
+
+        container.addEventListener("touchmove", (event) => {
+            let x = event.touches[0].clientX;
+            let y = event.touches[0].clientY;
+
+            if (this.touchesCount == 1) {
+                this.touchLook.horizontal += (x - this.lastTouch!.x) / 250;
+                this.touchLook.vertical += (y - this.lastTouch!.y) / 250;
+            } else if (this.touchesCount == 2) {
+                this.touchMovement.right += x - this.lastTouch!.x;
+                this.touchMovement.up -= y - this.lastTouch!.y;
+            } else if (this.touchesCount == 3) {
+                this.touchMovement.forward = y - this.lastTouch!.y;
+            }
+
+            this.lastTouch = {x: x, y: y};
+
+            event.preventDefault();
+        });
+
+        container.addEventListener("touchend", (event) => {
+            let x = event.touches[0].clientX;
+            let y = event.touches[0].clientY;
+
+            if (this.touchesCount == 1) {
+                this.touchLook.horizontal += (x - this.lastTouch!.x) / 250;
+                this.touchLook.vertical += (y - this.lastTouch!.y) / 250;
+            } else if (this.touchesCount == 2) {
+                this.touchMovement.right += x - this.lastTouch!.x;
+                this.touchMovement.up += y - this.lastTouch!.y;
+            } else if (this.touchesCount == 3) {
+                this.touchMovement.forward = y - this.lastTouch!.y;
+            }
+    
+            this.lastTouch = null;
+            this.touchesCount = 0;
+            this.touchActions.primary = false;
+            event.preventDefault();
+        });
+
+        container.addEventListener("touchcancel", (event) => {
+            let x = event.touches[0].clientX / 250;
+            let y = event.touches[0].clientY / 250;
+
+            if (this.touchesCount == 1) {
+                this.touchLook.horizontal += x - this.lastTouch!.x;
+                this.touchLook.vertical += y - this.lastTouch!.y;
+            } else if (this.touchesCount == 2) {
+                this.touchMovement.right += x - this.lastTouch!.x;
+                this.touchMovement.up += y - this.lastTouch!.y;
+            } else if (this.touchesCount == 3) {
+                this.touchMovement.forward = y - this.lastTouch!.y;
+            }
+
+            this.lastTouch = null;
+            this.touchesCount = 0;
+            this.touchActions.primary = false;
+            event.preventDefault();
+        });
+    }
+
     private readGamepad() {
         this.gamepadMovement = {forward: 0, right: 0, up: 0};
         this.gamepadActions = {primary: false, secondary: false};
@@ -224,6 +321,8 @@ export class Input {
 
     resetState() {
         this.mouseLook = {horizontal: 0, vertical: 0, zoom: 0};
+        this.touchLook = {horizontal: 0, vertical: 0, zoom: 0};
+        this.touchMovement = {forward: 0, right: 0, up: 0};
         this.readGamepad();
     }
 }
