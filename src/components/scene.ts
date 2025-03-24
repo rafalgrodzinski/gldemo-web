@@ -6,10 +6,11 @@ import { EntityCamera } from "components/entities/entity_camera";
 import { EntityLight } from "components/entities/entity_light"
 import { Vector } from "data/vector";
 import { Material } from "data/material";
-import { Light, LightKind } from "../data/light";
+import { Light, LightKind } from "data/light";
 import { Util } from "utils/util";
 import { ModelProcedural, ModelProceduralKind } from "data/model/model_procedural";
 import { Data } from "data/data_types";
+import { ModelObj } from "data/model/model_obj";
 
 export class Scene {
     rootEntity!: Entity;
@@ -94,6 +95,13 @@ export class Scene {
         // Ambient light
         let ambientLight = await EntityLight.create([Phase.PassPhong], "Ambient light", new Light(LightKind.Ambient, Data.rgb(1, 1, 1), 1, 0, 0));
         this.rootEntity.addChild(ambientLight);
+
+        // Bear
+        let bearMaterial = new Material(Data.rgb(0.5,  0.5, 0.5), 0.1, 1, 4, false, await Util.image("bear.png"));
+        let bearModel = await ModelObj.create("bear.obj", bearMaterial);
+        let bearEntity = await EntityModel.create([Phase.PassPhong], "Bear", gl, bearModel);
+        bearEntity.scale.x = bearEntity.scale.y = bearEntity.scale.z = 0.2;
+        this.rootEntity.addChild(bearEntity);
 
         return this;
     }
