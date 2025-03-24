@@ -3,7 +3,8 @@ export type Vec3 = {x: number, y: number, z: number};
 export type TexCoord = {s: number, t: number};
 
 export class Vertex {
-    static STRIDE: number = Float32Array.BYTES_PER_ELEMENT * (3 + 3 + 2);
+    static STRIDE_LENGTH = 3 + 3 + 2;
+    static STRIDE: number = Float32Array.BYTES_PER_ELEMENT * Vertex.STRIDE_LENGTH;
     static POSITION_OFFSET: number = 0;
     static NORMAL_OFFSET: number = Float32Array.BYTES_PER_ELEMENT * 3;
     static TEX_COORDS_OFFSET: number = Float32Array.BYTES_PER_ELEMENT * (3 + 3);

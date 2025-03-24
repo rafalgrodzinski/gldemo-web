@@ -1,163 +1,30 @@
 import { ShaderAttribute, ShaderProgram } from "components/shader_program";
 import { Entity } from "components/entities/entity";
 import { Vertex } from "utils/vertex";
-import { Vector } from "utils/vector";
-import { Util } from "utils/util";
 import { Phase } from "renderer/renderer";
 import { EntityKind } from "components/entities/entity";
-import { Material } from "utils/material";
+import { Model } from "data/model";
 
 export class EntityModel extends Entity {
-    static KIND_CUBE = "cube";
-    static KIND_PYRAMID = "pyramid";
-    static KIND_SPHERE = "sphere";
+    private model!: Model;
+    private vertexArray!: WebGLVertexArrayObject;
+    private texture: WebGLTexture | null = null;
 
-    static #cubeVertices = [
-        // Front
-        new Vertex({ x: -1, y: -1, z: 1 }, { x: 0, y: 0, z: 1 }, {s: 0, t: 0}),
-        new Vertex({ x: -1, y: 1, z: 1 }, { x: 0, y: 0, z: 1 }, {s: 0, t: 1}),
-        new Vertex({ x: 1, y: -1, z: 1 }, { x: 0, y: 0, z: 1 }, {s: 1, t: 0}),
-        new Vertex({ x: 1, y: -1, z: 1 }, { x: 0, y: 0, z: 1 }, {s: 1, t: 0}),
-        new Vertex({ x: -1, y: 1, z: 1 }, { x: 0, y: 0, z: 1 }, {s: 0, t: 1}),
-        new Vertex({ x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 1 }, {s: 1, t: 1}),
-        // Back
-        new Vertex({ x: 1, y: -1, z: -1 }, { x: 0, y: 0, z: -1 }, {s: 0, t: 0}),
-        new Vertex({ x: 1, y: 1, z: -1 }, { x: 0, y: 0, z: -1 }, {s: 0, t: 1}),
-        new Vertex({ x: -1, y: 1, z: -1 }, { x: 0, y: 0, z: -1 }, {s: 1, t: 1}),
-        new Vertex({ x: 1, y: -1, z: -1 }, { x: 0, y: 0, z: -1 }, {s: 0, t: 0}),
-        new Vertex({ x: -1, y: 1, z: -1 }, { x: 0, y: 0, z: -1 }, {s: 1, t: 1}),
-        new Vertex({ x: -1, y: -1, z: -1 }, { x: 0, y: 0, z: -1 }, {s: 1, t: 0}),
-        // Left
-        new Vertex({ x: -1, y: -1, z: -1 }, { x: -1, y: 0, z: 0 }, {s: 0, t: 0}),
-        new Vertex({ x: -1, y: 1, z: -1 }, { x: -1, y: 0, z: 0 }, {s: 0, t: 1}),
-        new Vertex({ x: -1, y: 1, z: 1 }, { x: -1, y: 0, z: 0 }, {s: 1, t: 1}),
-        new Vertex({ x: -1, y: -1, z: -1 }, { x: -1, y: 0, z: 0 }, {s: 1, t: 0}),
-        new Vertex({ x: -1, y: 1, z: 1 }, { x: -1, y: 0, z: 0 }, {s: 0, t: 1}),
-        new Vertex({ x: -1, y: -1, z: 1 }, { x: -1, y: 0, z: 0 }, {s: 1, t: 1}),
-        // Right
-        new Vertex({ x: 1, y: -1, z: 1 }, { x: 1, y: 0, z: 0 }, {s: 0, t: 0}),
-        new Vertex({ x: 1, y: 1, z: 1 }, { x: 1, y: 0, z: 0 }, {s: 0, t: 1}),
-        new Vertex({ x: 1, y: 1, z: -1 }, { x: 1, y: 0, z: 0 }, {s: 1, t: 1}),
-        new Vertex({ x: 1, y: -1, z: 1 }, { x: 1, y: 0, z: 0 }, {s: 1, t: 0}),
-        new Vertex({ x: 1, y: 1, z: -1 }, { x: 1, y: 0, z: 0 }, {s: 0, t: 1}),
-        new Vertex({ x: 1, y: -1, z: -1 }, { x: 1, y: 0, z: 0 }, {s: 1, t: 1}),
-        // Top
-        new Vertex({ x: -1, y: 1, z: 1 }, { x: 0, y: 1, z: 0 }, {s: 0, t: 0}),
-        new Vertex({ x: -1, y: 1, z: -1 }, { x: 0, y: 1, z: 0 }, {s: 0, t: 1}),
-        new Vertex({ x: 1, y: 1, z: -1 }, { x: 0, y: 1, z: 0 }, {s: 1, t: 1}),
-        new Vertex({ x: -1, y: 1, z: 1 }, { x: 0, y: 1, z: 0 }, {s: 1, t: 0}),
-        new Vertex({ x: 1, y: 1, z: -1 }, { x: 0, y: 1, z: 0 }, {s: 0, t: 1}),
-        new Vertex({ x: 1, y: 1, z: 1 }, { x: 0, y: 1, z: 0 }, {s: 1, t: 1}),
-        // Bottom
-        new Vertex({ x: -1, y: -1, z: 1 }, { x: 0, y: -1, z: 0 }, {s: 0, t: 0}),
-        new Vertex({ x: 1, y: -1, z: -1 }, { x: 0, y: -1, z: 0 }, {s: 1, t: 1}),
-        new Vertex({ x: -1, y: -1, z: -1 }, { x: 0, y: -1, z: 0 }, {s: 0, t: 1}),
-        new Vertex({ x: -1, y: -1, z: 1 }, { x: 0, y: -1, z: 0 }, {s: 0, t: 0}),
-        new Vertex({ x: 1, y: -1, z: 1 }, { x: 0, y: -1, z: 0 }, {s: 1, t: 0}),
-        new Vertex({ x: 1, y: -1, z: -1 }, { x: 0, y: -1, z: 0 }, {s: 1, t: 1})
-    ];
-
-    static #pyramidVertices = [
-        // Front
-        new Vertex({ x: -1, y: -0.75, z: 1 }, { x: 0, y: 0.4264, z: 0.6396 }, {s: 0, t: 0}),
-        new Vertex({ x: 0, y: 0.75, z: 0 }, { x: 0, y: 0.4264, z: 0.6396 }, {s: 0.5, t: 1}),
-        new Vertex({ x: 1, y: -0.75, z: 1 }, { x: 0, y: 0.4264, z: 0.6396 }, {s: 1, t: 0}),
-        // Back
-        new Vertex({ x: 1, y: -0.75, z: -1 }, { x: 0, y: 0.4264, z: -0.6396 }, {s: 0, t: 0}),
-        new Vertex({ x: 0, y: 0.75, z: 0 }, { x: 0, y: 0.4264, z: -0.6396 }, {s: 0.5, t: 1}),
-        new Vertex({ x: -1, y: -0.75, z: -1 }, { x: 0, y: 0.4264, z: -0.6396 }, {s: 1, t: 0}),
-        // Left
-        new Vertex({ x: -1, y: -0.75, z: -1 }, { x: -0.6396, y: 0.4264, z: 0 }, {s: 0, t: 0}),
-        new Vertex({ x: 0, y: 0.75, z: 0 }, { x: -0.6396, y: 0.4264, z: 0 }, {s: 0.5, t: 1}),
-        new Vertex({ x: -1, y: -0.75, z: 1 }, { x: -0.6396, y: 0.4264, z: 0 }, {s: 1, t: 0}),
-        // Right
-        new Vertex({ x: 1, y: -0.75, z: 1 }, { x: 0.6396, y: 0.4264, z: 0 }, {s: 0, t: 0}),
-        new Vertex({ x: 0, y: 0.75, z: 0 }, { x: 0.6396, y: 0.4264, z: 0 }, {s: 0.5, t: 1}),
-        new Vertex({ x: 1, y: -0.75, z: -1 }, { x: 0.6396, y: 0.4264, z: 0 }, {s: 1, t: 0}),
-        // Bottom
-        new Vertex({ x: -1, y: -0.75, z: 1 }, { x: 0, y: -1, z: 0 }, {s: 0, t: 0}),
-        new Vertex({ x: 1, y: -0.75, z: 1 }, { x: 0, y: -1, z: 0 }, {s: 1, t: 0}),
-        new Vertex({ x: -1, y: -0.75, z: -1 }, { x: 0, y: -1, z: 0 }, {s: 0, t: 1}),
-        new Vertex({ x: -1, y: -0.75, z: -1 }, { x: 0, y: -1, z: 0 }, {s: 0, t: 1}),
-        new Vertex({ x: 1, y: -0.75, z: 1 }, { x: 0, y: -1, z: 0 }, {s: 1, t: 0}),
-        new Vertex({ x: 1, y: -0.75, z: -1 }, { x: 0, y: -1, z: 0 }, {s: 1, t: 1}),
-    ];
-
-    #vertices;
-    #vertexArray;
-    private material!: Material;
-    #texture;
-
-    static async create(phases: Array<Phase>, name: string, gl: WebGL2RenderingContext, kind, material: Material): Promise<EntityModel> {
-        return await new EntityModel().init([phases, name, gl, kind, material]);
+    static async create(phases: Array<Phase>, name: string, gl: WebGL2RenderingContext, model: Model): Promise<EntityModel> {
+        return await new EntityModel().init([phases, name, gl, model]);
     }
 
     protected async init(args: Array<any>): Promise<this> {
-        let [phases, name, gl, kind, material] = args as [Array<Phase>, string, WebGL2RenderingContext, any, Material];
+        let [phases, name, gl, model] = args as [Array<Phase>, string, WebGL2RenderingContext, Model];
         await super.init([phases, name, EntityKind.Model]);
+        this.model = model;
 
-        this.material = material;
-
-        switch (kind) {
-            case EntityModel.KIND_CUBE:
-                this.#vertices = EntityModel.#cubeVertices;
-                break;
-            case EntityModel.KIND_PYRAMID:
-                this.#vertices = EntityModel.#pyramidVertices;
-                break;
-            case EntityModel.KIND_SPHERE:
-                let segments = 32;
-                this.#vertices = [];
-                for (let iy=0; iy<segments; iy++) {
-                    for (let ix=0; ix<segments; ix++) {
-                        let x1 = Math.sin(ix/segments * Math.PI * 2) * Math.sin((iy+1)/segments * Math.PI);
-                        let x2 = Math.sin((ix+1)/segments * Math.PI * 2) * Math.sin((iy+1)/segments * Math.PI);
-                        let x3 = Math.sin((ix+1)/segments * Math.PI * 2) * Math.sin(iy/segments * Math.PI);
-                        let x4 = Math.sin(ix/segments * Math.PI * 2) * Math.sin(iy/segments * Math.PI);
-
-                        let y1 = Math.cos((iy+1)/segments * Math.PI);
-                        let y2 = Math.cos((iy+1)/segments * Math.PI);
-                        let y3 = Math.cos((iy+0)/segments * Math.PI);
-                        let y4 = Math.cos((iy+0)/segments * Math.PI);
-
-                        let z1 = Math.sin((iy+1) / segments * Math.PI) * Math.cos(ix / segments * Math.PI * 2);
-                        let z2 = Math.sin((iy+1) / segments * Math.PI) * Math.cos((ix + 1) / segments * Math.PI * 2);
-                        let z3 = Math.sin(iy / segments * Math.PI) * Math.cos((ix + 1) / segments * Math.PI * 2);
-                        let z4 = Math.sin(iy / segments * Math.PI) * Math.cos(ix / segments * Math.PI * 2);
-
-                        let n1 = new Vector(x1, y1, z1).normalize();
-                        let n2 = new Vector(x2, y2, z2).normalize();
-                        let n3 = new Vector(x3, y3, z3).normalize();
-                        let n4 = new Vector(x4, y4, z4).normalize();
-
-                        let s1 = ix/segments;
-                        let s2 = (ix+1)/segments;
-                        let t1 = (iy+1)/segments;
-                        let t2 = iy/segments;
-
-                        this.#vertices.push(new Vertex({x: x1, y: y1, z: z1}, n1, {s: s1, t: t1}));
-                        this.#vertices.push(new Vertex({x: x2, y: y2, z: z2}, n2, {s: s2, t: t1}));
-                        this.#vertices.push(new Vertex({x: x3, y: y3, z: z3}, n3, {s: s2, t: t2}));
-
-                        this.#vertices.push(new Vertex({x: x1, y: y1, z: z1}, n1, {s: s1, t: t1}));
-                        this.#vertices.push(new Vertex({x: x3, y: y3, z: z3}, n3, {s: s2, t: t2}));
-                        this.#vertices.push(new Vertex({x: x4, y: y4, z: z4}, n4, {s: s1, t: t2}));
-                    }
-                }
-                break;
-        }
-
-        this.#vertexArray = gl.createVertexArray();
-        gl.bindVertexArray(this.#vertexArray);
-
-        let data =  new Float32Array(8 * this.#vertices.length);
-        this.#vertices.forEach((vertex, i) => {
-            data.set(vertex.m, i * 8);
-        });
+        this.vertexArray = gl.createVertexArray();
+        gl.bindVertexArray(this.vertexArray);
 
         let buffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, model.verticesData, gl.STATIC_DRAW);
 
         gl.enableVertexAttribArray(ShaderAttribute.Position);
         gl.vertexAttribPointer(ShaderAttribute.Position, 3, gl.FLOAT, false, Vertex.STRIDE, Vertex.POSITION_OFFSET);
@@ -168,11 +35,10 @@ export class EntityModel extends Entity {
         gl.enableVertexAttribArray(ShaderAttribute.TexCoords);
         gl.vertexAttribPointer(ShaderAttribute.TexCoords, 2, gl.FLOAT, false, Vertex.STRIDE, Vertex.TEX_COORDS_OFFSET);
 
-        if (material.diffuseTexture) {
-            this.#texture = gl.createTexture();
-            gl.bindTexture(gl.TEXTURE_2D, this.#texture);
-            //let image = await Util.image("box.jpg");
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, material.diffuseTexture);
+        if (model.material.diffuseTexture) {
+            this.texture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, this.texture);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, model.material.diffuseTexture);
             gl.generateMipmap(gl.TEXTURE_2D);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
@@ -189,31 +55,31 @@ export class EntityModel extends Entity {
         gl.uniformMatrix4fv(modelMatrixId, false, this.modelMatrixGlobal.m);
 
         let materialColorId = gl.getUniformLocation(shaderProgram.program, "u_material.color");
-        gl.uniform3fv(materialColorId, this.material.color.m);
+        gl.uniform3fv(materialColorId, this.model.material.color.m);
 
         let materialAmbientIntensityId = gl.getUniformLocation(shaderProgram.program, "u_material.ambientIntensity");
-        gl.uniform1f(materialAmbientIntensityId, this.material.ambientIntensity);
+        gl.uniform1f(materialAmbientIntensityId, this.model.material.ambientIntensity);
 
         let materialDiffuseIntensityId = gl.getUniformLocation(shaderProgram.program, "u_material.diffuseIntensity");
-        gl.uniform1f(materialDiffuseIntensityId, this.material.diffuseIntensity);
+        gl.uniform1f(materialDiffuseIntensityId, this.model.material.diffuseIntensity);
 
         let materialSpecularIntensityId = gl.getUniformLocation(shaderProgram.program, "u_material.specularIntensity");
-        gl.uniform1f(materialSpecularIntensityId, this.material.specularIntensity);
+        gl.uniform1f(materialSpecularIntensityId, this.model.material.specularIntensity);
 
         let materialIsUnshadedId = gl.getUniformLocation(shaderProgram.program, "u_material.isUnshaded");
-        gl.uniform1i(materialIsUnshadedId, this.material.isUnshaded ? 1 : 0);
+        gl.uniform1i(materialIsUnshadedId, this.model.material.isUnshaded ? 1 : 0);
 
         let materialHasDiffuseTextureId = gl.getUniformLocation(shaderProgram.program, "u_material.hasDiffuseTexture");
-        gl.uniform1i(materialHasDiffuseTextureId, this.material.diffuseTexture ? 1 : 0);
+        gl.uniform1i(materialHasDiffuseTextureId, this.model.material.diffuseTexture ? 1 : 0);
 
-        if (this.material.diffuseTexture) {
+        if (this.texture) {
             gl.activeTexture(gl.TEXTURE0);
-            gl.bindTexture(gl.TEXTURE_2D, this.#texture);
+            gl.bindTexture(gl.TEXTURE_2D, this.texture);
             let samplerId = gl.getUniformLocation(shaderProgram.program, "u_diffuseSampler");
             gl.uniform1i(samplerId, 0);
         }
 
-        gl.bindVertexArray(this.#vertexArray);
-        gl.drawArrays(gl.TRIANGLES, 0, this.#vertices.length);
+        gl.bindVertexArray(this.vertexArray);
+        gl.drawArrays(gl.TRIANGLES, 0, this.model.verticesCount);
     }
 }

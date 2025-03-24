@@ -8,6 +8,7 @@ import { Vector } from "utils/vector";
 import { Material } from "utils/material";
 import { Light, LightKind } from "utils/light";
 import { Util } from "utils/util";
+import { ModelProcedural, ModelProceduralKind } from "data/model_procedural";
 
 export class Scene {
     rootEntity!: Entity;
@@ -25,21 +26,16 @@ export class Scene {
         let material2 = new Material(new Vector(1, 0.5, 0.5), 0.1, 0.5, 2, false, await Util.image("box.jpg"));
         let material3 = new Material(new Vector(0.5, 1, 0.5), 0.1, 0.8, 16, false, null);
         let material4 = new Material(new Vector(1, 1, 0.5), 0, 0, 0, true, null);
+        let pointLightMaterial = new Material(new Vector(0.5, 0.5, 1), 0, 0, 0, true, null);
+
+        let modelPyramid = await ModelProcedural.create(ModelProceduralKind.Pyramid, material1);
+        let modelCube = await ModelProcedural.create(ModelProceduralKind.Cube, material3);
+        let modelSphere = await ModelProcedural.create(ModelProceduralKind.Sphere, material2);
+        let modelPyramid2 = await ModelProcedural.create(ModelProceduralKind.Pyramid, material4);
+        let modelCube2 = await ModelProcedural.create(ModelProceduralKind.Cube, pointLightMaterial);
         
-        let pyramid1_1 = await EntityModel.create(
-            [Phase.PassPhong],
-            "Pyramid #1.1",
-            gl,
-            EntityModel.KIND_PYRAMID,
-            material1
-        );
-        let pyramid1_2 = await EntityModel.create(
-            [Phase.PassPhong],
-            "Pyramid #1.2",
-            gl,
-            EntityModel.KIND_PYRAMID,
-            material1
-        );
+        let pyramid1_1 = await EntityModel.create([Phase.PassPhong], "Pyramid #1.1", gl, modelPyramid);
+        let pyramid1_2 = await EntityModel.create([Phase.PassPhong], "Pyramid #1.2", gl, modelPyramid);
         let camera = await EntityCamera.create(
             [Phase.Resize, Phase.Update, Phase.PassPhong, Phase.PassGrid],
             "Camera #1"
@@ -48,29 +44,17 @@ export class Scene {
         pyramid1_1.addChild(pyramid1_2);
         this.rootEntity.addChild(pyramid1_1);
         
-        let pyramid2 = await EntityModel.create(
-            [Phase.PassPhong],
-            "Pyramid #2",
-            gl,
-            EntityModel.KIND_PYRAMID,
-            material1
-        )
+        let pyramid2 = await EntityModel.create([Phase.PassPhong], "Pyramid #2", gl, modelPyramid);
         this.rootEntity.addChild(pyramid2);
         pyramid2.addChild(
-            await EntityModel.create(
-                [Phase.PassPhong],
-                "Pyramid #3",
-                gl,
-                EntityModel.KIND_PYRAMID,
-                material1
-            )
+            await EntityModel.create([Phase.PassPhong], "Pyramid #3", gl, modelPyramid)
         );
 
         let lightNode = await EntityNode.create("Light Node");
         lightNode.translation.y = 5;
         this.rootEntity.addChild(lightNode);
 
-        let lightNodeModel = await EntityModel.create([Phase.PassPhong], "Light Model", gl, EntityModel.KIND_PYRAMID, material4);
+        let lightNodeModel = await EntityModel.create([Phase.PassPhong], "Light Model", gl, modelPyramid2);
         lightNodeModel.rotation.x = Math.PI/2;
         lightNodeModel.scale = new Vector(0.5, 0.5, 0.5);
         lightNode.addChild(lightNodeModel);
@@ -82,17 +66,11 @@ export class Scene {
         );
         lightNode.addChild(lightNodeLight);
 
-        let cube = await EntityModel.create(
-            [Phase.PassPhong],
-            "Cube",
-            gl,
-            EntityModel.KIND_CUBE,
-            material3
-        );
+        let cube = await EntityModel.create([Phase.PassPhong], "Cube", gl, modelCube);
         cube.translation.z = -5;
         this.rootEntity.addChild(cube);
 
-        let sphere = await EntityModel.create([Phase.PassPhong], "Sphere", gl, EntityModel.KIND_SPHERE, material2);
+        let sphere = await EntityModel.create([Phase.PassPhong], "Sphere", gl, modelSphere);
         sphere.translation.x += 3;
         sphere.translation.y += 2;
         sphere.translation.z += 1;
@@ -105,8 +83,7 @@ export class Scene {
         pointLightNode.translation.z = 5;
         this.rootEntity.addChild(pointLightNode);
 
-        let pointLightMaterial = new Material(new Vector(0.5, 0.5, 1), 0, 0, 0, true, null);
-        let pointLightModel = await EntityModel.create([Phase.PassPhong], "Point light model", gl, EntityModel.KIND_CUBE, pointLightMaterial);
+        let pointLightModel = await EntityModel.create([Phase.PassPhong], "Point light model", gl, modelCube2);
         pointLightModel.scale = new Vector(0.5, 0.5, 0.5);
         pointLightNode.addChild(pointLightModel);
 
