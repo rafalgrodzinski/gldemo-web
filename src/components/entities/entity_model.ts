@@ -151,16 +151,9 @@ export class EntityModel extends Entity {
         gl.bindVertexArray(this.#vertexArray);
 
         let data =  new Float32Array(8 * this.#vertices.length);
-        for (let i=0; i<this.#vertices.length; i++) {
-            data[i*8 + 0] = this.#vertices[i].position.x;
-            data[i*8 + 1] = this.#vertices[i].position.y;
-            data[i*8 + 2] = this.#vertices[i].position.z;
-            data[i*8 + 3] = this.#vertices[i].normal.x;
-            data[i*8 + 4] = this.#vertices[i].normal.y;
-            data[i*8 + 5] = this.#vertices[i].normal.z;
-            data[i*8 + 6] = this.#vertices[i].texCoords.s;
-            data[i*8 + 7] = this.#vertices[i].texCoords.t;
-        }
+        this.#vertices.forEach((vertex, i) => {
+            data.set(vertex.m, i * 8);
+        });
 
         let buffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
