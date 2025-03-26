@@ -15,7 +15,7 @@ out vec2 v_texCoords;
 void main() {
     gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * vec4(a_position, 1.0);
 
-    v_normal = mat3(u_modelMatrix) * a_normal;
+    v_normal = normalize(mat3(u_modelMatrix) * a_normal);
     v_position = vec3(u_modelMatrix * vec4(a_position, 1.0));
     v_texCoords = a_texCoords;
 }

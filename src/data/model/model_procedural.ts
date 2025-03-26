@@ -14,72 +14,72 @@ export class ModelProcedural extends Model {
     private static cubeVertices = [
         // Front
         new Vertex(Data.xyz(-1, -1, 1), Data.xyz(0, 0, 1), Data.st(0, 0)),
+        new Vertex(Data.xyz(1, 1, 1), Data.xyz(0, 0, 1), Data.st(1, 1)),
         new Vertex(Data.xyz(-1, 1, 1), Data.xyz(0, 0, 1), Data.st(0, 1)),
+        new Vertex(Data.xyz(-1, -1, 1), Data.xyz(0, 0, 1), Data.st(0, 0)),
         new Vertex(Data.xyz(1, -1, 1), Data.xyz(0, 0, 1), Data.st(1, 0)),
-        new Vertex(Data.xyz(1, -1, 1), Data.xyz(0, 0, 1), Data.st(1, 0)),
-        new Vertex(Data.xyz(-1, 1, 1), Data.xyz(0, 0, 1), Data.st(0, 1)),
         new Vertex(Data.xyz(1, 1, 1), Data.xyz(0, 0, 1), Data.st(1, 1)),
         // Back
         new Vertex(Data.xyz(1, -1, -1), Data.xyz(0, 0, -1), Data.st(0, 0)),
+        new Vertex(Data.xyz(-1, 1, -1), Data.xyz(0, 0, -1), Data.st(1, 1)),
         new Vertex(Data.xyz(1, 1, -1), Data.xyz(0, 0, -1), Data.st(0, 1)),
-        new Vertex(Data.xyz(-1, 1, -1), Data.xyz(0, 0, -1), Data.st(1, 1)),
         new Vertex(Data.xyz(1, -1, -1), Data.xyz(0, 0, -1), Data.st(0, 0)),
-        new Vertex(Data.xyz(-1, 1, -1), Data.xyz(0, 0, -1), Data.st(1, 1)),
         new Vertex(Data.xyz(-1, -1, -1), Data.xyz(0, 0, -1), Data.st(1, 0)),
+        new Vertex(Data.xyz(-1, 1, -1), Data.xyz(0, 0, -1), Data.st(1, 1)),
         // Left
         new Vertex(Data.xyz(-1, -1, -1), Data.xyz(-1, 0, 0), Data.st(0, 0)),
-        new Vertex(Data.xyz(-1, 1, -1), Data.xyz(-1, 0, 0), Data.st(0, 1)),
         new Vertex(Data.xyz(-1, 1, 1), Data.xyz(-1, 0, 0), Data.st(1, 1)),
-        new Vertex(Data.xyz(-1, -1, -1), Data.xyz(-1, 0, 0), Data.st(1, 0)),
-        new Vertex(Data.xyz(-1, 1, 1), Data.xyz(-1, 0, 0), Data.st(0, 1)),
-        new Vertex(Data.xyz(-1, -1, 1), Data.xyz(-1, 0, 0), Data.st(1, 1)),
+        new Vertex(Data.xyz(-1, 1, -1), Data.xyz(-1, 0, 0), Data.st(0, 1)),
+        new Vertex(Data.xyz(-1, -1, -1), Data.xyz(-1, 0, 0), Data.st(0, 0)),
+        new Vertex(Data.xyz(-1, -1, 1), Data.xyz(-1, 0, 0), Data.st(1, 0)),
+        new Vertex(Data.xyz(-1, 1, 1), Data.xyz(-1, 0, 0), Data.st(1, 1)),
         // Right
         new Vertex(Data.xyz(1, -1, 1), Data.xyz(1, 0, 0), Data.st(0, 0)),
-        new Vertex(Data.xyz(1, 1, 1), Data.xyz(1, 0, 0), Data.st(0, 1)),
         new Vertex(Data.xyz(1, 1, -1), Data.xyz(1, 0, 0), Data.st(1, 1)),
-        new Vertex(Data.xyz(1, -1, 1), Data.xyz(1, 0, 0), Data.st(1, 0)),
-        new Vertex(Data.xyz(1, 1, -1), Data.xyz(1, 0, 0), Data.st(0, 1)),
-        new Vertex(Data.xyz(1, -1, -1), Data.xyz(1, 0, 0), Data.st(1, 1)),
+        new Vertex(Data.xyz(1, 1, 1), Data.xyz(1, 0, 0), Data.st(0, 1)),
+        new Vertex(Data.xyz(1, -1, 1), Data.xyz(1, 0, 0), Data.st(0, 0)),
+        new Vertex(Data.xyz(1, -1, -1), Data.xyz(1, 0, 0), Data.st(1, 0)),
+        new Vertex(Data.xyz(1, 1, -1), Data.xyz(1, 0, 0), Data.st(1, 1)),
         // Top
         new Vertex(Data.xyz(-1, 1, 1), Data.xyz(0, 1, 0), Data.st(0, 0)),
-        new Vertex(Data.xyz(-1, 1, -1), Data.xyz(0, 1, 0), Data.st(0, 1)),
         new Vertex(Data.xyz(1, 1, -1), Data.xyz(0, 1, 0), Data.st(1, 1)),
-        new Vertex(Data.xyz(-1, 1, 1), Data.xyz(0, 1, 0), Data.st(1, 0)),
-        new Vertex(Data.xyz(1, 1, -1), Data.xyz(0, 1, 0), Data.st(0, 1)),
-        new Vertex(Data.xyz(1, 1, 1), Data.xyz(0, 1, 0), Data.st(1, 1)),
+        new Vertex(Data.xyz(-1, 1, -1), Data.xyz(0, 1, 0), Data.st(0, 1)),
+        new Vertex(Data.xyz(-1, 1, 1), Data.xyz(0, 1, 0), Data.st(0, 0)),
+        new Vertex(Data.xyz(1, 1, 1), Data.xyz(0, 1, 0), Data.st(1, 0)),
+        new Vertex(Data.xyz(1, 1, -1), Data.xyz(0, 1, 0), Data.st(1, 1)),
         // Bottom
-        new Vertex(Data.xyz(-1, -1, 1), Data.xyz(0, -1, 0), Data.st(0, 0)),
-        new Vertex(Data.xyz(1, -1, -1), Data.xyz(0, -1, 0), Data.st(1, 1)),
-        new Vertex(Data.xyz(-1, -1, -1), Data.xyz(0, -1, 0), Data.st(0, 1)),
-        new Vertex(Data.xyz(-1, -1, 1), Data.xyz(0, -1, 0), Data.st(0, 0)),
-        new Vertex(Data.xyz(1, -1, 1), Data.xyz(0, -1, 0), Data.st(1, 0)),
-        new Vertex(Data.xyz(1, -1, -1), Data.xyz(0, -1, 0), Data.st(1, 1))
+        new Vertex(Data.xyz(-1, -1, -1), Data.xyz(0, -1, 0), Data.st(0, 0)),
+        new Vertex(Data.xyz(1, -1, 1), Data.xyz(0, -1, 0), Data.st(1, 1)),
+        new Vertex(Data.xyz(-1, -1, 1), Data.xyz(0, -1, 0), Data.st(0, 1)),
+        new Vertex(Data.xyz(-1, -1, -1), Data.xyz(0, -1, 0), Data.st(0, 0)),
+        new Vertex(Data.xyz(1, -1, -1), Data.xyz(0, -1, 0), Data.st(1, 0)),
+        new Vertex(Data.xyz(1, -1, 1), Data.xyz(0, -1, 0), Data.st(1, 1))
     ];
 
     private static pyramidVertices = [
         // Front
         new Vertex(Data.xyz(-1, -0.75, 1), Data.xyz(0, 0.4264, 0.6396), Data.st(0, 0)),
-        new Vertex(Data.xyz(0, 0.75, 0), Data.xyz(0, 0.4264, 0.6396), Data.st(0.5, 1)),
         new Vertex(Data.xyz(1, -0.75, 1), Data.xyz(0, 0.4264, 0.6396), Data.st(1, 0)),
+        new Vertex(Data.xyz(0, 0.75, 0), Data.xyz(0, 0.4264, 0.6396), Data.st(0.5, 1)),
         // Back
         new Vertex(Data.xyz(1, -0.75, -1), Data.xyz(0, 0.4264, -0.6396), Data.st(0, 0)),
-        new Vertex(Data.xyz(0, 0.75, 0), Data.xyz(0, 0.4264, -0.6396), Data.st(0.5, 1)),
         new Vertex(Data.xyz(-1, -0.75, -1), Data.xyz(0, 0.4264, -0.6396), Data.st(1, 0)),
+        new Vertex(Data.xyz(0, 0.75, 0), Data.xyz(0, 0.4264, -0.6396), Data.st(0.5, 1)),
         // Left
         new Vertex(Data.xyz(-1, -0.75, -1), Data.xyz(-0.6396, 0.4264, 0), Data.st(0, 0)),
-        new Vertex(Data.xyz(0, 0.75, 0), Data.xyz(-0.6396, 0.4264, 0), Data.st(0.5, 1)),
         new Vertex(Data.xyz(-1, -0.75, 1), Data.xyz(-0.6396, 0.4264, 0), Data.st(1, 0)),
+        new Vertex(Data.xyz(0, 0.75, 0), Data.xyz(-0.6396, 0.4264, 0), Data.st(0.5, 1)),
         // Right
         new Vertex(Data.xyz(1, -0.75, 1), Data.xyz(0.6396, 0.4264, 0), Data.st(0, 0)),
-        new Vertex(Data.xyz(0, 0.75, 0), Data.xyz(0.6396, 0.4264, 0), Data.st(0.5, 1)),
         new Vertex(Data.xyz(1, -0.75, -1), Data.xyz(0.6396, 0.4264, 0), Data.st(1, 0)),
+        new Vertex(Data.xyz(0, 0.75, 0), Data.xyz(0.6396, 0.4264, 0), Data.st(0.5, 1)),
         // Bottom
-        new Vertex(Data.xyz(-1, -0.75, 1), Data.xyz(0, -1, 0), Data.st(0, 0)),
-        new Vertex(Data.xyz(1, -0.75, 1), Data.xyz(0, -1, 0), Data.st(1, 0)),
-        new Vertex(Data.xyz(-1, -0.75, -1), Data.xyz(0, -1, 0), Data.st(0, 1)),
-        new Vertex(Data.xyz(-1, -0.75, -1), Data.xyz(0, -1, 0), Data.st(0, 1)),
-        new Vertex(Data.xyz(1, -0.75, 1), Data.xyz(0, -1, 0), Data.st(1, 0)),
-        new Vertex(Data.xyz(1, -0.75, -1), Data.xyz(0, -1, 0), Data.st(1, 1)),
+        new Vertex(Data.xyz(-1, -0.75, -1), Data.xyz(0, -1, 0), Data.st(0, 0)),
+        new Vertex(Data.xyz(1, -0.75, 1), Data.xyz(0, -1, 0), Data.st(1, 1)),
+        new Vertex(Data.xyz(-1, -0.75, 1), Data.xyz(0, -1, 0), Data.st(0, 1)),
+        new Vertex(Data.xyz(-1, -0.75, -1), Data.xyz(0, -1, 0), Data.st(0, 0)),
+        new Vertex(Data.xyz(1, -0.75, -1), Data.xyz(0, -1, 0), Data.st(1, 0)),
+        new Vertex(Data.xyz(1, -0.75, 1), Data.xyz(0, -1, 0), Data.st(1, 1)),
     ];
 
     static async create(kind: ModelProceduralKind, material: Material): Promise<ModelProcedural> {
