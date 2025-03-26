@@ -6,7 +6,7 @@ import { EntityKind } from "components/entities/entity";
 import { Model } from "data/model/model";
 
 export class EntityModel extends Entity {
-    private model!: Model;
+    model!: Model;
     private vertexArray!: WebGLVertexArrayObject;
     private texture: WebGLTexture | null = null;
 

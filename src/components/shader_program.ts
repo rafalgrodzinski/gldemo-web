@@ -16,26 +16,24 @@ export class ShaderProgram {
     async init(args: Array<any>): Promise<this> {
         let [gl, vertexShaderFileName, fragmentShaderFileName] = args as [WebGL2RenderingContext, string, string];
 
-        let vertexSource = await Util.text(vertexShaderFileName);
-        let vertexShader = this.compileShader(gl, gl.VERTEX_SHADER, vertexSource);
-
-        let fragmentSource = await Util.text(fragmentShaderFileName);
-        let fragmentShader = this.compileShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
-
+        let vertexShader = await this.compileShader(gl, gl.VERTEX_SHADER, vertexShaderFileName);
+        let fragmentShader = await this.compileShader(gl, gl.FRAGMENT_SHADER, fragmentShaderFileName);
         this.program = this.linkProgram(gl, vertexShader, fragmentShader);
 
         return this;
     }
 
-    private compileShader(gl: WebGL2RenderingContext, type: GLenum, source: string): WebGLShader {
+    private async compileShader(gl: WebGL2RenderingContext, type: GLenum, shaderFileName: string): Promise<WebGLShader> {
+        let source = await Util.text(shaderFileName);
+
         let shader = gl.createShader(type)!;
         gl.shaderSource(shader, source);
         gl.compileShader(shader);
         let success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
         if(!success) {
-            console.log(gl.getShaderInfoLog(shader));
+            let message = `Failed to compile shader ${shaderFileName}:\n${gl.getShaderInfoLog(shader)}`;
             gl.deleteShader(shader);
-            throw new Error();
+            throw new Error(message);
         }
         return shader;
     }
@@ -47,9 +45,9 @@ export class ShaderProgram {
         gl.linkProgram(program);
         let success = gl.getProgramParameter(program, gl.LINK_STATUS);
         if(!success) {
-            console.log(gl.getProgramInfoLog(program));
+            let message = `Failed to link program:\n${gl.getProgramInfoLog(program)}`;
             gl.deleteProgram(program);
-            throw new Error();
+            throw new Error(message);
         }
         return program;
     }

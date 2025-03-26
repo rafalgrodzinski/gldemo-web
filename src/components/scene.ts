@@ -39,18 +39,18 @@ export class Scene {
         let pyramid1_1 = await EntityModel.create([Phase.PassPhong], "Pyramid #1.1", gl, modelPyramid);
         let pyramid1_2 = await EntityModel.create([Phase.PassPhong], "Pyramid #1.2", gl, modelPyramid);
         let camera = await EntityCamera.create(
-            [Phase.Resize, Phase.Update, Phase.PassPhong, Phase.PassGrid],
+            [Phase.Resize, Phase.Update, Phase.PassPhong, Phase.PassGrid, Phase.PassDebugNormals],
             "Camera #1"
         );
         pyramid1_2.addChild(camera);
         pyramid1_1.addChild(pyramid1_2);
         this.rootEntity.addChild(pyramid1_1);
         
-        let pyramid2 = await EntityModel.create([Phase.PassPhong], "Pyramid #2", gl, modelPyramid);
+        /*let pyramid2 = await EntityModel.create([Phase.PassPhong], "Pyramid #2", gl, modelPyramid);
         this.rootEntity.addChild(pyramid2);
         pyramid2.addChild(
             await EntityModel.create([Phase.PassPhong], "Pyramid #3", gl, modelPyramid)
-        );
+        );*/
 
         let lightNode = await EntityNode.create("Light Node");
         lightNode.translation.y = 5;
@@ -68,18 +68,18 @@ export class Scene {
         );
         lightNode.addChild(lightNodeLight);
 
-        let cube = await EntityModel.create([Phase.PassPhong], "Cube", gl, modelCube);
+        let cube = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals], "Cube", gl, modelCube);
         cube.translation.z = -5;
         this.rootEntity.addChild(cube);
 
-        let sphere = await EntityModel.create([Phase.PassPhong], "Sphere", gl, modelSphere);
+        let sphere = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals], "Sphere", gl, modelSphere);
         sphere.translation.x += 3;
         sphere.translation.y += 2;
         sphere.translation.z += 1;
         this.rootEntity.addChild(sphere);
 
         // Point light
-        let pointLightNode = await EntityNode.create("Point light node");
+        /*let pointLightNode = await EntityNode.create("Point light node");
         pointLightNode.translation.x = 5;
         pointLightNode.translation.y = 5;
         pointLightNode.translation.z = 5;
@@ -90,7 +90,7 @@ export class Scene {
         pointLightNode.addChild(pointLightModel);
 
         let pointLight = await EntityLight.create([Phase.PassPhong], "Point light", new Light(LightKind.Point, Data.rgb(0.5, 0.5, 1), 1, 0.07, 0.017));
-        pointLightNode.addChild(pointLight);
+        pointLightNode.addChild(pointLight);*/
 
         // Ambient light
         let ambientLight = await EntityLight.create([Phase.PassPhong], "Ambient light", new Light(LightKind.Ambient, Data.rgb(1, 1, 1), 1, 0, 0));
@@ -99,7 +99,7 @@ export class Scene {
         // Bear
         let bearMaterial = new Material(Data.rgb(0.5,  0.5, 0.5), 0.1, 1, 4, false, await Util.image("bear.png"));
         let bearModel = await ModelObj.create("bear.obj", bearMaterial);
-        let bearEntity = await EntityModel.create([Phase.PassPhong], "Bear", gl, bearModel);
+        let bearEntity = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals], "Bear", gl, bearModel);
         bearEntity.scale.x = bearEntity.scale.y = bearEntity.scale.z = 0.2;
         this.rootEntity.addChild(bearEntity);
 

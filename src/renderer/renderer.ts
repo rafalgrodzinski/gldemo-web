@@ -1,6 +1,7 @@
 import { RenderPass } from "render_pass";
 import { RenderPassPhong } from "renderer/render_pass_phong";
 import { RenderPassGrid } from "renderer/render_pass_grid";
+import { RenderPassDebugNormals } from "renderer/render_pass_debug_normals";
 import { Scene } from "components/scene";
 import { Input } from "utils/input";
 
@@ -8,7 +9,8 @@ export enum Phase{
         Resize,
         Update,
         PassPhong,
-        PassGrid
+        PassGrid,
+        PassDebugNormals
 }
 
 export class Renderer {
@@ -25,7 +27,8 @@ export class Renderer {
 
         this.renderPasses = await Promise.all([
             await RenderPassPhong.create(gl),
-            await RenderPassGrid.create(gl)
+            await RenderPassDebugNormals.create(gl),
+            await RenderPassGrid.create(gl),
         ]);
 
         return this;
@@ -53,9 +56,12 @@ export class Renderer {
         gl.clearColor(0, 0, 0, 1);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.enable(gl.DEPTH_TEST);
+        gl.enable(gl.CULL_FACE);
+        gl.frontFace(gl.CCW);
 
         this.renderPasses.forEach(renderPass => {
             let entities = this.scene.rootEntity.entitiesForPhase(renderPass.phase);
+            renderPass.prepareForDraw(gl, entities);
             renderPass.draw(gl, entities);
         });
     }

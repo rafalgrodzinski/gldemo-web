@@ -7,14 +7,14 @@ import { Entity } from "components/entities/entity";
 export class RenderPassGrid extends RenderPass {
     // Grid
     private static gridVertices: Array<number> = [
-        -1, 0, 1,
         -1, 0, -1,
+        -1, 0, 1,
         1, 0, -1,
         1, 0, 1
     ];
     private static gridIndices: Array<number> = [
         0, 1, 2,
-        0, 2, 3
+        1, 3, 2
     ];
     private gridShaderProgram!: ShaderProgram;
     private gridVertexArray!: WebGLVertexArrayObject;
