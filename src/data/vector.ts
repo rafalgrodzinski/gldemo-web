@@ -56,4 +56,12 @@ export class Vector {
         let value = this.x * other.x + this.y * other.y + this.z * other.z;
         return Util.clamp(value, -1, 1);
     }
+
+    cross(other: Vector): Vector {
+        return new Vector(
+            this.y * other.z - this.z * other.y,
+            this.z * other.x - this.x * other.z,
+            this.x * other.y - this.y * other.x
+        )
+    }
 }

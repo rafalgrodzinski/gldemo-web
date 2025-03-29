@@ -4,13 +4,15 @@ import { RenderPassGrid } from "renderer/render_pass_grid";
 import { RenderPassDebugNormals } from "renderer/render_pass_debug_normals";
 import { Scene } from "components/scene";
 import { Input } from "utils/input";
+import { RenderPassShadow } from "renderer/render_pass_shadow";
 
 export enum Phase{
         Resize,
         Update,
         PassPhong,
         PassGrid,
-        PassDebugNormals
+        PassDebugNormals,
+        PassShadow
 }
 
 export class Renderer {
@@ -26,8 +28,9 @@ export class Renderer {
         this.scene = scene;
 
         this.renderPasses = await Promise.all([
+            await RenderPassShadow.create(gl),
             await RenderPassPhong.create(gl),
-            await RenderPassDebugNormals.create(gl),
+            //await RenderPassDebugNormals.create(gl),
             await RenderPassGrid.create(gl),
         ]);
 

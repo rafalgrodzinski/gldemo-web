@@ -1,4 +1,5 @@
 import { Vector } from "data/vector";
+import { Data3 } from "./data_types";
 
 export class Matrix {
     m: Array<number>;
@@ -67,6 +68,17 @@ export class Matrix {
         return new Matrix(m);
     }
 
+    static makeOrthographic(aspect: number, width: number, depth: number) {
+        let height = width / aspect;
+        let m = [
+            2 / width, 0, 0, 0,
+            0, 2 / height, 0, 0,
+            0, 0, -2 / depth, 0,
+            0, 0, -1, 1
+        ];
+        return new Matrix(m);
+    }
+
     static makePerspective(fieldOfView: number, aspect: number, near: number, far: number): Matrix {
         var f = Math.tan(Math.PI * 0.5 - 0.5 * fieldOfView);
         var rangeInv = 1.0 / (near - far);
@@ -76,6 +88,18 @@ export class Matrix {
             0, f, 0, 0,
             0, 0, (near + far) * rangeInv, -1,
             0, 0, near * far * rangeInv * 2, 0,
+        ];
+        return new Matrix(m);
+    }
+
+    static makeLookAt(eye: Data3, direction: Data3): Matrix {
+        let right = new Vector(direction.x, direction.y, -direction.z).cross(new Vector(0, 1, 0));
+        let up = right.cross(new Vector(direction.x, direction.y, -direction.z));
+        let m = [
+            right.x, up.x, direction.x, 0,
+            right.y, up.y, direction.y, 0,
+            right.z, up.z, -direction.z, 0,
+            -eye.x, -eye.y, -eye.z, 1
         ];
         return new Matrix(m);
     }

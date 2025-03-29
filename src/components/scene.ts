@@ -62,17 +62,18 @@ export class Scene {
         lightNode.addChild(lightNodeModel);
 
         let lightNodeLight = await EntityLight.create(
-            [Phase.PassPhong],
+            [Phase.PassPhong, Phase.PassShadow],
             "Light #2",
-            new Light(LightKind.Directional, Data.rgb(1, 1, 1), 1, 0, 0)
+            gl,
+            new Light(LightKind.Directional, Data.rgb(1, 1, 1), 1, 0, 0, true)
         );
         lightNode.addChild(lightNodeLight);
 
-        let cube = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals], "Cube", gl, modelCube);
+        let cube = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadow], "Cube", gl, modelCube);
         cube.translation.z = -5;
         this.rootEntity.addChild(cube);
 
-        let sphere = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals], "Sphere", gl, modelSphere);
+        let sphere = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadow], "Sphere", gl, modelSphere);
         sphere.translation.x += 3;
         sphere.translation.y += 2;
         sphere.translation.z += 1;
@@ -89,17 +90,17 @@ export class Scene {
         pointLightModel.scale = new Vector(0.5, 0.5, 0.5);
         pointLightNode.addChild(pointLightModel);
 
-        let pointLight = await EntityLight.create([Phase.PassPhong], "Point light", new Light(LightKind.Point, Data.rgb(0.5, 0.5, 1), 1, 0.07, 0.017));
+        let pointLight = await EntityLight.create([Phase.PassPhong], "Point light", gl, new Light(LightKind.Point, Data.rgb(0.5, 0.5, 1), 1, 0.07, 0.017, false));
         pointLightNode.addChild(pointLight);
 
         // Ambient light
-        let ambientLight = await EntityLight.create([Phase.PassPhong], "Ambient light", new Light(LightKind.Ambient, Data.rgb(1, 1, 1), 1, 0, 0));
+        let ambientLight = await EntityLight.create([Phase.PassPhong], "Ambient light", gl, new Light(LightKind.Ambient, Data.rgb(1, 1, 1), 1, 0, 0, false));
         this.rootEntity.addChild(ambientLight);
 
         // Bear
         let bearMaterial = new Material(Data.rgb(1,  1, 1), 0.1, 1, 8, false, await Util.image("bear.png"));
         let bearModel = await ModelObj.create("bear.obj", bearMaterial);
-        let bearEntity = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals], "Bear", gl, bearModel);
+        let bearEntity = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadow], "Bear", gl, bearModel);
         bearEntity.scale.x = bearEntity.scale.y = bearEntity.scale.z = 0.2;
         this.rootEntity.addChild(bearEntity);
 

@@ -1,3 +1,5 @@
+import { Vector } from "data/vector";
+
 export class Data {
     static st(s: number, t: number): Data2 {
         return new Data2(s, t);
@@ -9,6 +11,10 @@ export class Data {
 
     static rgb(r: number, g: number, b: number): Data3 {
         return new Data3(r, g, b)
+    }
+
+    static vector(vector: Vector): Data3 {
+        return new Data3(vector.x, vector.y, vector.z);
     }
 }
 
