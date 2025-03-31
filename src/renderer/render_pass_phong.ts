@@ -19,6 +19,7 @@ export class RenderPassPhong extends RenderPass {
     }
 
     draw(gl: WebGL2RenderingContext, entities: Array<Entity>) {
+        gl.cullFace(gl.BACK);
         gl.useProgram(this.shaderProgram.program);
 
         entities.forEach(entity => {

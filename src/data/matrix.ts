@@ -93,12 +93,12 @@ export class Matrix {
     }
 
     static makeLookAt(eye: Data3, direction: Data3): Matrix {
-        let right = new Vector(direction.x, direction.y, -direction.z).cross(new Vector(0, 1, 0));
-        let up = right.cross(new Vector(direction.x, direction.y, -direction.z));
+        let right = new Vector(-direction.x, -direction.y, -direction.z).cross(new Vector(0, 1, 0));
+        let up = right.cross(new Vector(-direction.x, -direction.y, -direction.z));
         let m = [
-            right.x, up.x, direction.x, 0,
-            right.y, up.y, direction.y, 0,
-            right.z, up.z, -direction.z, 0,
+            -right.x, -up.x, -direction.x, 0,
+            -right.y, -up.y, -direction.y, 0,
+            -right.z, -up.z, -direction.z, 0,
             -eye.x, -eye.y, -eye.z, 1
         ];
         return new Matrix(m);

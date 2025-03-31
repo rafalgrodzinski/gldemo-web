@@ -77,13 +77,14 @@ export class Scene {
 
         let cube = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadowMap], "Cube", gl, modelCube);
         cube.translation.z = -5;
+        cube.translation.y = 1;
         this.rootEntity.addChild(cube);
 
-        /*let sphere = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadow], "Sphere", gl, modelSphere);
+        let sphere = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadowMap], "Sphere", gl, modelSphere);
         sphere.translation.x += 3;
         sphere.translation.y += 2;
         sphere.translation.z += 1;
-        this.rootEntity.addChild(sphere);*/
+        this.rootEntity.addChild(sphere);
 
         // Point light
         /*let pointLightNode = await EntityNode.create("Point light node");
@@ -113,13 +114,13 @@ export class Scene {
         this.rootEntity.addChild(bearEntity);
 
         // Ground
-        let groundMaterial = new Material(Data.rgb(0.5, 0.5, 0.5), 0.1, 1, 0, true, await Util.image("box.jpg"));
+        let groundMaterial = new Material(Data.rgb(0.5, 0.5, 0.5), 0.1, 1, 0, false, await Util.image("box.jpg"));
         let groundModel = await ModelProcedural.create(ModelProceduralKind.Cube, groundMaterial);
-        let groundEntity = await EntityModel.create([Phase.PassPhong], "Ground", gl, groundModel);
+        let groundEntity = await EntityModel.create([Phase.PassPhong, Phase.PassShadowMap], "Ground", gl, groundModel);
         groundEntity.scale.y = 0.5;
         groundEntity.scale.x = 20;
         groundEntity.scale.z = 20;
-        groundEntity.translation.y = -1;
+        groundEntity.translation.y = -0.5;
         this.rootEntity.addChild(groundEntity);
 
         return this;

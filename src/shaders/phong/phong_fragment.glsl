@@ -31,7 +31,7 @@ in vec3 v_position;
 in vec3 v_normal;
 in vec2 v_texCoords;
 
-in vec3 v_lightSpacePosition;
+in vec4 v_lightSpacePosition;
 
 uniform sampler2D u_diffuseSampler;
 uniform sampler2D u_shadowMapSampler;
@@ -41,6 +41,17 @@ uniform vec3 u_cameraPosition;
 
 out vec4 o_color;
 
+float shadow(vec4 lightSpacePosition, vec3 normal, Light light, sampler2D shadowMapSampler) {
+    vec3 lightSpaceNormalizedPosition = lightSpacePosition.xyz / lightSpacePosition.w;
+    lightSpaceNormalizedPosition = lightSpaceNormalizedPosition * 0.5 + 0.5;
+
+    float shadowMapDepth = texture(shadowMapSampler, lightSpaceNormalizedPosition.xy).x;
+    float fragmentDepth = lightSpaceNormalizedPosition.z;
+
+    float bias = max(0.01 * (1.0 - dot(normal, light.direction)), 0.001);
+    return fragmentDepth - bias > shadowMapDepth ? 1.0 : 0.0;
+}
+
 vec3 ambientLightColor(Light light, Material material) {
     vec3 color = vec3(0);
 
@@ -49,11 +60,11 @@ vec3 ambientLightColor(Light light, Material material) {
     return color;
 }
 
-vec3 directionalLightColor(vec3 position, vec3 normal, vec3 cameraPosition, Light light, Material material) {
+vec3 directionalLightColor(vec3 position, vec3 normal, vec3 cameraPosition, Light light, Material material, float shadowIntensity) {
     vec3 color = vec3(0);
     
     // Diffuse
-    float diffuseIntensity = dot(normal, -light.direction) * light.intensity * material.diffuseIntensity;
+    float diffuseIntensity = dot(normal, -light.direction) * light.intensity * material.diffuseIntensity - shadowIntensity;
     diffuseIntensity = clamp(diffuseIntensity, 0.0, 1.0);
     color += material.color * light.color * diffuseIntensity;
 
@@ -61,7 +72,7 @@ vec3 directionalLightColor(vec3 position, vec3 normal, vec3 cameraPosition, Ligh
     if (material.specularIntensity > 0.0) {
         vec3 cameraDirection = normalize(cameraPosition - position);
         vec3 reflected = reflect(light.direction, normal);
-        float specularIntensity = dot(cameraDirection, reflected);
+        float specularIntensity = dot(cameraDirection, reflected) - shadowIntensity;
         specularIntensity = clamp(specularIntensity, 0.0, 1.0);
         color += light.color * pow(specularIntensity, material.specularIntensity) * light.intensity;
     }
@@ -99,28 +110,20 @@ void main() {
     Material material = u_material;
     if (material.hasDiffuseTexture) {
         material.color = vec3(texture(u_diffuseSampler, v_texCoords));
-        //material.color = vec3(texture(u_shadowMapSampler, v_texCoords).x);
     }
 
     if (u_material.isUnshaded) {
         color = material.color;
     } else {
         for (int i=0; i<8; i++) {
+            float shadowIntensity = shadow(v_lightSpacePosition, v_normal, u_lights[i], u_shadowMapSampler);
+
             if (u_lights[i].kind == LightKindAmbient)
                 color += ambientLightColor(u_lights[i], material);
-            else if (u_lights[i].kind == LightKindDirectional)
-                color += directionalLightColor(v_position, v_normal, u_cameraPosition, u_lights[i], material);
-            else if (u_lights[i].kind == LightKindPoint)
+            else if (u_lights[i].kind == LightKindDirectional) {
+                color += directionalLightColor(v_position, v_normal, u_cameraPosition, u_lights[i], material, shadowIntensity);
+            } else if (u_lights[i].kind == LightKindPoint)
                 color += pointLightColor(v_position, v_normal, u_cameraPosition, u_lights[i], material);
-
-            if (u_lights[i].shouldCastShadow) {
-                vec3 shadowCoords = v_lightSpacePosition.xyz / v_lightSpacePosition.w;
-                shadowCoords = shadowCoords * 0.5 + 0.5;
-                float shadowMapDepth = texture(u_shadowMapSampler, shadowCoords.xy).r;
-                float fragmentDepth = shadowCoords.z;
-                float shadow = fragmentDepth > shadowMapDepth ? 0.0 : 1.0;
-                color *= shadow;
-            }
         }
     }
 
