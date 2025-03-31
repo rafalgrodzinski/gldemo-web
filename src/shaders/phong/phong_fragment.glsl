@@ -31,6 +31,7 @@ in vec3 v_normal;
 in vec2 v_texCoords;
 
 uniform sampler2D u_diffuseSampler;
+uniform sampler2D u_shadowMapSampler;
 uniform Light u_lights[8];
 uniform Material u_material;
 uniform vec3 u_cameraPosition;
@@ -95,6 +96,7 @@ void main() {
     Material material = u_material;
     if (material.hasDiffuseTexture) {
         material.color = vec3(texture(u_diffuseSampler, v_texCoords));
+        //material.color = vec3(texture(u_shadowMapSampler, v_texCoords).x);
     }
 
     if (u_material.isUnshaded) {

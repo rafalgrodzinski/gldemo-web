@@ -2,27 +2,25 @@ import { RenderPass } from "renderer/render_pass";
 import { ShaderProgram } from "components/shader_program";
 import { Phase } from "renderer/renderer";
 import { Entity } from "components/entities/entity";
-import { Matrix } from "../data/matrix";
-import { EntityLight } from "../components/entities/entity_light";
-import { Data } from "../data/data_types";
+import { EntityLight } from "components/entities/entity_light";
 
-export class RenderPassShadow extends RenderPass {
+export class RenderPassShadowMap extends RenderPass {
     private shaderProgram!: ShaderProgram;
 
     static async create(gl: WebGL2RenderingContext) {
-        return await new RenderPassShadow().init([gl]);
+        return await new RenderPassShadowMap().init([gl]);
     }
 
     protected async init(args: Array<any>): Promise<this> {
         let [gl] = args as [WebGL2RenderingContext];
-        await super.init([Phase.PassShadow]);
-        this.shaderProgram = await ShaderProgram.create(gl, "src/shaders/shadow/vertex.glsl", "src/shaders/shadow/fragment.glsl");
+        await super.init([Phase.PassShadowMap]);
+        this.shaderProgram = await ShaderProgram.create(gl, "src/shaders/shadow_map/vertex.glsl", "src/shaders/shadow_map/fragment.glsl");
 
         return this;
     }
 
     draw(gl: WebGL2RenderingContext, entities: Array<Entity>) {
-        gl.useProgram(this.shaderProgram.program);
+        let viewportSize = gl.getParameter(gl.VIEWPORT) as Array<number>;
 
         let lightEntities = entities.map((entity) => {
             return (entity instanceof EntityLight && entity.light.shouldCastShadow) ? entity : null
@@ -30,15 +28,15 @@ export class RenderPassShadow extends RenderPass {
             return entity != null;
         });
 
+        gl.useProgram(this.shaderProgram.program);
         lightEntities.forEach((lightEntity) => {
-            lightEntity.prepareForDraw(gl, this.shaderProgram);
-            gl.bindFramebuffer(gl.FRAMEBUFFER, lightEntity.depthMapFramebuffer);
-            gl.clear(gl.DEPTH_BUFFER_BIT);
+            lightEntity.prepareForShadowMap(gl, this.shaderProgram);
             entities.forEach((entity) => {
                 entity.draw(gl, this.shaderProgram);
             });
         });
 
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.viewport(viewportSize[0], viewportSize[1], viewportSize[2], viewportSize[3]);
     }
 }

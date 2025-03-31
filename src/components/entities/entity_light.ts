@@ -8,9 +8,11 @@ import { Data } from "data/data_types";
 export class EntityLight extends Entity {
     private static MAX_LIGHTS: number = 8;
     private static lightsCount: number = 0;
+    private static SHADOW_MAP_SIZE = 512;
 
     light!: Light;
-    depthMapFramebuffer!: WebGLFramebuffer;
+    private depthMapFramebuffer!: WebGLFramebuffer;
+    private depthMapTexture!: WebGLTexture;
     private index!: number;
     private projectionMatrix!: Matrix;
 
@@ -34,9 +36,9 @@ export class EntityLight extends Entity {
         this.projectionMatrix = Matrix.makeIdentity();
 
         if (light.shouldCastShadow) {
-            let texture = gl.createTexture();
-            gl.bindTexture(gl.TEXTURE_2D, texture);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT16, 1024, 1024, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null);
+            this.depthMapTexture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, this.depthMapTexture);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT32F, EntityLight.SHADOW_MAP_SIZE, EntityLight.SHADOW_MAP_SIZE, 0, gl.DEPTH_COMPONENT, gl.FLOAT, null);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -44,7 +46,9 @@ export class EntityLight extends Entity {
 
             this.depthMapFramebuffer = gl.createFramebuffer();
             gl.bindFramebuffer(gl.FRAMEBUFFER, this.depthMapFramebuffer);
-            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, texture, 0);
+            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, this.depthMapTexture, 0);
+            gl.drawBuffers([gl.NONE]);
+            gl.readBuffer(gl.NONE)
             if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE)
                 throw new Error("Failed to create depth map framebuffer");
 
@@ -60,7 +64,7 @@ export class EntityLight extends Entity {
     }
 
     resize(width: number, height: number): void {
-        this.projectionMatrix = Matrix.makeOrthographic(width/height, 20, 20);
+        this.projectionMatrix = Matrix.makeOrthographic(1, 20, 20);
     }
 
     prepareForDraw(gl: WebGL2RenderingContext, shaderProgram: ShaderProgram) {
@@ -96,6 +100,14 @@ export class EntityLight extends Entity {
 
                 let lightViewMatrixId = gl.getUniformLocation(shaderProgram.program, idPrefix + "viewMatrix");
                 gl.uniformMatrix4fv(lightViewMatrixId, false, this.viewMatrix.m);
+
+                if (this.light.shouldCastShadow) {
+                    gl.activeTexture(gl.TEXTURE1);
+                    gl.bindTexture(gl.TEXTURE_2D, this.depthMapTexture);
+                    let shadowMapSamplerId = gl.getUniformLocation(shaderProgram.program, "u_shadowMapSampler");
+                    gl.uniform1i(shadowMapSamplerId, 1);
+                }
+
                 break;
             }
             case LightKind.Point: {
@@ -116,5 +128,17 @@ export class EntityLight extends Entity {
                 break;
             }
         }
+    }
+
+    prepareForShadowMap(gl: WebGL2RenderingContext, shaderProgram: ShaderProgram) {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.depthMapFramebuffer);
+        gl.viewport(0, 0, EntityLight.SHADOW_MAP_SIZE, EntityLight.SHADOW_MAP_SIZE);
+        gl.clear(gl.DEPTH_BUFFER_BIT);
+
+        let lightProjectionMatrixId = gl.getUniformLocation(shaderProgram.program, "u_lightProjectionMatrix");
+        gl.uniformMatrix4fv(lightProjectionMatrixId, false, this.projectionMatrix.m);
+
+        let lightViewMatrixId = gl.getUniformLocation(shaderProgram.program, "u_lightViewMatrix");
+        gl.uniformMatrix4fv(lightViewMatrixId, false, this.viewMatrix.m);
     }
 }
