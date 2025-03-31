@@ -20,6 +20,8 @@ export class RenderPassShadowMap extends RenderPass {
     }
 
     draw(gl: WebGL2RenderingContext, entities: Array<Entity>) {
+        gl.enable(gl.DEPTH_TEST);
+        gl.disable(gl.CULL_FACE);
         let viewportSize = gl.getParameter(gl.VIEWPORT) as Array<number>;
 
         let lightEntities = entities.map((entity) => {

@@ -26,7 +26,7 @@ export class Scene {
 
         // Camera
         let cameraEntity = await EntityCamera.create(
-            [Phase.Resize, Phase.Update, Phase.PassPhong, Phase.PassGrid, Phase.PassDebugNormals],
+            [Phase.Resize, Phase.Update, Phase.PassPhong, Phase.PassGrid, Phase.PassDebugNormals, Phase.PassSkybox],
             "Camera"
         );
         cameraEntity.translation.y = 4;

@@ -140,6 +140,7 @@ export class EntityLight extends Entity {
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.depthMapFramebuffer);
         gl.viewport(0, 0, EntityLight.SHADOW_MAP_SIZE, EntityLight.SHADOW_MAP_SIZE);
         gl.clear(gl.DEPTH_BUFFER_BIT);
+        gl.enable(gl.DEPTH_TEST);
         gl.enable(gl.CULL_FACE);
         gl.cullFace(gl.BACK);
 

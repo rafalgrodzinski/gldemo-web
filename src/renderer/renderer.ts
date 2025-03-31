@@ -5,6 +5,8 @@ import { RenderPassDebugNormals } from "renderer/render_pass_debug_normals";
 import { Scene } from "components/scene";
 import { Input } from "utils/input";
 import { RenderPassShadowMap } from "renderer/render_pass_shadow";
+import { RenderPassSkybox, SkyboxTextures } from "renderer/render_pass_skybox";
+import { Util } from "utils/util";
 
 export enum Phase{
         Resize,
@@ -12,7 +14,8 @@ export enum Phase{
         PassPhong,
         PassGrid,
         PassDebugNormals,
-        PassShadowMap
+        PassShadowMap,
+        PassSkybox
 }
 
 export class Renderer {
@@ -27,7 +30,17 @@ export class Renderer {
         let [gl, scene] = args as [WebGL2RenderingContext, Scene];
         this.scene = scene;
 
+        let skyboxTextures: SkyboxTextures = {
+            left: await Util.image("skybox_left.png"),
+            right: await Util.image("skybox_right.png"),
+            front: await Util.image("skybox_front.png"),
+            back: await Util.image("skybox_back.png"),
+            bottom: await Util.image("skybox_bottom.png"),
+            top: await Util.image("skybox_top.png")
+        };
+
         this.renderPasses = await Promise.all([
+            await RenderPassSkybox.create(gl, skyboxTextures),
             await RenderPassShadowMap.create(gl),
             await RenderPassPhong.create(gl),
             //await RenderPassDebugNormals.create(gl),
@@ -58,8 +71,6 @@ export class Renderer {
     draw(gl: WebGL2RenderingContext) {
         gl.clearColor(0, 0, 0, 1);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        gl.enable(gl.DEPTH_TEST);
-        gl.enable(gl.CULL_FACE);
         gl.frontFace(gl.CCW);
 
         this.renderPasses.forEach(renderPass => {
