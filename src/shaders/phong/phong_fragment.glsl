@@ -10,6 +10,7 @@ struct Light {
     vec3 position; // point
     float linearAttenuation; // point
     float quadraticAttenuation; // point
+    bool shouldCastShadow;
 };
 
 struct Material {
@@ -29,6 +30,8 @@ const int LightKindSpot = 4;
 in vec3 v_position;
 in vec3 v_normal;
 in vec2 v_texCoords;
+
+in vec3 v_lightSpacePosition;
 
 uniform sampler2D u_diffuseSampler;
 uniform sampler2D u_shadowMapSampler;
@@ -109,6 +112,15 @@ void main() {
                 color += directionalLightColor(v_position, v_normal, u_cameraPosition, u_lights[i], material);
             else if (u_lights[i].kind == LightKindPoint)
                 color += pointLightColor(v_position, v_normal, u_cameraPosition, u_lights[i], material);
+
+            if (u_lights[i].shouldCastShadow) {
+                vec3 shadowCoords = v_lightSpacePosition.xyz / v_lightSpacePosition.w;
+                shadowCoords = shadowCoords * 0.5 + 0.5;
+                float shadowMapDepth = texture(u_shadowMapSampler, shadowCoords.xy).r;
+                float fragmentDepth = shadowCoords.z;
+                float shadow = fragmentDepth > shadowMapDepth ? 0.0 : 1.0;
+                color *= shadow;
+            }
         }
     }
 
