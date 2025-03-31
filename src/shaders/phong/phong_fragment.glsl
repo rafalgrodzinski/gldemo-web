@@ -45,11 +45,24 @@ float shadow(vec4 lightSpacePosition, vec3 normal, Light light, sampler2D shadow
     vec3 lightSpaceNormalizedPosition = lightSpacePosition.xyz / lightSpacePosition.w;
     lightSpaceNormalizedPosition = lightSpaceNormalizedPosition * 0.5 + 0.5;
 
-    float shadowMapDepth = texture(shadowMapSampler, lightSpaceNormalizedPosition.xy).x;
-    float fragmentDepth = lightSpaceNormalizedPosition.z;
+    if (lightSpaceNormalizedPosition.x < 0.0 || lightSpaceNormalizedPosition.x > 1.0 ||
+        lightSpaceNormalizedPosition.y < 0.0 || lightSpaceNormalizedPosition.y > 1.0 ||
+        lightSpaceNormalizedPosition.z < 0.0 || lightSpaceNormalizedPosition.z > 1.0) {
+        return 0.0;
+    }
 
+    float fragmentDepth = lightSpaceNormalizedPosition.z;
     float bias = max(0.01 * (1.0 - dot(normal, light.direction)), 0.001);
-    return fragmentDepth - bias > shadowMapDepth ? 1.0 : 0.0;
+    float shadowIntensity = 0.0;
+    vec2 texelSize = vec2(textureSize(shadowMapSampler, 0).xy);
+    for (int x=-1; x<=1; x++) {
+            for (int y=-1; y<=1; y++) {
+                vec2 offset = vec2(x, y) / texelSize;
+                float shadowMapDepth = texture(shadowMapSampler, lightSpaceNormalizedPosition.xy + offset).x;
+                shadowIntensity += fragmentDepth - bias > shadowMapDepth ? 1.0 : 0.0;
+        }
+    }
+    return shadowIntensity / 9.0;
 }
 
 vec3 ambientLightColor(Light light, Material material) {
