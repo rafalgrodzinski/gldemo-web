@@ -24,85 +24,52 @@ export class Scene {
 
         this.rootEntity = await EntityNode.create("Root");
 
-        let material1 = new Material(Data.rgb(1, 1, 1), 0.1, 1, 0, false, await Util.image("box.jpg"));
-        let material2 = new Material(Data.rgb(1, 0.5, 0.5), 0.1, 0.5, 2, false, await Util.image("box.jpg"));
-        let material3 = new Material(Data.rgb(0.5, 1, 0.5), 0.1, 0.8, 16, false, null);
-        let material4 = new Material(Data.rgb(1, 1, 0.5), 0, 0, 0, true, null);
-        let pointLightMaterial = new Material(Data.rgb(0.5, 0.5, 1), 0, 0, 0, true, null);
-
-        let modelPyramid = await ModelProcedural.create(ModelProceduralKind.Pyramid, material1);
-        let modelCube = await ModelProcedural.create(ModelProceduralKind.Cube, material1);
-        let modelSphere = await ModelProcedural.create(ModelProceduralKind.Sphere, material2);
-        let modelPyramid2 = await ModelProcedural.create(ModelProceduralKind.Pyramid, material4);
-        let modelCube2 = await ModelProcedural.create(ModelProceduralKind.Cube, pointLightMaterial);
-        
-        let pyramid1_1 = await EntityModel.create([Phase.PassPhong], "Pyramid #1.1", gl, modelPyramid);
-        let pyramid1_2 = await EntityModel.create([Phase.PassPhong], "Pyramid #1.2", gl, modelPyramid);
-
-        /*pyramid1_1.addChild(pyramid1_2);
-        this.rootEntity.addChild(pyramid1_1);
-        
-        let pyramid2 = await EntityModel.create([Phase.PassPhong], "Pyramid #2", gl, modelPyramid);
-        this.rootEntity.addChild(pyramid2);
-        pyramid2.addChild(
-            await EntityModel.create([Phase.PassPhong], "Pyramid #3", gl, modelPyramid)
-        );*/
-
         // Camera
-        let camera = await EntityCamera.create(
+        let cameraEntity = await EntityCamera.create(
             [Phase.Resize, Phase.Update, Phase.PassPhong, Phase.PassGrid, Phase.PassDebugNormals],
-            "Camera #1"
+            "Camera"
         );
-        camera.translation.y = 4;
-        camera.translation.z = 4;
-        this.rootEntity.addChild(camera);
-
-        // Directional Light
-        let lightNode = await EntityNode.create("Light Node");
-        lightNode.translation.y = 5;
-        this.rootEntity.addChild(lightNode);
-
-        let lightNodeModel = await EntityModel.create([Phase.PassPhong], "Light Model", gl, modelPyramid2);
-        lightNodeModel.rotation.x = Math.PI/2;
-        lightNodeModel.scale = new Vector(0.5, 0.5, 0.5);
-        lightNode.addChild(lightNodeModel);
-
-        let lightNodeLight = await EntityLight.create(
-            [Phase.PassPhong, Phase.PassShadowMap, Phase.Resize],
-            "Light #2",
-            gl,
-            new Light(LightKind.Directional, Data.rgb(1, 1, 1), 1, 0, 0, true)
-        );
-        lightNode.addChild(lightNodeLight);
-
-        let cube = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadowMap], "Cube", gl, modelCube);
-        cube.translation.z = -5;
-        cube.translation.y = 1;
-        this.rootEntity.addChild(cube);
-
-        let sphere = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadowMap], "Sphere", gl, modelSphere);
-        sphere.translation.x += 3;
-        sphere.translation.y += 2;
-        sphere.translation.z += 1;
-        this.rootEntity.addChild(sphere);
-
-        // Point light
-        /*let pointLightNode = await EntityNode.create("Point light node");
-        pointLightNode.translation.x = 5;
-        pointLightNode.translation.y = 5;
-        pointLightNode.translation.z = 5;
-        this.rootEntity.addChild(pointLightNode);
-
-        let pointLightModel = await EntityModel.create([Phase.PassPhong], "Point light model", gl, modelCube2);
-        pointLightModel.scale = new Vector(0.5, 0.5, 0.5);
-        pointLightNode.addChild(pointLightModel);
-
-        let pointLight = await EntityLight.create([Phase.PassPhong], "Point light", gl, new Light(LightKind.Point, Data.rgb(0.5, 0.5, 1), 1, 0.07, 0.017, false));
-        pointLightNode.addChild(pointLight);*/
+        cameraEntity.translation.y = 4;
+        cameraEntity.translation.z = 4;
+        this.rootEntity.addChild(cameraEntity);
 
         // Ambient light
         let ambientLight = await EntityLight.create([Phase.PassPhong], "Ambient light", gl, new Light(LightKind.Ambient, Data.rgb(1, 1, 1), 1, 0, 0, false));
         this.rootEntity.addChild(ambientLight);
+
+        // Directional Light
+        let directionalLightNodeEntity = await EntityNode.create("Directional Light Node");
+        directionalLightNodeEntity.translation.y = 5;
+        directionalLightNodeEntity.translation.z = 5;
+        this.rootEntity.addChild(directionalLightNodeEntity);
+
+        let directionalLightMaterial = new Material(Data.rgb(1, 1, 0.5), 0, 0, 0, true, null);
+        let directionalLightModel = await ModelProcedural.create(ModelProceduralKind.Pyramid, directionalLightMaterial);
+        let directionalLightModelEntity = await EntityModel.create([Phase.PassPhong], "Directional Light Model", gl, directionalLightModel);
+        directionalLightModelEntity.rotation.x = Math.PI / 2;
+        directionalLightModelEntity.scale = new Vector(0.5, 0.5, 0.5);
+        directionalLightNodeEntity.addChild(directionalLightModelEntity);
+
+        let directionaLight = new Light(LightKind.Directional, Data.rgb(1, 1, 1), 1, 0, 0, true)
+        let directionalLightEntity = await EntityLight.create([Phase.PassPhong, Phase.PassShadowMap, Phase.Resize], "Directional Light", gl, directionaLight);
+        directionalLightNodeEntity.addChild(directionalLightEntity);
+
+        // Point light
+        let pointLightNodeEntity = await EntityNode.create("Point Light Node");
+        pointLightNodeEntity.translation.x = 5;
+        pointLightNodeEntity.translation.y = 5;
+        pointLightNodeEntity.translation.z = 5;
+        this.rootEntity.addChild(pointLightNodeEntity);
+
+        let pointLightMaterial = new Material(Data.rgb(0.5, 0.5, 1), 0, 0, 0, true, null);
+        let pointLightModel = await ModelProcedural.create(ModelProceduralKind.Cube, pointLightMaterial);
+        let pointLightModelEntity = await EntityModel.create([Phase.PassPhong], "Point light model", gl, pointLightModel);
+        pointLightModelEntity.scale = new Vector(0.5, 0.5, 0.5);
+        pointLightNodeEntity.addChild(pointLightModelEntity);
+
+        let pointLight = new Light(LightKind.Point, Data.rgb(0.5, 0.5, 1), 1, 0.07, 0.017, false);
+        let pointLightEntity = await EntityLight.create([Phase.PassPhong], "Point light", gl, pointLight);
+        pointLightNodeEntity.addChild(pointLightEntity);
 
         // Bear
         let bearMaterial = new Material(Data.rgb(1,  1, 1), 0.1, 1, 8, false, await Util.image("bear.png"));
@@ -113,9 +80,26 @@ export class Scene {
         bearEntity.scale.x = bearEntity.scale.y = bearEntity.scale.z = 0.2;
         this.rootEntity.addChild(bearEntity);
 
+        // Cube
+        let cubeMaterial = new Material(Data.rgb(1, 1, 1), 0.1, 1, 0, false, await Util.image("box.jpg"));
+        let cubeModel = await ModelProcedural.create(ModelProceduralKind.Cube, cubeMaterial);
+        let cubeEntity = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadowMap], "Cube", gl, cubeModel);
+        cubeEntity.translation.z = -5;
+        cubeEntity.translation.y = 1;
+        this.rootEntity.addChild(cubeEntity);
+
+        // Sphere
+        let sphereMaterial = new Material(Data.rgb(1, 0.5, 0.5), 0.1, 0.5, 2, false, await Util.image("box.jpg"));
+        let sphereModel = await ModelProcedural.create(ModelProceduralKind.Sphere, sphereMaterial);
+        let sphereEntity = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadowMap], "Sphere", gl, sphereModel);
+        sphereEntity.translation.x += 3;
+        sphereEntity.translation.y += 2;
+        sphereEntity.translation.z += 1;
+        this.rootEntity.addChild(sphereEntity);
+
         // Ground
-        let groundMaterial = new Material(Data.rgb(0.5, 0.5, 0.5), 0.1, 1, 0, false, await Util.image("box.jpg"));
-        let groundModel = await ModelProcedural.create(ModelProceduralKind.Cube, groundMaterial);
+        let groundMaterial = new Material(Data.rgb(0.5, 0.5, 0.5), 0.1, 1, 0, false, await Util.image("grass.jpg"));
+        let groundModel = await ModelProcedural.create(ModelProceduralKind.Plane, groundMaterial);
         let groundEntity = await EntityModel.create([Phase.PassPhong, Phase.PassShadowMap], "Ground", gl, groundModel);
         groundEntity.scale.y = 0.5;
         groundEntity.scale.x = 20;

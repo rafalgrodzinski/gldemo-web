@@ -5,12 +5,22 @@ import { Vector } from "data/vector";
 import { Data } from "data/data_types";
 
 export enum ModelProceduralKind {
+    Plane,
     Cube,
     Pyramid,
     Sphere
 }
 
 export class ModelProcedural extends Model {
+    private static planeVertices = [
+        new Vertex(Data.xyz(-1, 1, 1), Data.xyz(0, 1, 0), Data.st(0, 0)),
+        new Vertex(Data.xyz(1, 1, -1), Data.xyz(0, 1, 0), Data.st(1, 1)),
+        new Vertex(Data.xyz(-1, 1, -1), Data.xyz(0, 1, 0), Data.st(0, 1)),
+        new Vertex(Data.xyz(-1, 1, 1), Data.xyz(0, 1, 0), Data.st(0, 0)),
+        new Vertex(Data.xyz(1, 1, 1), Data.xyz(0, 1, 0), Data.st(1, 0)),
+        new Vertex(Data.xyz(1, 1, -1), Data.xyz(0, 1, 0), Data.st(1, 1)),
+    ];
+
     private static cubeVertices = [
         // Front
         new Vertex(Data.xyz(-1, -1, 1), Data.xyz(0, 0, 1), Data.st(0, 0)),
@@ -91,6 +101,9 @@ export class ModelProcedural extends Model {
 
         let vertices: Array<Vertex>;
         switch (kind) {
+            case ModelProceduralKind.Plane:
+                vertices = ModelProcedural.planeVertices;
+                break;
             case ModelProceduralKind.Cube:
                 vertices = ModelProcedural.cubeVertices;
                 break;
