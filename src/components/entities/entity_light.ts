@@ -141,7 +141,7 @@ export class EntityLight extends Entity {
         gl.viewport(0, 0, EntityLight.SHADOW_MAP_SIZE, EntityLight.SHADOW_MAP_SIZE);
         gl.clear(gl.DEPTH_BUFFER_BIT);
         gl.enable(gl.CULL_FACE);
-        gl.cullFace(gl.FRONT);
+        gl.cullFace(gl.BACK);
 
         let lightProjectionMatrixId = gl.getUniformLocation(shaderProgram.program, "u_lightProjectionMatrix");
         gl.uniformMatrix4fv(lightProjectionMatrixId, false, this.projectionMatrix.m);
