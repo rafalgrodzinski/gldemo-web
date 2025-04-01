@@ -110,6 +110,8 @@ export class Scene {
 
         // Soldier
         let soldierModel = await ModelMdl.create("soldier.mdl");
+        let soldierEntity = await EntityModel.create([Phase.PassPhong, Phase.PassShadowMap], "Soldier", gl, soldierModel);
+        this.rootEntity.addChild(soldierEntity);
 
         return this;
     }
