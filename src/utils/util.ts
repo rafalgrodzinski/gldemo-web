@@ -26,6 +26,20 @@ export class Util {
             .then(response => response.text())
     }
 
+    static async arrayBuffer(fileName: string): Promise<ArrayBuffer> {
+        let response = await fetch(fileName);
+        let blob = await response.blob();
+
+        return new Promise((resolve, reject) => {
+            let fileReader = new FileReader();
+            fileReader.onload = () => {
+                let result = fileReader.result as ArrayBuffer;
+                resolve(result);
+            };
+            fileReader.readAsArrayBuffer(blob);
+        });
+    }
+
     static async image(fileName: string): Promise<HTMLImageElement> {
         return new Promise((resolve, reject) => {
             let image = new Image();

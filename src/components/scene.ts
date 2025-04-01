@@ -11,6 +11,7 @@ import { Util } from "utils/util";
 import { ModelProcedural, ModelProceduralKind } from "data/model/model_procedural";
 import { Data } from "data/data_types";
 import { ModelObj } from "data/model/model_obj";
+import { ModelMdl } from "../data/model/model_mdl";
 
 export class Scene {
     rootEntity!: Entity;
@@ -106,6 +107,9 @@ export class Scene {
         groundEntity.scale.z = 20;
         groundEntity.translation.y = -0.5;
         this.rootEntity.addChild(groundEntity);
+
+        // Soldier
+        let soldierModel = await ModelMdl.create("soldier.mdl");
 
         return this;
     }
