@@ -3,11 +3,12 @@ import { Util } from "../../utils/util";
 import { Data, Data2, Data3 } from "../data_types";
 import { Material } from "../material";
 import { Matrix } from "../matrix";
+import { Texture2D } from "../texture/texture_2d";
 import { Vector } from "../vector";
 import { Vertex } from "../vertex";
 import { Model } from "./model";
 
-type MdlCoord = {isOnSeam: boolean, coord: Data2};
+type MdlCoord = {isOnSeam: number, coord: Data2};
 type MdlTriangle = {isFrontFace: boolean, vertexIndices: Data3};
 type MdlVertex = {vertex: Data3, normalIndex: number}
 
@@ -437,12 +438,12 @@ export class ModelMdl extends Model {
         Data.rgb(0x9f, 0x5b, 0x53),
     ];
 
-    static async create(fileName: string): Promise<ModelMdl> {
-        return await new ModelMdl().init([fileName]);
+    static async create(gl: WebGL2RenderingContext, fileName: string): Promise<ModelMdl> {
+        return await new ModelMdl().init([gl, fileName]);
     }
 
     protected async init(args: Array<any>): Promise<this> {
-        let [fileName] = args as [string];
+        let [gl, fileName] = args as [WebGL2RenderingContext, string];
 
         let pointer = new Pointer(await Util.arrayBuffer(fileName))
 
@@ -481,13 +482,14 @@ export class ModelMdl extends Model {
             let color = ModelMdl.colorsPalette[colorsPaletteIndex];
             textureData.set(color.m, i*3);
         }
-        let material = new Material(Data.rgb(0, 1, 0), 0.1, 1, 0, false, null);
+        let texture = await Texture2D.create(gl, textureData, textureSize);
+        let material = new Material(Data.rgb(1, 1, 1), 0.1, 1, 0, true, texture);
 
         // Texture Coords
         let mdlCoords = new Array<MdlCoord>;
         for (let i=0; i<verticesCount; i++) {
             let value: MdlCoord = {
-                isOnSeam: pointer.readBool32(),
+                isOnSeam: pointer.readInt32(),
                 coord: pointer.readData2Int32(),
             }
             mdlCoords.push(value);
@@ -530,36 +532,43 @@ export class ModelMdl extends Model {
                 mdlVertices.push(value);
             }
 
-            for (let triangleIndex=0; triangleIndex<trianglesCount; triangleIndex++) {
+            for (let triangleIndex = 0; triangleIndex < trianglesCount; triangleIndex++) {
                 let triangle = mdlTriangles[triangleIndex];
-                
+
                 triangle.vertexIndices.m.forEach((vertexIndex) => {
                     let vertex = mdlVertices[vertexIndex];
                     let coord = mdlCoords[vertexIndex];
 
                     // Adjust texture coordinates
+                    let texCoordSOffset = 0;
                     if (!triangle.isFrontFace && coord.isOnSeam)
-                        coord.coord.s += textureSize.x / 2;
+                        texCoordSOffset = textureSize.x / 2;
 
-                    // From z to x to make it CCW
                     let position = new Vector(
-                        vertex.vertex.z * scale.z + translate.z,
-                        vertex.vertex.y * scale.y + translate.y,
                         vertex.vertex.x * scale.x + translate.x,
-                    )
-                    // Fix orientation (because X is up and -Y is forward)
-                    let matrix = Matrix.makeRotationX(-Math.PI);
-                    matrix = matrix.multiply(Matrix.makeRotationZ(-Math.PI/2));
+                        vertex.vertex.y * scale.y + translate.y,
+                        vertex.vertex.z * scale.z + translate.z,
+                    );
+                    // Fix orientation (because X is forward and Z is up)
+                    let matrix = Matrix.makeRotationX(-Math.PI/2).multiply(Matrix.makeRotationZ(Math.PI/2));
                     position = matrix.multiplyVector(position)
 
+                    // From z to x to make it CCW
                     let modelVertex = new Vertex(
-                        Data.vector(position),
+                        Data.xyz(
+                            position.z,
+                            position.y,
+                            position.x,
+                        ),
                         Data.xyz(
                             ModelMdl.normals[vertex.normalIndex].z,
                             ModelMdl.normals[vertex.normalIndex].y,
                             ModelMdl.normals[vertex.normalIndex].x,
                         ),
-                        coord.coord
+                        Data.st(
+                            (coord.coord.s + texCoordSOffset + 0.5) / textureSize.x,
+                            (coord.coord.t + 0.5) / textureSize.y,
+                        )
                     );
                     vertices.push(modelVertex)
                 });

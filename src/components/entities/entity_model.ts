@@ -8,7 +8,6 @@ import { Model } from "data/model/model";
 export class EntityModel extends Entity {
     model!: Model;
     private vertexArray!: WebGLVertexArrayObject;
-    private texture: WebGLTexture | null = null;
 
     static async create(phases: Array<Phase>, name: string, gl: WebGL2RenderingContext, model: Model): Promise<EntityModel> {
         return await new EntityModel().init([phases, name, gl, model]);
@@ -35,16 +34,6 @@ export class EntityModel extends Entity {
         gl.enableVertexAttribArray(ShaderAttribute.TexCoords);
         gl.vertexAttribPointer(ShaderAttribute.TexCoords, 2, gl.FLOAT, false, Vertex.STRIDE, Vertex.TEX_COORDS_OFFSET);
 
-        if (model.material.diffuseTexture) {
-            this.texture = gl.createTexture();
-            gl.bindTexture(gl.TEXTURE_2D, this.texture);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, model.material.diffuseTexture);
-            gl.generateMipmap(gl.TEXTURE_2D);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        }
-
-        gl.bindTexture(gl.TEXTURE_2D, null);
         gl.bindVertexArray(null);
 
         return this;
@@ -72,9 +61,9 @@ export class EntityModel extends Entity {
         let materialHasDiffuseTextureId = gl.getUniformLocation(shaderProgram.program, "u_material.hasDiffuseTexture");
         gl.uniform1i(materialHasDiffuseTextureId, this.model.material.diffuseTexture ? 1 : 0);
 
-        if (this.texture) {
+        if (this.model.material.diffuseTexture != null) {
             gl.activeTexture(gl.TEXTURE0);
-            gl.bindTexture(gl.TEXTURE_2D, this.texture);
+            gl.bindTexture(gl.TEXTURE_2D, this.model.material.diffuseTexture.texture);
             let samplerId = gl.getUniformLocation(shaderProgram.program, "u_diffuseSampler");
             gl.uniform1i(samplerId, 0);
         }

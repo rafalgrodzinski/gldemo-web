@@ -31,7 +31,7 @@ export class Pointer {
     }
 
     readBool32(): boolean {
-        let value = this.dataView.getInt32(this.currentOffset, true) > 0 ? true : false;
+        let value = this.dataView.getInt32(this.currentOffset, true) != 0 ? true : false;
         this.currentOffset += Int32Array.BYTES_PER_ELEMENT;
         return value;
     }

@@ -12,6 +12,7 @@ import { ModelProcedural, ModelProceduralKind } from "data/model/model_procedura
 import { Data } from "data/data_types";
 import { ModelObj } from "data/model/model_obj";
 import { ModelMdl } from "../data/model/model_mdl";
+import { Texture2D } from "../data/texture/texture_2d";
 
 export class Scene {
     rootEntity!: Entity;
@@ -73,7 +74,8 @@ export class Scene {
         pointLightNodeEntity.addChild(pointLightEntity);
 
         // Bear
-        let bearMaterial = new Material(Data.rgb(1,  1, 1), 0.1, 1, 8, false, await Util.image("bear.png"));
+        let bearTexture = await Texture2D.create(gl, "bear.png");
+        let bearMaterial = new Material(Data.rgb(1,  1, 1), 0.1, 1, 8, false, bearTexture);
         let bearModel = await ModelObj.create("bear.obj", bearMaterial);
         let bearEntity = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadowMap], "Bear", gl, bearModel);
         bearEntity.translation.z = -4;
@@ -82,7 +84,8 @@ export class Scene {
         this.rootEntity.addChild(bearEntity);
 
         // Cube
-        let cubeMaterial = new Material(Data.rgb(1, 1, 1), 0.1, 1, 0, false, await Util.image("box.jpg"));
+        let cubeTexture = await Texture2D.create(gl, "box.jpg");
+        let cubeMaterial = new Material(Data.rgb(1, 1, 1), 0.1, 1, 0, false, cubeTexture);
         let cubeModel = await ModelProcedural.create(ModelProceduralKind.Cube, cubeMaterial);
         let cubeEntity = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadowMap], "Cube", gl, cubeModel);
         cubeEntity.translation.z = -5;
@@ -90,7 +93,8 @@ export class Scene {
         this.rootEntity.addChild(cubeEntity);
 
         // Sphere
-        let sphereMaterial = new Material(Data.rgb(1, 0.5, 0.5), 0.1, 0.5, 2, false, await Util.image("box.jpg"));
+        let sphereTexture = await Texture2D.create(gl, "box.jpg");
+        let sphereMaterial = new Material(Data.rgb(1, 0.5, 0.5), 0.1, 0.5, 2, false, sphereTexture);
         let sphereModel = await ModelProcedural.create(ModelProceduralKind.Sphere, sphereMaterial);
         let sphereEntity = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadowMap], "Sphere", gl, sphereModel);
         sphereEntity.translation.x += 3;
@@ -99,7 +103,8 @@ export class Scene {
         this.rootEntity.addChild(sphereEntity);
 
         // Ground
-        let groundMaterial = new Material(Data.rgb(0.5, 0.5, 0.5), 0.1, 1, 0, false, await Util.image("grass.jpg"));
+        let groundTexture = await Texture2D.create(gl, "grass.jpg");
+        let groundMaterial = new Material(Data.rgb(0.5, 0.5, 0.5), 0.1, 1, 0, false, groundTexture);
         let groundModel = await ModelProcedural.create(ModelProceduralKind.Plane, groundMaterial);
         let groundEntity = await EntityModel.create([Phase.PassPhong, Phase.PassShadowMap], "Ground", gl, groundModel);
         groundEntity.scale.y = 0.5;
@@ -109,8 +114,11 @@ export class Scene {
         this.rootEntity.addChild(groundEntity);
 
         // Soldier
-        let soldierModel = await ModelMdl.create("soldier.mdl");
+        let soldierModel = await ModelMdl.create(gl, "soldier.mdl");
         let soldierEntity = await EntityModel.create([Phase.PassPhong, Phase.PassShadowMap], "Soldier", gl, soldierModel);
+        soldierEntity.scale.x = soldierEntity.scale.y = soldierEntity.scale.z = 0.2;
+        soldierEntity.translation.y = 4;
+        soldierEntity.translation.x = -5;
         this.rootEntity.addChild(soldierEntity);
 
         return this;
