@@ -5,8 +5,8 @@ import { RenderPassDebugNormals } from "renderer/render_pass_debug_normals";
 import { Scene } from "components/scene";
 import { Input } from "utils/input";
 import { RenderPassShadowMap } from "renderer/render_pass_shadow";
-import { RenderPassSkybox, SkyboxTextures } from "renderer/render_pass_skybox";
-import { Util } from "utils/util";
+import { RenderPassSkybox } from "renderer/render_pass_skybox";
+import { TextureCube } from "../data/texture/texture_cube";
 
 export enum Phase{
         Resize,
@@ -30,17 +30,18 @@ export class Renderer {
         let [gl, scene] = args as [WebGL2RenderingContext, Scene];
         this.scene = scene;
 
-        let skyboxTextures: SkyboxTextures = {
-            left: await Util.image("skybox_left.png"),
-            right: await Util.image("skybox_right.png"),
-            front: await Util.image("skybox_front.png"),
-            back: await Util.image("skybox_back.png"),
-            bottom: await Util.image("skybox_bottom.png"),
-            top: await Util.image("skybox_top.png")
-        };
+        let skyboxTexture = await TextureCube.create(
+            gl,
+            "skybox_left.png",
+            "skybox_right.png",
+            "skybox_front.png",
+            "skybox_back.png",
+            "skybox_bottom.png",
+            "skybox_top.png"
+        );
 
         this.renderPasses = await Promise.all([
-            await RenderPassSkybox.create(gl, skyboxTextures),
+            await RenderPassSkybox.create(gl, skyboxTexture),
             await RenderPassShadowMap.create(gl),
             await RenderPassPhong.create(gl),
             //await RenderPassDebugNormals.create(gl),
