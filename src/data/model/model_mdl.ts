@@ -483,7 +483,7 @@ export class ModelMdl extends Model {
             textureData.set(color.m, i*3);
         }
         let texture = await Texture2D.create(gl, textureData, textureSize);
-        let material = new Material(Data.rgb(1, 1, 1), 0.1, 1, 0, true, texture);
+        let material = new Material(Data.rgb(1, 1, 1), 0.1, 1, 0, false, texture);
 
         // Texture Coords
         let mdlCoords = new Array<MdlCoord>;
@@ -544,14 +544,22 @@ export class ModelMdl extends Model {
                     if (!triangle.isFrontFace && coord.isOnSeam)
                         texCoordSOffset = textureSize.x / 2;
 
+                    // Fix orientation (because X is forward and Z is up)
                     let position = new Vector(
                         vertex.vertex.x * scale.x + translate.x,
                         vertex.vertex.y * scale.y + translate.y,
                         vertex.vertex.z * scale.z + translate.z,
                     );
-                    // Fix orientation (because X is forward and Z is up)
-                    let matrix = Matrix.makeRotationX(-Math.PI/2).multiply(Matrix.makeRotationZ(Math.PI/2));
+
+                    let normal = new Vector(
+                        ModelMdl.normals[vertex.normalIndex].x,
+                        ModelMdl.normals[vertex.normalIndex].y,
+                        ModelMdl.normals[vertex.normalIndex].z,
+                    );
+
+                    let matrix = Matrix.makeRotationZ(Math.PI).multiply(Matrix.makeRotationX(Math.PI/2));
                     position = matrix.multiplyVector(position)
+                    normal = matrix.multiplyVector(normal);
 
                     // From z to x to make it CCW
                     let modelVertex = new Vertex(
@@ -561,9 +569,9 @@ export class ModelMdl extends Model {
                             position.x,
                         ),
                         Data.xyz(
-                            ModelMdl.normals[vertex.normalIndex].z,
-                            ModelMdl.normals[vertex.normalIndex].y,
-                            ModelMdl.normals[vertex.normalIndex].x,
+                            normal.z,
+                            normal.y,
+                            normal.x,
                         ),
                         Data.st(
                             (coord.coord.s + texCoordSOffset + 0.5) / textureSize.x,
