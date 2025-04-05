@@ -3,6 +3,7 @@
     "express": "^4.21.2"
   },
   "scripts": {
-    "start": "tsc && node app.ts"
+    "build": "tsc",
+    "start": "node app.ts"
   }
 }
