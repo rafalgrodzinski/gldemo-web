@@ -1,5 +1,5 @@
 import { Scene } from "components/scene";
-import { Renderer } from "renderer/renderer";
+import { CoordsOrientation, Renderer } from "renderer/renderer";
 import { Config } from "utils/config";
 import { Input } from "utils/input";
 
@@ -9,6 +9,7 @@ class Main {
     private renderer!: Renderer;
     private input!: Input;
     private config!: Config;
+    private coordsOrientation = CoordsOrientation.LeftHanded;
 
     static async create() {
         return await new Main().init([]);
@@ -18,9 +19,9 @@ class Main {
         let canvas = document.querySelector("#gl-view") as HTMLCanvasElement;
 
         this.gl = canvas.getContext("webgl2")!;
-        this.scene = await Scene.create(this.gl);
-        this.renderer = await Renderer.create(this.gl, this.scene);
-        this.input = await Input.create(canvas);
+        this.scene = await Scene.create(this.gl, this.coordsOrientation);
+        this.renderer = await Renderer.create(this.gl, this.scene, this.coordsOrientation);
+        this.input = await Input.create(canvas, this.coordsOrientation);
 
         let resizeObserver = new ResizeObserver( entries => {
             let entry = entries[0];

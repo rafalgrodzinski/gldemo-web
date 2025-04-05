@@ -8,6 +8,11 @@ import { RenderPassShadowMap } from "renderer/render_pass_shadow";
 import { RenderPassSkybox } from "renderer/render_pass_skybox";
 import { TextureCube } from "../data/texture/texture_cube";
 
+export enum CoordsOrientation {
+    LeftHanded,
+    RightHanded,
+}
+
 export enum Phase{
         Resize,
         Update,
@@ -21,14 +26,16 @@ export enum Phase{
 export class Renderer {
     scene!: Scene;
     private renderPasses: Array<RenderPass> = [];
+    private coordsOrientation!: CoordsOrientation;
 
-     static async create(gl: WebGL2RenderingContext, scene: Scene) {
-        return await new Renderer().init([gl, scene]);
+     static async create(gl: WebGL2RenderingContext, scene: Scene, coordsOrientation: CoordsOrientation) {
+        return await new Renderer().init([gl, scene, coordsOrientation]);
      }
 
      protected async init(args: Array<any>): Promise<this> {
-        let [gl, scene] = args as [WebGL2RenderingContext, Scene];
+        let [gl, scene, coordsOrientation] = args as [WebGL2RenderingContext, Scene, CoordsOrientation];
         this.scene = scene;
+        this.coordsOrientation = coordsOrientation;
 
         let skyboxTexture = await TextureCube.create(
             gl,
@@ -72,7 +79,14 @@ export class Renderer {
     draw(gl: WebGL2RenderingContext) {
         gl.clearColor(0, 0, 0, 1);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        gl.frontFace(gl.CCW);
+        switch (this.coordsOrientation) {
+            case CoordsOrientation.LeftHanded:
+                gl.frontFace(gl.CW);
+                break;
+            case CoordsOrientation.RightHanded:
+                gl.frontFace(gl.CCW);
+                break;
+        }
 
         this.renderPasses.forEach(renderPass => {
             let entities = this.scene.rootEntity.entitiesForPhase(renderPass.phase);

@@ -1,4 +1,4 @@
-import { Phase } from "renderer/renderer";
+import { CoordsOrientation, Phase } from "renderer/renderer";
 import { Entity, EntityKind } from "components/entities/entity";
 import { Light, LightKind } from "data/light";
 import { ShaderProgram } from "components/shader_program";
@@ -9,6 +9,7 @@ export class EntityLight extends Entity {
     private static MAX_LIGHTS: number = 8;
     private static lightsCount: number = 0;
     private static SHADOW_MAP_SIZE = 2048;
+    private coordsOrientation!: CoordsOrientation
 
     light!: Light;
     private depthMapFramebuffer!: WebGLFramebuffer;
@@ -16,12 +17,12 @@ export class EntityLight extends Entity {
     private index!: number;
     private projectionMatrix!: Matrix;
 
-    static async create(phases: Array<Phase>, name: string, gl: WebGL2RenderingContext, light: Light): Promise<EntityLight> {
-        return await new EntityLight().init([phases, name, gl, light]);
+    static async create(phases: Array<Phase>, name: string, gl: WebGL2RenderingContext, light: Light, coordsOrientation: CoordsOrientation): Promise<EntityLight> {
+        return await new EntityLight().init([phases, name, gl, light, coordsOrientation]);
     }
 
     protected async init(args: Array<any>): Promise<this> {
-        let  [phases, name, gl, light] = args as [Array<Phase>, string, WebGL2RenderingContext, Light];
+        let  [phases, name, gl, light, coordsOrientation] = args as [Array<Phase>, string, WebGL2RenderingContext, Light, CoordsOrientation];
         await super.init([phases, name, EntityKind.Light]);
 
         if (EntityLight.lightsCount >= EntityLight.MAX_LIGHTS) {
@@ -33,6 +34,7 @@ export class EntityLight extends Entity {
         EntityLight.lightsCount++;
 
         this.light = light;
+        this.coordsOrientation = coordsOrientation;
         this.projectionMatrix = Matrix.makeIdentity();
 
         if (light.shouldCastShadow) {
@@ -64,7 +66,15 @@ export class EntityLight extends Entity {
     }
 
     resize(width: number, height: number): void {
-        this.projectionMatrix = Matrix.makeOrthographic(1, 100, 100);
+        switch (this.coordsOrientation) {
+            case CoordsOrientation.LeftHanded:
+                this.projectionMatrix = this.projectionMatrix = Matrix.makeOrthographicLeft(1, 100, 100);
+                break;
+            case CoordsOrientation.RightHanded:
+                this.projectionMatrix = this.projectionMatrix = Matrix.makeOrthographicRight(1, 100, 100);
+                break;
+        }
+
     }
 
     prepareForDraw(gl: WebGL2RenderingContext, shaderProgram: ShaderProgram) {

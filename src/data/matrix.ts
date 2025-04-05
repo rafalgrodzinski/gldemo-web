@@ -68,26 +68,49 @@ export class Matrix {
         return new Matrix(m);
     }
 
-    static makeOrthographic(aspect: number, width: number, depth: number) {
+    static makeOrthographicLeft(aspect: number, width: number, depth: number) {
+        let height = width / aspect;
+        let m = [
+            2 / width, 0, 0, 0,
+            0, 2 / height, 0, 0,
+            0, 0, 2 / depth, 0,
+            0, 0, 0, 1
+        ];
+        return new Matrix(m);
+    }
+    static makeOrthographicRight(aspect: number, width: number, depth: number) {
         let height = width / aspect;
         let m = [
             2 / width, 0, 0, 0,
             0, 2 / height, 0, 0,
             0, 0, -2 / depth, 0,
-            0, 0, -1, 1
+            0, 0, 0, 1
         ];
         return new Matrix(m);
     }
 
-    static makePerspective(fieldOfView: number, aspect: number, near: number, far: number): Matrix {
-        var f = Math.tan(Math.PI * 0.5 - 0.5 * fieldOfView);
-        var rangeInv = 1.0 / (near - far);
+    static makePerspectiveLeft(fieldOfView: number, aspect: number, depth: number): Matrix {
+        let near = 0.1;
+        let far = near + depth;
 
         let m = [
-            f / aspect, 0, 0, 0,
-            0, f, 0, 0,
-            0, 0, (near + far) * rangeInv, -1,
-            0, 0, near * far * rangeInv * 2, 0,
+            1 / (aspect * Math.tan(fieldOfView * 0.5)), 0, 0, 0,
+            0, 1 / Math.tan(fieldOfView * 0.5), 0, 0,
+            0, 0, (-near - far) / (near - far), 1,
+            0, 0, near * far * 2 / (near - far), 0,
+        ];
+        return new Matrix(m);
+    }
+
+    static makePerspectiveRight(fieldOfView: number, aspect: number, depth: number): Matrix {
+        let near = 0.1;
+        let far = near + depth;
+
+        let m = [
+            1 / (aspect * Math.tan(fieldOfView * 0.5)), 0, 0, 0,
+            0, 1 / (Math.tan(fieldOfView * 0.5)), 0, 0,
+            0, 0, (near + far) / (near - far), -1,
+            0, 0, near * far * 2 / (near - far), 0,
         ];
         return new Matrix(m);
     }

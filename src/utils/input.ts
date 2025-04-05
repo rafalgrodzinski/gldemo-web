@@ -1,4 +1,5 @@
 import { Util } from "utils/util";
+import { CoordsOrientation } from "../renderer/renderer";
 
 export type InputMovement = {forward: number, right: number, up: number};
 export type InputActions = {primary: boolean, secondary: boolean};
@@ -12,6 +13,8 @@ export class Input {
     private static upKey = "KeyE";
     private static downKey = "KeyQ";
     private static releaseKey = "Escape";
+
+    private forwardValue = 0;
 
     private keyboardMovement: InputMovement = {forward: 0, right: 0, up: 0};
     private touchMovement: InputMovement = {forward: 0, right: 0, up: 0};
@@ -91,11 +94,22 @@ export class Input {
         return values;
     }
 
-    static async create(container: HTMLElement): Promise<Input> {
-        return await new Input().init(container);
+    static async create(container: HTMLElement, coordsOrientation: CoordsOrientation): Promise<Input> {
+        return await new Input().init([container, coordsOrientation]);
     }
 
-    protected async init(container: HTMLElement): Promise<this> {
+    protected async init(args: Array<any>): Promise<this> {
+        let [container, coordsOrientation] = args as [HTMLElement, CoordsOrientation];
+    
+        switch (coordsOrientation) {
+            case CoordsOrientation.LeftHanded:
+                this.forwardValue = 1;
+                break;
+            case CoordsOrientation.RightHanded:
+                this.forwardValue = -1;
+                break;
+        }
+
         // Disable context menu
         container.oncontextmenu = () =>  {
             return false;
@@ -115,10 +129,10 @@ export class Input {
 
             switch (event.code) {
                 case Input.forwardKey:
-                    this.keyboardMovement.forward = -1;
+                    this.keyboardMovement.forward = this.forwardValue;
                     break;
                 case Input.backKey:
-                    this.keyboardMovement.forward = 1;
+                    this.keyboardMovement.forward = -this.forwardValue;
                     break;
                 case Input.rightKey:
                     this.keyboardMovement.right = 1;
