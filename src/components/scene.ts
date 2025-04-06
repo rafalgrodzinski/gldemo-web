@@ -7,7 +7,6 @@ import { EntityLight } from "components/entities/entity_light"
 import { Vector } from "data/vector";
 import { Material } from "data/material";
 import { Light, LightKind } from "data/light";
-import { Util } from "utils/util";
 import { ModelProcedural, ModelProceduralKind } from "data/model/model_procedural";
 import { Data } from "data/data_types";
 import { ModelObj } from "data/model/model_obj";
@@ -116,11 +115,12 @@ export class Scene {
 
         // Soldier
         let soldierModel = await ModelMdl.create(gl, "soldier.mdl");
-        let soldierEntity = await EntityModel.create([Phase.PassPhong, Phase.PassShadowMap], "Soldier", gl, soldierModel);
+        let soldierEntity = await EntityModel.create([Phase.PassPhong, Phase.PassShadowMap, Phase.Update], "Soldier", gl, soldierModel);
         soldierEntity.scale.x = soldierEntity.scale.y = soldierEntity.scale.z = 0.2;
         soldierEntity.translation.y = 4;
         soldierEntity.translation.x = -5;
         this.rootEntity.addChild(soldierEntity);
+        soldierModel.anims[0].play();
 
         return this;
     }

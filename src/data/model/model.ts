@@ -1,20 +1,25 @@
 import { Material } from "data/material";
 import { Vertex } from "data/vertex";
+import { Anim } from "./anim";
 
 export abstract class Model {
-    verticesData!: Float32Array;
     verticesCount!: number;
+    framesData!: Float32Array;
     material!: Material;
+    anims!: Array<Anim>;
 
     protected async init(args: Array<any>): Promise<this> {
-        let [vertices, material] = args as [Array<Vertex>, Material];
+        let [frames, material, anims] = args as [Array<Array<Vertex>>, Material, Array<Anim> | null];
 
-        this.verticesData = new Float32Array(vertices.length * Vertex.STRIDE_LENGTH);
-        vertices.forEach((vertex, i) => {
-            this.verticesData.set(vertex.m, i * Vertex.STRIDE_LENGTH);
+        this.verticesCount = frames[0].length;
+        this.framesData = new Float32Array(this.verticesCount * frames.length * Vertex.STRIDE_LENGTH);
+        frames.forEach((frameVertices, frameIndex) => {
+            frameVertices.forEach((vertex, vertexIndex) => {
+                this.framesData.set(vertex.m, (frameIndex * this.verticesCount + vertexIndex) * Vertex.STRIDE_LENGTH);
+            });
         });
-        this.verticesCount = vertices.length;
         this.material = material;
+        this.anims = anims ?? [];
 
         return this;
     }

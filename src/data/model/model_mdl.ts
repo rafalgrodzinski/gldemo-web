@@ -6,6 +6,7 @@ import { Matrix } from "../matrix";
 import { Texture2D } from "../texture/texture_2d";
 import { Vector } from "../vector";
 import { Vertex } from "../vertex";
+import { Anim } from "./anim";
 import { Model } from "./model";
 
 type MdlCoord = {isOnSeam: number, coord: Data2};
@@ -506,8 +507,9 @@ export class ModelMdl extends Model {
         }
 
         // Frames
-        let vertices: Array<Vertex> = [];
-        for (let frameIndex=0; frameIndex<1; frameIndex++) {
+        let frames: Array<Array<Vertex>> = [];
+        for (let frameIndex=0; frameIndex<framesCount; frameIndex++) {
+            let vertices: Array<Vertex> = [];
             // Is frames group
             let isFramesGroup = pointer.readBool32();
             if (isFramesGroup)
@@ -581,9 +583,12 @@ export class ModelMdl extends Model {
                     vertices.push(modelVertex)
                 });
             }
+            frames.push(vertices);
         }
 
-        await super.init([vertices, material]);
+        let anim = new Anim(0, frames.length, 0.1);
+
+        await super.init([frames, material, [anim]]);
         return this;
     }
 }

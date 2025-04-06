@@ -34,7 +34,7 @@ export class RenderPassSkybox extends RenderPass {
 
         let buffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, this.model.verticesData, gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, this.model.framesData, gl.STATIC_DRAW);
 
         gl.enableVertexAttribArray(ShaderAttribute.Position);
         gl.vertexAttribPointer(ShaderAttribute.Position, 3, gl.FLOAT, false, Vertex.STRIDE, Vertex.POSITION_OFFSET);

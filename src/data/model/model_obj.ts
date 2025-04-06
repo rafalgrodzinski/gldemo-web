@@ -59,7 +59,7 @@ export class ModelObj extends Model {
             }
         });
 
-        await super.init([vertices, material]);
+        await super.init([[vertices], material, null]);
         return this;
     }
 }

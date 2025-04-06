@@ -45,43 +45,43 @@ export class RenderPassDebugNormals extends RenderPass {
             let vertexIndex2 = normalIndex*3 + 2;
 
             let x = 0;
-            x += entityModel.model.verticesData[vertexIndex0 * Vertex.STRIDE_LENGTH + 0];
-            x += entityModel.model.verticesData[vertexIndex1 * Vertex.STRIDE_LENGTH + 0];
-            x += entityModel.model.verticesData[vertexIndex2 * Vertex.STRIDE_LENGTH + 0];
+            x += entityModel.model.framesData[vertexIndex0 * Vertex.STRIDE_LENGTH + 0];
+            x += entityModel.model.framesData[vertexIndex1 * Vertex.STRIDE_LENGTH + 0];
+            x += entityModel.model.framesData[vertexIndex2 * Vertex.STRIDE_LENGTH + 0];
             x /= 3;
 
             let y = 0;
-            y += entityModel.model.verticesData[vertexIndex0 * Vertex.STRIDE_LENGTH + 1];
-            y += entityModel.model.verticesData[vertexIndex1 * Vertex.STRIDE_LENGTH + 1];
-            y += entityModel.model.verticesData[vertexIndex2 * Vertex.STRIDE_LENGTH + 1];
+            y += entityModel.model.framesData[vertexIndex0 * Vertex.STRIDE_LENGTH + 1];
+            y += entityModel.model.framesData[vertexIndex1 * Vertex.STRIDE_LENGTH + 1];
+            y += entityModel.model.framesData[vertexIndex2 * Vertex.STRIDE_LENGTH + 1];
             y /= 3;
 
             let z = 0;
-            z += entityModel.model.verticesData[vertexIndex0 * Vertex.STRIDE_LENGTH + 2];
-            z += entityModel.model.verticesData[vertexIndex1 * Vertex.STRIDE_LENGTH + 2];
-            z += entityModel.model.verticesData[vertexIndex2 * Vertex.STRIDE_LENGTH + 2];
+            z += entityModel.model.framesData[vertexIndex0 * Vertex.STRIDE_LENGTH + 2];
+            z += entityModel.model.framesData[vertexIndex1 * Vertex.STRIDE_LENGTH + 2];
+            z += entityModel.model.framesData[vertexIndex2 * Vertex.STRIDE_LENGTH + 2];
             z /= 3;
 
             let nx = 0;
-            nx += entityModel.model.verticesData[vertexIndex0 * Vertex.STRIDE_LENGTH + 3 + 0];
-            nx += entityModel.model.verticesData[vertexIndex1 * Vertex.STRIDE_LENGTH + 3 + 0];
-            nx += entityModel.model.verticesData[vertexIndex2 * Vertex.STRIDE_LENGTH + 3 + 0];
+            nx += entityModel.model.framesData[vertexIndex0 * Vertex.STRIDE_LENGTH + 3 + 0];
+            nx += entityModel.model.framesData[vertexIndex1 * Vertex.STRIDE_LENGTH + 3 + 0];
+            nx += entityModel.model.framesData[vertexIndex2 * Vertex.STRIDE_LENGTH + 3 + 0];
             nx /= 3;
             nx /= entityModel.scaleGlobal.x;
             nx *= normalLength;
 
             let ny = 0;
-            ny += entityModel.model.verticesData[vertexIndex0 * Vertex.STRIDE_LENGTH + 3 + 1];
-            ny += entityModel.model.verticesData[vertexIndex1 * Vertex.STRIDE_LENGTH + 3 + 1];
-            ny += entityModel.model.verticesData[vertexIndex2 * Vertex.STRIDE_LENGTH + 3 + 1];
+            ny += entityModel.model.framesData[vertexIndex0 * Vertex.STRIDE_LENGTH + 3 + 1];
+            ny += entityModel.model.framesData[vertexIndex1 * Vertex.STRIDE_LENGTH + 3 + 1];
+            ny += entityModel.model.framesData[vertexIndex2 * Vertex.STRIDE_LENGTH + 3 + 1];
             ny /= 3;
             ny /= entityModel.scaleGlobal.y;
             ny *= normalLength;
 
             let nz = 0;
-            nz += entityModel.model.verticesData[vertexIndex0 * Vertex.STRIDE_LENGTH + 3 + 2];
-            nz += entityModel.model.verticesData[vertexIndex1 * Vertex.STRIDE_LENGTH + 3 + 2];
-            nz += entityModel.model.verticesData[vertexIndex2 * Vertex.STRIDE_LENGTH + 3 + 2];
+            nz += entityModel.model.framesData[vertexIndex0 * Vertex.STRIDE_LENGTH + 3 + 2];
+            nz += entityModel.model.framesData[vertexIndex1 * Vertex.STRIDE_LENGTH + 3 + 2];
+            nz += entityModel.model.framesData[vertexIndex2 * Vertex.STRIDE_LENGTH + 3 + 2];
             nz /= 3;
             nz /= entityModel.scaleGlobal.z;
             nz *= normalLength;
