@@ -18,6 +18,15 @@ export class Pointer {
         return value;
     }
 
+    readUint8Bytes(count: number): Array<number> {
+        let bytes: Array<number> = [];
+        for (let i=0; i<count; i++) {
+            bytes.push(this.dataView.getUint8(this.currentOffset));
+            this.currentOffset += Uint8Array.BYTES_PER_ELEMENT;
+        }
+        return bytes;
+    }
+
     readInt32(): number {
         let value = this.dataView.getInt32(this.currentOffset, true);
         this.currentOffset += Int32Array.BYTES_PER_ELEMENT;

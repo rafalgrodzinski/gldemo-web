@@ -85,7 +85,7 @@ export class EntityModel extends Entity {
 
         let currentFrame = 0;
         if (this.currentAnim != null) {
-            currentFrame = Math.floor(this.currentTime / this.currentAnim.frameDuration) % this.currentAnim.framesCount;
+            currentFrame = this.currentAnim.startFrame + Math.floor(this.currentTime / this.currentAnim.frameDuration) % this.currentAnim.framesCount;
         }
 
         gl.bindVertexArray(this.vertexArray);

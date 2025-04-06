@@ -120,7 +120,7 @@ export class Scene {
         soldierEntity.translation.y = 4;
         soldierEntity.translation.x = -5;
         this.rootEntity.addChild(soldierEntity);
-        soldierModel.anims[0].play();
+        soldierModel.anims[14].play();
 
         return this;
     }

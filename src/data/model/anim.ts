@@ -1,11 +1,13 @@
 export class Anim {
+    name: string;
     startFrame: number;
     framesCount: number;
     frameDuration: number;
 
     setCurrentAnim: ((animation: Anim | null) => void) | null = null;
 
-    constructor(startFrame: number, framesCount: number, frameDuration: number) {
+    constructor(name: string, startFrame: number, framesCount: number, frameDuration: number) {
+        this.name = name;
         this.startFrame = startFrame;
         this.framesCount = framesCount;
         this.frameDuration = frameDuration;

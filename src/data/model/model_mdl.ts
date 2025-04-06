@@ -508,6 +508,7 @@ export class ModelMdl extends Model {
 
         // Frames
         let frames: Array<Array<Vertex>> = [];
+        let anims: Array<Anim> = [];
         for (let frameIndex=0; frameIndex<framesCount; frameIndex++) {
             let vertices: Array<Vertex> = [];
             // Is frames group
@@ -521,8 +522,21 @@ export class ModelMdl extends Model {
             // Bounding box max
             pointer.skip(Uint8Array.BYTES_PER_ELEMENT * 4);
 
-            // Name
-            pointer.skip(Uint8Array.BYTES_PER_ELEMENT * 16);
+            // Anim
+            let nameBytes = pointer.readUint8Bytes(16);
+            let name = new TextDecoder()
+                .decode(new Uint8Array(nameBytes))
+                .replace(/[^a-zA-Z]/g, "");
+            let lastAnim = (anims.length > 0) ? anims[anims.length - 1] : null;
+            // update current anim
+            if (lastAnim != null && lastAnim.name == name) {
+                lastAnim.framesCount = frameIndex - lastAnim.startFrame + 1;
+            // Add new anim (only if we have multiple frames)
+            } else if (framesCount > 0) {
+                let startFrame = (lastAnim != null) ? lastAnim.startFrame + lastAnim.framesCount : frameIndex;
+                let anim = new Anim(name, startFrame, 1, 0.1);
+                anims.push(anim);
+            }
 
             // Vertices
             let mdlVertices = new Array<MdlVertex>;
@@ -586,9 +600,7 @@ export class ModelMdl extends Model {
             frames.push(vertices);
         }
 
-        let anim = new Anim(0, frames.length, 0.1);
-
-        await super.init([frames, material, [anim]]);
+        await super.init([frames, material, anims]);
         return this;
     }
 }
