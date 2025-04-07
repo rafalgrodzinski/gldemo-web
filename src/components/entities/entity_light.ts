@@ -117,6 +117,24 @@ export class EntityLight extends Entity {
                 shaderProgram.setFloat(gl, idPrefix + "quadaraticAttenuation", this.light.quadaraticAttenuation);
                 break;
             }
+            case LightKind.Spot: {
+                shaderProgram.setVector(gl, idPrefix + "color", this.light.color.m);
+                shaderProgram.setVector(gl, idPrefix + "direction", this.directionGlobal.m);
+                shaderProgram.setFloat(gl, idPrefix + "intensity", this.light.intensity);
+                shaderProgram.setVector(gl, idPrefix + "position", this.translationGlobal.m);
+                shaderProgram.setFloat(gl, idPrefix + "innerCutOff", this.light.innerCutOff);
+                shaderProgram.setFloat(gl, idPrefix + "outerCutOff", this.light.outerCutOff);
+                shaderProgram.setBool(gl, idPrefix + "shouldCastShadow", this.light.shouldCastShadow);
+
+                if (this.light.shouldCastShadow) {
+                    gl.activeTexture(gl.TEXTURE1);
+                    gl.bindTexture(gl.TEXTURE_2D, this.depthMapTexture);
+                    shaderProgram.setInt(gl, "u_shadowMapSampler", 1);
+                    shaderProgram.setMatrix(gl, "u_lightProjectionMatrix", this.projectionMatrix.m);
+                    shaderProgram.setMatrix(gl, "u_lightViewMatrix", this.viewMatrix.m);
+                }
+                break;
+            }
         }
     }
 

@@ -13,7 +13,10 @@ export class Light {
     intensity: number;
     linearAttenuation: number;
     quadaraticAttenuation: number;
+    innerCutOff: number;
+    outerCutOff: number;
     shouldCastShadow: boolean;
+
 
     constructor(
         kind: LightKind,
@@ -21,6 +24,8 @@ export class Light {
         intensity: number,
         linearAttenuation: number,
         quadaraticAttenuation: number,
+        innerCutOff: number,
+        outerCutOff: number,
         shouldCastShadow: boolean
     ) {
         this.kind = kind;
@@ -28,6 +33,8 @@ export class Light {
         this.intensity = intensity;
         this.linearAttenuation = linearAttenuation;
         this.quadaraticAttenuation = quadaraticAttenuation;
+        this.innerCutOff = innerCutOff;
+        this.outerCutOff = outerCutOff;
         this.shouldCastShadow = shouldCastShadow;
     }
 }

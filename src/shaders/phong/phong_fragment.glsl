@@ -10,6 +10,8 @@ struct Light {
     vec3 position; // point
     float linearAttenuation; // point
     float quadraticAttenuation; // point
+    float innerCutOff;
+    float outerCutOff;
     bool shouldCastShadow;
 };
 
@@ -121,6 +123,29 @@ vec3 pointLightColor(vec3 position, vec3 normal, vec3 cameraPosition, Light ligh
     return color;
 }
 
+vec3 spotLightColor(vec3 position, vec3 normal, vec3 cameraPosition, Light light, Material material, float shadowIntensity) {
+    vec3 color = vec3(0);
+
+    vec3 direction = normalize(position - light.position);
+    float theta = dot(direction, light.direction);
+    float epsilon = light.innerCutOff - light.outerCutOff;
+    float spotIntensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+    
+    // Diffuse
+    float diffuseIntensity = spotIntensity * light.intensity * material.diffuseIntensity - shadowIntensity;
+    color += material.color * light.color * diffuseIntensity;
+
+    // Specular
+    if (material.specularIntensity > 0.0) {
+        vec3 cameraDirection = normalize(cameraPosition - position);
+        vec3 reflected = reflect(direction, normal);
+        float specularIntensity = clamp(dot(cameraDirection, reflected), 0.0, 1.0);
+        color += light.color * pow(specularIntensity, material.specularIntensity) * spotIntensity * specularIntensity * light.intensity * material.roughnessIntensity;
+    }
+
+    return color;
+}
+
 void main() {
     vec3 color = vec3(0);
 
@@ -150,12 +175,15 @@ void main() {
         for (int i=0; i<8; i++) {
             float shadowIntensity = shadow(v_lightSpacePosition, v_normal, u_lights[i], u_shadowMapSampler);
 
-            if (u_lights[i].kind == LightKindAmbient)
+            if (u_lights[i].kind == LightKindAmbient) {
                 color += ambientLightColor(u_lights[i], material);
-            else if (u_lights[i].kind == LightKindDirectional) {
+            } else if (u_lights[i].kind == LightKindDirectional) {
                 color += directionalLightColor(v_position, v_normal, u_cameraPosition, u_lights[i], material, shadowIntensity);
-            } else if (u_lights[i].kind == LightKindPoint)
+            } else if (u_lights[i].kind == LightKindPoint) {
                 color += pointLightColor(v_position, v_normal, u_cameraPosition, u_lights[i], material);
+            } else if (u_lights[i].kind == LightKindSpot) {
+                color += spotLightColor(v_position, v_normal, u_cameraPosition, u_lights[i], material, shadowIntensity);
+            }
         }
     }
 
