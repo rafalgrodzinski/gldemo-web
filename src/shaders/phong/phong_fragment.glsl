@@ -22,6 +22,7 @@ struct Material {
     bool isUnshaded;
     bool hasDiffuseTexture;
     bool hasRoughnessTexture;
+    bool hasEnvironmentTexture;
 };
 
 const int LightKindAmbient = 1;
@@ -37,6 +38,7 @@ in vec4 v_lightSpacePosition;
 
 uniform sampler2D u_diffuseSampler;
 uniform sampler2D u_roughnessSampler;
+uniform samplerCube u_environmentSampler;
 uniform sampler2D u_shadowMapSampler;
 uniform Light u_lights[8];
 uniform Material u_material;
@@ -123,11 +125,24 @@ void main() {
     vec3 color = vec3(0);
 
     Material material = u_material;
+
+    // Diffuse texture
     if (material.hasDiffuseTexture) {
-        material.color = vec3(texture(u_diffuseSampler, v_texCoords));
+        material.color = texture(u_diffuseSampler, v_texCoords).rgb;
     }
 
-    material.roughnessIntensity = material.hasRoughnessTexture ? texture(u_roughnessSampler, v_texCoords).x : 1.0;
+    // Roughness texture
+    material.roughnessIntensity = 1.0;
+    if (material.hasRoughnessTexture) {
+        material.roughnessIntensity = texture(u_roughnessSampler, v_texCoords).r;
+    }
+
+    // Environment texture
+    if (material.hasEnvironmentTexture) {
+        vec3 direction = normalize(v_position - u_cameraPosition);
+        vec3 reflected = reflect(direction, v_normal);
+        material.color = texture(u_environmentSampler, reflected).rgb;
+    }
 
     if (u_material.isUnshaded) {
         color = material.color;

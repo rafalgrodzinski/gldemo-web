@@ -48,6 +48,7 @@ export class EntityModel extends Entity {
         shaderProgram.setBool(gl, "u_material.isUnshaded", this.model.material.isUnshaded);
         shaderProgram.setBool(gl, "u_material.hasDiffuseTexture", this.model.material.diffuseTexture != null);
         shaderProgram.setBool(gl, "u_material.hasRoughnessTexture", this.model.material.roughnessTexture != null);
+        shaderProgram.setBool(gl, "u_material.hasEnvironmentTexture", this.model.material.environmentTexture != null);
 
         if (this.model.material.diffuseTexture != null) {
             gl.activeTexture(gl.TEXTURE0);
@@ -59,6 +60,12 @@ export class EntityModel extends Entity {
             gl.activeTexture(gl.TEXTURE2);
             gl.bindTexture(gl.TEXTURE_2D, this.model.material.roughnessTexture.texture);
             shaderProgram.setInt(gl, "u_roughnessSampler", 2);
+        }
+
+        if (this.model.material.environmentTexture != null) {
+            gl.activeTexture(gl.TEXTURE3);
+            gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.model.material.environmentTexture.texture);
+            shaderProgram.setInt(gl, "u_environmentSampler", 3);
         }
 
         shaderProgram.setBool(gl, "u_isAnimated", false);
