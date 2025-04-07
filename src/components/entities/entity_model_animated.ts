@@ -61,45 +61,36 @@ export class EntityModelAnimated extends Entity {
     }
 
     draw(gl: WebGL2RenderingContext, shaderProgram: ShaderProgram) {
-        let modelMatrixId = gl.getUniformLocation(shaderProgram.program, "u_modelMatrix");
-        gl.uniformMatrix4fv(modelMatrixId, false, this.modelMatrixGlobal.m);
-
-        let materialColorId = gl.getUniformLocation(shaderProgram.program, "u_material.color");
-        gl.uniform3fv(materialColorId, this.modelAnimated.material.color.m);
-
-        let materialAmbientIntensityId = gl.getUniformLocation(shaderProgram.program, "u_material.ambientIntensity");
-        gl.uniform1f(materialAmbientIntensityId, this.modelAnimated.material.ambientIntensity);
-
-        let materialDiffuseIntensityId = gl.getUniformLocation(shaderProgram.program, "u_material.diffuseIntensity");
-        gl.uniform1f(materialDiffuseIntensityId, this.modelAnimated.material.diffuseIntensity);
-
-        let materialSpecularIntensityId = gl.getUniformLocation(shaderProgram.program, "u_material.specularIntensity");
-        gl.uniform1f(materialSpecularIntensityId, this.modelAnimated.material.specularIntensity);
-
-        let materialIsUnshadedId = gl.getUniformLocation(shaderProgram.program, "u_material.isUnshaded");
-        gl.uniform1i(materialIsUnshadedId, this.modelAnimated.material.isUnshaded ? 1 : 0);
-
-        let materialHasDiffuseTextureId = gl.getUniformLocation(shaderProgram.program, "u_material.hasDiffuseTexture");
-        gl.uniform1i(materialHasDiffuseTextureId, this.modelAnimated.material.diffuseTexture ? 1 : 0);
+        shaderProgram.setMatrix(gl, "u_modelMatrix", this.modelMatrixGlobal.m);
+        shaderProgram.setVector(gl, "u_material.color", this.modelAnimated.material.color.m);
+        shaderProgram.setFloat(gl, "u_material.ambientIntensity", this.modelAnimated.material.ambientIntensity);
+        shaderProgram.setFloat(gl, "u_material.diffuseIntensity", this.modelAnimated.material.diffuseIntensity);
+        shaderProgram.setFloat(gl, "u_material.specularIntensity", this.modelAnimated.material.specularIntensity);
+        shaderProgram.setBool(gl, "u_material.isUnshaded", this.modelAnimated.material.isUnshaded);
+        shaderProgram.setBool(gl, "u_material.hasDiffuseTexture", this.modelAnimated.material.diffuseTexture != null);
+        shaderProgram.setBool(gl, "u_material.hasRoughnessTexture", this.modelAnimated.material.roughnessTexture != null);
 
         if (this.modelAnimated.material.diffuseTexture != null) {
             gl.activeTexture(gl.TEXTURE0);
             gl.bindTexture(gl.TEXTURE_2D, this.modelAnimated.material.diffuseTexture.texture);
-            let samplerId = gl.getUniformLocation(shaderProgram.program, "u_diffuseSampler");
-            gl.uniform1i(samplerId, 0);
+            shaderProgram.setInt(gl, "u_diffuseSampler", 0);
         }
+
+        if (this.modelAnimated.material.roughnessTexture != null) {
+            gl.activeTexture(gl.TEXTURE2);
+            gl.bindTexture(gl.TEXTURE_2D, this.modelAnimated.material.roughnessTexture.texture);
+            shaderProgram.setInt(gl, "u_roughnessSampler", 2);
+        }
+
+        shaderProgram.setBool(gl, "u_isAnimated", true);
 
         let currentFrame = 0;
         if (this.currentAnim != null) {
             currentFrame = this.currentAnim.startFrame + Math.floor(this.currentTime / this.currentAnim.frameDuration) % this.currentAnim.framesCount;
             
             let tweenFactor = (this.currentTime % this.currentAnim.frameDuration) / this.currentAnim.frameDuration;
-            let tweenFactorId = gl.getUniformLocation(shaderProgram.program, "u_tweenFactor");
-            gl.uniform1f(tweenFactorId, tweenFactor);
+            shaderProgram.setFloat(gl, "u_tweenFactor", tweenFactor);
         }
-
-        let isAnimatedId = gl.getUniformLocation(shaderProgram.program, "u_isAnimated");
-        gl.uniform1i(isAnimatedId, 1);
 
         gl.bindVertexArray(this.vertexArray);
         gl.drawArrays(gl.TRIANGLES, currentFrame * this.modelAnimated.verticesCount, this.modelAnimated.verticesCount);

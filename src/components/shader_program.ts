@@ -53,4 +53,34 @@ export class ShaderProgram {
         }
         return program;
     }
+
+    setBool(gl: WebGL2RenderingContext, uniformLocation: string, value: boolean) {
+        let uniformId = gl.getUniformLocation(this.program, uniformLocation);
+        if (uniformId != null)
+            gl.uniform1i(uniformId, value ? 1 : 0);
+    }
+
+    setInt(gl: WebGL2RenderingContext, uniformLocation: string, value: number) {
+        let uniformId = gl.getUniformLocation(this.program, uniformLocation);
+        if (uniformId != null)
+            gl.uniform1i(uniformId, value);
+    }
+
+    setFloat(gl: WebGL2RenderingContext, uniformLocation: string, value: number) {
+        let uniformId = gl.getUniformLocation(this.program, uniformLocation);
+        if (uniformId != null)
+            gl.uniform1f(uniformId, value);
+    }
+
+    setVector(gl: WebGL2RenderingContext, uniformLocation: string, value: Array<number>) {
+        let uniformId = gl.getUniformLocation(this.program, uniformLocation);
+        if (uniformId != null)
+            gl.uniform3fv(uniformId, value);
+    }
+
+    setMatrix(gl: WebGL2RenderingContext, uniformLocation: string, value: Array<number>) {
+        let uniformId = gl.getUniformLocation(this.program, uniformLocation);
+        if (uniformId != null)
+            gl.uniformMatrix4fv(uniformId, false, value);
+    }
 }

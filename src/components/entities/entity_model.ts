@@ -40,46 +40,28 @@ export class EntityModel extends Entity {
     }
 
     draw(gl: WebGL2RenderingContext, shaderProgram: ShaderProgram) {
-        let modelMatrixId = gl.getUniformLocation(shaderProgram.program, "u_modelMatrix");
-        gl.uniformMatrix4fv(modelMatrixId, false, this.modelMatrixGlobal.m);
-
-        let materialColorId = gl.getUniformLocation(shaderProgram.program, "u_material.color");
-        gl.uniform3fv(materialColorId, this.model.material.color.m);
-
-        let materialAmbientIntensityId = gl.getUniformLocation(shaderProgram.program, "u_material.ambientIntensity");
-        gl.uniform1f(materialAmbientIntensityId, this.model.material.ambientIntensity);
-
-        let materialDiffuseIntensityId = gl.getUniformLocation(shaderProgram.program, "u_material.diffuseIntensity");
-        gl.uniform1f(materialDiffuseIntensityId, this.model.material.diffuseIntensity);
-
-        let materialSpecularIntensityId = gl.getUniformLocation(shaderProgram.program, "u_material.specularIntensity");
-        gl.uniform1f(materialSpecularIntensityId, this.model.material.specularIntensity);
-
-        let materialIsUnshadedId = gl.getUniformLocation(shaderProgram.program, "u_material.isUnshaded");
-        gl.uniform1i(materialIsUnshadedId, this.model.material.isUnshaded ? 1 : 0);
-
-        let materialHasDiffuseTextureId = gl.getUniformLocation(shaderProgram.program, "u_material.hasDiffuseTexture");
-        gl.uniform1i(materialHasDiffuseTextureId, this.model.material.diffuseTexture ? 1 : 0);
-
-        let materialHasRoughnessTextureId = gl.getUniformLocation(shaderProgram.program, "u_material.hasRoughnessTexture");
-        gl.uniform1i(materialHasRoughnessTextureId, this.model.material.roughnessTexture ? 1 : 0);
+        shaderProgram.setMatrix(gl, "u_modelMatrix", this.modelMatrixGlobal.m);
+        shaderProgram.setVector(gl, "u_material.color", this.model.material.color.m);
+        shaderProgram.setFloat(gl, "u_material.ambientIntensity", this.model.material.ambientIntensity);
+        shaderProgram.setFloat(gl, "u_material.diffuseIntensity", this.model.material.diffuseIntensity);
+        shaderProgram.setFloat(gl, "u_material.specularIntensity", this.model.material.specularIntensity);
+        shaderProgram.setBool(gl, "u_material.isUnshaded", this.model.material.isUnshaded);
+        shaderProgram.setBool(gl, "u_material.hasDiffuseTexture", this.model.material.diffuseTexture != null);
+        shaderProgram.setBool(gl, "u_material.hasRoughnessTexture", this.model.material.roughnessTexture != null);
 
         if (this.model.material.diffuseTexture != null) {
             gl.activeTexture(gl.TEXTURE0);
             gl.bindTexture(gl.TEXTURE_2D, this.model.material.diffuseTexture.texture);
-            let samplerId = gl.getUniformLocation(shaderProgram.program, "u_diffuseSampler");
-            gl.uniform1i(samplerId, 0);
+            shaderProgram.setInt(gl, "u_diffuseSampler", 0);
         }
 
         if (this.model.material.roughnessTexture != null) {
             gl.activeTexture(gl.TEXTURE2);
             gl.bindTexture(gl.TEXTURE_2D, this.model.material.roughnessTexture.texture);
-            let samplerId = gl.getUniformLocation(shaderProgram.program, "u_roughnessSampler");
-            gl.uniform1i(samplerId, 2);
+            shaderProgram.setInt(gl, "u_roughnessSampler", 2);
         }
 
-        let isAnimatedId = gl.getUniformLocation(shaderProgram.program, "u_isAnimated");
-        gl.uniform1i(isAnimatedId, 0);
+        shaderProgram.setBool(gl, "u_isAnimated", false);
 
         gl.bindVertexArray(this.vertexArray);
         gl.drawArrays(gl.TRIANGLES, 0, this.model.verticesCount);
