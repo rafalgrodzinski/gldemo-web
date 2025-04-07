@@ -552,7 +552,9 @@ export class ModelMdl extends ModelAnimated {
             for (let triangleIndex = 0; triangleIndex < trianglesCount; triangleIndex++) {
                 let triangle = mdlTriangles[triangleIndex];
 
-                triangle.vertexIndices.m.forEach((vertexIndex) => {
+                // Reverse triangles winding
+                for (let vertexIter = 2; vertexIter >= 0; vertexIter--) {
+                    let vertexIndex = triangle.vertexIndices.m[vertexIter];
                     let vertex = mdlVertices[vertexIndex];
                     let coord = mdlCoords[vertexIndex];
 
@@ -574,21 +576,22 @@ export class ModelMdl extends ModelAnimated {
                         ModelMdl.normals[vertex.normalIndex].z,
                     );
 
-                    let matrix = Matrix.makeRotationZ(Math.PI).multiply(Matrix.makeRotationX(Math.PI/2));
+                    // Fix orientation so -Z is front and X is right
+                    let matrix = Matrix.makeRotationZ(Math.PI/2).multiply(Matrix.makeRotationY(Math.PI/2));
                     position = matrix.multiplyVector(position)
                     normal = matrix.multiplyVector(normal);
 
                     // From z to x to make it CCW
                     let modelVertex = new Vertex(
                         Data.xyz(
-                            position.z,
-                            position.y,
                             position.x,
+                            position.y,
+                            position.z,
                         ),
                         Data.xyz(
-                            normal.z,
-                            normal.y,
                             normal.x,
+                            normal.y,
+                            normal.z,
                         ),
                         Data.st(
                             (coord.coord.s + texCoordSOffset + 0.5) / textureSize.x,
@@ -596,7 +599,7 @@ export class ModelMdl extends ModelAnimated {
                         )
                     );
                     vertices.push(modelVertex)
-                });
+                };
             }
             frames.push(vertices);
         }
