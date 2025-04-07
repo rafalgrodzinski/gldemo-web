@@ -28,7 +28,7 @@ export class Scene {
 
         // Camera
         let cameraEntity = await EntityCamera.create(
-            [Phase.Resize, Phase.Update, Phase.PassPhong, Phase.PassGrid, Phase.PassDebugNormals, Phase.PassSkybox],
+            [Phase.Resize, Phase.Update, Phase.PassPhong, Phase.PassGrid, Phase.PassAxis, Phase.PassDebugNormals, Phase.PassSkybox],
             "Camera",
             coordsOrientation
         );

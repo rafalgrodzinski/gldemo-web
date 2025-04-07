@@ -13,7 +13,7 @@ out vec2 v_coordsLevel2;
 void main() {
     float scale = 1000.0;
 
-    vec3 position = vec3(a_position.x * scale + u_cameraPosition.x, 0.002, a_position.z * scale + u_cameraPosition.z);
+    vec3 position = vec3(a_position.x * scale + u_cameraPosition.x, 0.007, a_position.z * scale + u_cameraPosition.z);
     v_coordsLevel0 = position.xz / 10.0;
     v_coordsLevel1 = position.xz;
     v_coordsLevel2 = position.xz * 10.0;

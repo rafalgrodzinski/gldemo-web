@@ -7,6 +7,7 @@ import { Input } from "utils/input";
 import { RenderPassShadowMap } from "renderer/render_pass_shadow";
 import { RenderPassSkybox } from "renderer/render_pass_skybox";
 import { TextureCube } from "../data/texture/texture_cube";
+import { RenderPassAxis } from "./render_pass_axis";
 
 export enum CoordsOrientation {
     LeftHanded,
@@ -18,6 +19,7 @@ export enum Phase{
         Update,
         PassPhong,
         PassGrid,
+        PassAxis,
         PassDebugNormals,
         PassShadowMap,
         PassSkybox
@@ -53,6 +55,7 @@ export class Renderer {
             await RenderPassPhong.create(gl),
             //await RenderPassDebugNormals.create(gl),
             await RenderPassGrid.create(gl),
+            await RenderPassAxis.create(gl)
         ]);
 
         return this;
