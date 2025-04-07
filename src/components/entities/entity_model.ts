@@ -61,11 +61,21 @@ export class EntityModel extends Entity {
         let materialHasDiffuseTextureId = gl.getUniformLocation(shaderProgram.program, "u_material.hasDiffuseTexture");
         gl.uniform1i(materialHasDiffuseTextureId, this.model.material.diffuseTexture ? 1 : 0);
 
+        let materialHasRoughnessTextureId = gl.getUniformLocation(shaderProgram.program, "u_material.hasRoughnessTexture");
+        gl.uniform1i(materialHasRoughnessTextureId, this.model.material.roughnessTexture ? 1 : 0);
+
         if (this.model.material.diffuseTexture != null) {
             gl.activeTexture(gl.TEXTURE0);
             gl.bindTexture(gl.TEXTURE_2D, this.model.material.diffuseTexture.texture);
             let samplerId = gl.getUniformLocation(shaderProgram.program, "u_diffuseSampler");
             gl.uniform1i(samplerId, 0);
+        }
+
+        if (this.model.material.roughnessTexture != null) {
+            gl.activeTexture(gl.TEXTURE2);
+            gl.bindTexture(gl.TEXTURE_2D, this.model.material.roughnessTexture.texture);
+            let samplerId = gl.getUniformLocation(shaderProgram.program, "u_roughnessSampler");
+            gl.uniform1i(samplerId, 2);
         }
 
         let isAnimatedId = gl.getUniformLocation(shaderProgram.program, "u_isAnimated");

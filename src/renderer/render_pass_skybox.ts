@@ -26,7 +26,7 @@ export class RenderPassSkybox extends RenderPass {
         this.texture = texture;
         this.shaderProgram = await ShaderProgram.create(gl, "src/shaders/skybox/skybox_vertex.glsl", "src/shaders/skybox/skybox_fragment.glsl");
 
-        let material = new Material(Data.rgb(0, 0, 0), 0, 0, 0, false, null);
+        let material = new Material(Data.rgb(0, 0, 0), 0, 0, 0, false, null, null);
         this.model = await ModelProcedural.create(ModelProceduralKind.Cube, material)
 
         this.vertexArray = gl.createVertexArray();

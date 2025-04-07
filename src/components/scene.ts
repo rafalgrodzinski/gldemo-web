@@ -46,7 +46,7 @@ export class Scene {
         directionalLightNodeEntity.translation.z = 5;
         this.rootEntity.addChild(directionalLightNodeEntity);
 
-        let directionalLightMaterial = new Material(Data.rgb(1, 1, 0.5), 0, 0, 0, true, null);
+        let directionalLightMaterial = new Material(Data.rgb(1, 1, 0.5), 0, 0, 0, true, null, null);
         let directionalLightModel = await ModelProcedural.create(ModelProceduralKind.Pyramid, directionalLightMaterial);
         let directionalLightModelEntity = await EntityModel.create([Phase.PassPhong], "Directional Light Model", gl, directionalLightModel);
         directionalLightModelEntity.rotation.x = Math.PI / 2;
@@ -64,7 +64,7 @@ export class Scene {
         pointLightNodeEntity.translation.z = 5;
         this.rootEntity.addChild(pointLightNodeEntity);
 
-        let pointLightMaterial = new Material(Data.rgb(0.5, 0.5, 1), 0, 0, 0, true, null);
+        let pointLightMaterial = new Material(Data.rgb(0.5, 0.5, 1), 0, 0, 0, true, null, null);
         let pointLightModel = await ModelProcedural.create(ModelProceduralKind.Cube, pointLightMaterial);
         let pointLightModelEntity = await EntityModel.create([Phase.PassPhong], "Point light model", gl, pointLightModel);
         pointLightModelEntity.scale = new Vector(0.5, 0.5, 0.5);
@@ -76,7 +76,7 @@ export class Scene {
 
         // Bear
         let bearTexture = await Texture2D.create(gl, "bear.png");
-        let bearMaterial = new Material(Data.rgb(1,  1, 1), 0.1, 1, 8, false, bearTexture);
+        let bearMaterial = new Material(Data.rgb(1,  1, 1), 0.1, 1, 8, false, bearTexture, null);
         let bearModel = await ModelObj.create("bear.obj", bearMaterial);
         let bearEntity = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadowMap], "Bear", gl, bearModel);
         bearEntity.translation.z = -4;
@@ -86,7 +86,8 @@ export class Scene {
 
         // Cube
         let cubeTexture = await Texture2D.create(gl, "box.jpg");
-        let cubeMaterial = new Material(Data.rgb(1, 1, 1), 0.1, 1, 0, false, cubeTexture);
+        let cubeSpecularTexture = await Texture2D.create(gl, "box_roughness.png");
+        let cubeMaterial = new Material(Data.rgb(1, 1, 1), 0.1, 1, 8, false, cubeTexture, cubeSpecularTexture);
         let cubeModel = await ModelProcedural.create(ModelProceduralKind.Cube, cubeMaterial);
         let cubeEntity = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadowMap], "Cube", gl, cubeModel);
         cubeEntity.translation.z = -5;
@@ -95,7 +96,7 @@ export class Scene {
 
         // Sphere
         let sphereTexture = await Texture2D.create(gl, "box.jpg");
-        let sphereMaterial = new Material(Data.rgb(1, 0.5, 0.5), 0.1, 0.5, 2, false, sphereTexture);
+        let sphereMaterial = new Material(Data.rgb(1, 0.5, 0.5), 0.1, 0.5, 2, false, sphereTexture, null);
         let sphereModel = await ModelProcedural.create(ModelProceduralKind.Sphere, sphereMaterial);
         let sphereEntity = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadowMap], "Sphere", gl, sphereModel);
         sphereEntity.translation.x += 3;
@@ -105,7 +106,7 @@ export class Scene {
 
         // Ground
         let groundTexture = await Texture2D.create(gl, "grass.jpg");
-        let groundMaterial = new Material(Data.rgb(0.5, 0.5, 0.5), 0.1, 1, 0, false, groundTexture);
+        let groundMaterial = new Material(Data.rgb(0.5, 0.5, 0.5), 0.1, 1, 0, false, groundTexture, null);
         let groundModel = await ModelProcedural.create(ModelProceduralKind.Plane, groundMaterial);
         let groundEntity = await EntityModel.create([Phase.PassPhong, Phase.PassShadowMap], "Ground", gl, groundModel);
         groundEntity.scale.y = 0.5;

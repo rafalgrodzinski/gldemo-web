@@ -485,7 +485,7 @@ export class ModelMdl extends ModelAnimated {
             textureData.set(color.m, i*3);
         }
         let texture = await Texture2D.create(gl, textureData, textureSize);
-        let material = new Material(Data.rgb(1, 1, 1), 0.1, 1, 0, false, texture);
+        let material = new Material(Data.rgb(1, 1, 1), 0.1, 1, 0, false, texture, null);
 
         // Texture Coords
         let mdlCoords = new Array<MdlCoord>;

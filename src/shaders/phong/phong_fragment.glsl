@@ -18,8 +18,10 @@ struct Material {
     float ambientIntensity;
     float diffuseIntensity;
     float specularIntensity;
+    float roughnessIntensity;
     bool isUnshaded;
     bool hasDiffuseTexture;
+    bool hasRoughnessTexture;
 };
 
 const int LightKindAmbient = 1;
@@ -34,6 +36,7 @@ in vec2 v_texCoords;
 in vec4 v_lightSpacePosition;
 
 uniform sampler2D u_diffuseSampler;
+uniform sampler2D u_roughnessSampler;
 uniform sampler2D u_shadowMapSampler;
 uniform Light u_lights[8];
 uniform Material u_material;
@@ -86,7 +89,7 @@ vec3 directionalLightColor(vec3 position, vec3 normal, vec3 cameraPosition, Ligh
         vec3 reflected = reflect(light.direction, normal);
         float specularIntensity = dot(cameraDirection, reflected) - shadowIntensity;
         specularIntensity = clamp(specularIntensity, 0.0, 1.0);
-        color += light.color * pow(specularIntensity, material.specularIntensity) * light.intensity;
+        color += light.color * pow(specularIntensity, material.specularIntensity) * light.intensity * material.roughnessIntensity;
     }
 
     return color;
@@ -110,7 +113,7 @@ vec3 pointLightColor(vec3 position, vec3 normal, vec3 cameraPosition, Light ligh
         vec3 reflected = reflect(-direction, normal);
         float specularIntensity = dot(cameraDirection, reflected);
         specularIntensity = clamp(specularIntensity, 0.0, 1.0);
-        color += light.color * pow(specularIntensity, material.specularIntensity) * light.intensity;
+        color += light.color * pow(specularIntensity, material.specularIntensity) * light.intensity * material.roughnessIntensity;
     }
 
     return color;
@@ -123,6 +126,8 @@ void main() {
     if (material.hasDiffuseTexture) {
         material.color = vec3(texture(u_diffuseSampler, v_texCoords));
     }
+
+    material.roughnessIntensity = material.hasRoughnessTexture ? texture(u_roughnessSampler, v_texCoords).x : 1.0;
 
     if (u_material.isUnshaded) {
         color = material.color;
