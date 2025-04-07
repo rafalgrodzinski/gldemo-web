@@ -2,10 +2,11 @@ import { Data2, Data3 } from "data/data_types";
 
 export class Vertex {
     static STRIDE_LENGTH = 3 + 3 + 2;
-    static STRIDE: number = Float32Array.BYTES_PER_ELEMENT * Vertex.STRIDE_LENGTH;
+    static STRIDE: number = Vertex.STRIDE_LENGTH * Float32Array.BYTES_PER_ELEMENT;
+
     static POSITION_OFFSET: number = 0;
-    static NORMAL_OFFSET: number = Float32Array.BYTES_PER_ELEMENT * 3;
-    static TEX_COORDS_OFFSET: number = Float32Array.BYTES_PER_ELEMENT * (3 + 3);
+    static NORMAL_OFFSET: number = Vertex.POSITION_OFFSET + 3 * Float32Array.BYTES_PER_ELEMENT;
+    static TEX_COORDS_OFFSET: number = Vertex.NORMAL_OFFSET + 3 * Float32Array.BYTES_PER_ELEMENT;
 
     position: Data3;
     normal: Data3;

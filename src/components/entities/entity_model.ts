@@ -4,14 +4,10 @@ import { Vertex } from "data/vertex";
 import { Phase } from "renderer/renderer";
 import { EntityKind } from "components/entities/entity";
 import { Model } from "data/model/model";
-import { Input } from "../../utils/input";
-import { Anim } from "../../data/model/anim";
 
 export class EntityModel extends Entity {
     model!: Model;
     private vertexArray!: WebGLVertexArrayObject;
-    private currentTime = 0;
-    private currentAnim: Anim | null = null;
 
     static async create(phases: Array<Phase>, name: string, gl: WebGL2RenderingContext, model: Model): Promise<EntityModel> {
         return await new EntityModel().init([phases, name, gl, model]);
@@ -22,19 +18,12 @@ export class EntityModel extends Entity {
         await super.init([phases, name, EntityKind.Model]);
         this.model = model;
 
-        this.model.anims.forEach((anim) => {
-            anim.setCurrentAnim = (currentAnim) => {
-                this.currentTime = 0;
-                this.currentAnim = currentAnim;
-            };
-        });
-
         this.vertexArray = gl.createVertexArray();
         gl.bindVertexArray(this.vertexArray);
 
         let buffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, model.framesData, gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, model.verticesData, gl.STATIC_DRAW);
 
         gl.enableVertexAttribArray(ShaderAttribute.Position);
         gl.vertexAttribPointer(ShaderAttribute.Position, 3, gl.FLOAT, false, Vertex.STRIDE, Vertex.POSITION_OFFSET);
@@ -48,10 +37,6 @@ export class EntityModel extends Entity {
         gl.bindVertexArray(null);
 
         return this;
-    }
-
-    update(elapsedMiliseconds: number, input: Input) {
-        this.currentTime += elapsedMiliseconds / 1000;
     }
 
     draw(gl: WebGL2RenderingContext, shaderProgram: ShaderProgram) {
@@ -83,12 +68,10 @@ export class EntityModel extends Entity {
             gl.uniform1i(samplerId, 0);
         }
 
-        let currentFrame = 0;
-        if (this.currentAnim != null) {
-            currentFrame = this.currentAnim.startFrame + Math.floor(this.currentTime / this.currentAnim.frameDuration) % this.currentAnim.framesCount;
-        }
+        let isAnimatedId = gl.getUniformLocation(shaderProgram.program, "u_isAnimated");
+        gl.uniform1i(isAnimatedId, 0);
 
         gl.bindVertexArray(this.vertexArray);
-        gl.drawArrays(gl.TRIANGLES, currentFrame * this.model.verticesCount, this.model.verticesCount);
+        gl.drawArrays(gl.TRIANGLES, 0, this.model.verticesCount);
     }
 }

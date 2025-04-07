@@ -2,7 +2,9 @@ import { Util } from "utils/util"
 
 export enum ShaderAttribute {
     Position = 0,
+    PositionNext = 3,
     Normal = 1,
+    NormalNext = 4,
     TexCoords = 2
 }
 

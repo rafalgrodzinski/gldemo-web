@@ -8,12 +8,13 @@ import { Vector } from "../vector";
 import { Vertex } from "../vertex";
 import { Anim } from "./anim";
 import { Model } from "./model";
+import { ModelAnimated } from "./model_animated";
 
 type MdlCoord = {isOnSeam: number, coord: Data2};
 type MdlTriangle = {isFrontFace: boolean, vertexIndices: Data3};
 type MdlVertex = {vertex: Data3, normalIndex: number}
 
-export class ModelMdl extends Model {
+export class ModelMdl extends ModelAnimated {
     private static ident = 1330660425; // 'I' << 0 + 'D' << 8 + 'P' << 16 + 'O' << 24
     private static version = 6
     private static normals = [

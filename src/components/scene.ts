@@ -12,6 +12,7 @@ import { Data } from "data/data_types";
 import { ModelObj } from "data/model/model_obj";
 import { ModelMdl } from "../data/model/model_mdl";
 import { Texture2D } from "../data/texture/texture_2d";
+import { EntityModelAnimated } from "./entities/entity_model_animated";
 
 export class Scene {
     rootEntity!: Entity;
@@ -115,12 +116,12 @@ export class Scene {
 
         // Soldier
         let soldierModel = await ModelMdl.create(gl, "soldier.mdl");
-        let soldierEntity = await EntityModel.create([Phase.PassPhong, Phase.PassShadowMap, Phase.Update], "Soldier", gl, soldierModel);
+        let soldierEntity = await EntityModelAnimated.create([Phase.PassPhong, Phase.PassShadowMap, Phase.Update], "Soldier", gl, soldierModel);
         soldierEntity.scale.x = soldierEntity.scale.y = soldierEntity.scale.z = 0.2;
         soldierEntity.translation.y = 4;
         soldierEntity.translation.x = -5;
         this.rootEntity.addChild(soldierEntity);
-        soldierModel.anims[14].play();
+        soldierModel.anims[0].play();
 
         return this;
     }

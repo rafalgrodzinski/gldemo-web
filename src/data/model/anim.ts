@@ -4,6 +4,10 @@ export class Anim {
     framesCount: number;
     frameDuration: number;
 
+    get endFrame(): number {
+        return this.startFrame + this.framesCount - 1;
+    }
+
     setCurrentAnim: ((animation: Anim | null) => void) | null = null;
 
     constructor(name: string, startFrame: number, framesCount: number, frameDuration: number) {

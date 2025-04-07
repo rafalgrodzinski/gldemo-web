@@ -115,7 +115,7 @@ export class ModelProcedural extends Model {
                 break;
         }
 
-        await super.init([[vertices], material, null]);
+        await super.init([vertices, material]);
         return this;
     }
 
