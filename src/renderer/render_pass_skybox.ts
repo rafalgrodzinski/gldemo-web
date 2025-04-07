@@ -57,8 +57,7 @@ export class RenderPassSkybox extends RenderPass {
         gl.bindVertexArray(this.vertexArray);
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.texture.texture);
-        let samplerId = gl.getUniformLocation(this.shaderProgram.program, "u_sampler");
-        gl.uniform1i(samplerId, 0);
+        this.shaderProgram.setInt(gl, "u_sampler", 0);
 
         gl.drawArrays(gl.TRIANGLES, 0, this.model.verticesCount);
     }

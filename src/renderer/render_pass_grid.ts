@@ -81,8 +81,7 @@ export class RenderPassGrid extends RenderPass {
         gl.bindVertexArray(this.vertexArray);
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, this.texture);
-        let samplerId = gl.getUniformLocation(this.shaderProgram.program, "u_sampler");
-        gl.uniform1i(samplerId, 0);
+        this.shaderProgram.setInt(gl, "u_sampler", 0);
 
         gl.drawElements(gl.TRIANGLES, RenderPassGrid.indices.length, gl.UNSIGNED_INT, 0);
     }

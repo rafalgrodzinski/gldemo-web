@@ -60,14 +60,9 @@ export class EntityCamera extends Entity {
     }
 
     prepareForDraw(gl: WebGL2RenderingContext, shaderProgram: ShaderProgram) {
-        let projectionMatrixId = gl.getUniformLocation(shaderProgram.program, "u_projectionMatrix");
-        gl.uniformMatrix4fv(projectionMatrixId, false, this.projectionMatrix.m);
-
-        let viewMatrixId = gl.getUniformLocation(shaderProgram.program, "u_viewMatrix");
-        gl.uniformMatrix4fv(viewMatrixId, false, this.viewMatrix.m)
-
-        let cameraPositionId = gl.getUniformLocation(shaderProgram.program, "u_cameraPosition");
-        gl.uniform3fv(cameraPositionId, this.translationGlobal.m);
+        shaderProgram.setMatrix(gl, "u_projectionMatrix", this.projectionMatrix.m);
+        shaderProgram.setMatrix(gl,"u_viewMatrix", this.viewMatrix.m);
+        shaderProgram.setVector(gl, "u_cameraPosition", this.translationGlobal.m);
     }
 
     private arcballUpdate(input: Input) {

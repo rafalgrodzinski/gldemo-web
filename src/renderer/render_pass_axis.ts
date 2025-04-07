@@ -59,15 +59,14 @@ export class RenderPassAxis extends RenderPass {
     
             gl.bindVertexArray(this.vertexArray);
     
-            let axisDirectionId = gl.getUniformLocation(this.shaderProgram.program, "u_axisDirection");
             // X
-            gl.uniform1i(axisDirectionId, 0);
+            this.shaderProgram.setInt(gl, "u_axisDirection", 0);
             gl.drawArrays(gl.LINES, 0, 2);
             // Y
-            gl.uniform1i(axisDirectionId, 1);
+            this.shaderProgram.setInt(gl, "u_axisDirection", 1);
             gl.drawArrays(gl.LINES, 2, 2);
             // Z
-            gl.uniform1i(axisDirectionId, 2);
+            this.shaderProgram.setInt(gl, "u_axisDirection", 2);
             gl.drawArrays(gl.LINES, 4, 2);
 
             gl.bindVertexArray(null);

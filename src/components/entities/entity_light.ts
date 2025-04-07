@@ -80,30 +80,19 @@ export class EntityLight extends Entity {
     prepareForDraw(gl: WebGL2RenderingContext, shaderProgram: ShaderProgram) {
         let idPrefix = `u_lights[${this.index}].`;
 
-        let kindId = gl.getUniformLocation(shaderProgram.program, idPrefix + "kind");
-        gl.uniform1i(kindId, this.light.kind);
+        shaderProgram.setInt(gl, idPrefix + "kind", this.light.kind);
 
         switch (this.light.kind) {
             case LightKind.Ambient: {
-                let colorId = gl.getUniformLocation(shaderProgram.program, idPrefix + "color");
-                gl.uniform3fv(colorId, this.light.color.m);
-
-                let intensityId = gl.getUniformLocation(shaderProgram.program, idPrefix + "intensity");
-                gl.uniform1f(intensityId, this.light.intensity);
+                shaderProgram.setVector(gl, idPrefix + "color", this.light.color.m);
+                shaderProgram.setFloat(gl, idPrefix + "intensity", this.light.intensity)
                 break;
             }
             case LightKind.Directional: {
-                let colorId = gl.getUniformLocation(shaderProgram.program, idPrefix + "color");
-                gl.uniform3fv(colorId, this.light.color.m);
-
-                let directionId = gl.getUniformLocation(shaderProgram.program, idPrefix + "direction");
-                gl.uniform3fv(directionId, this.directionGlobal.m);
-
-                let intensityId = gl.getUniformLocation(shaderProgram.program, idPrefix + "intensity");
-                gl.uniform1f(intensityId, this.light.intensity);
-
-                let shouldCastShadowId = gl.getUniformLocation(shaderProgram.program, idPrefix + "shouldCastShadow");
-                gl.uniform1i(shouldCastShadowId, this.light.shouldCastShadow ? 1 : 0);
+                shaderProgram.setVector(gl, idPrefix + "color", this.light.color.m);
+                shaderProgram.setVector(gl, idPrefix + "direction", this.directionGlobal.m);
+                shaderProgram.setFloat(gl, idPrefix + "intensity", this.light.intensity)
+                shaderProgram.setBool(gl, idPrefix + "shouldCastShadow", this.light.shouldCastShadow);
 
                 /*let lightProjectionMatrixId = gl.getUniformLocation(shaderProgram.program, idPrefix + "projectionMatrix");
                 gl.uniformMatrix4fv(lightProjectionMatrixId, false, this.projectionMatrix.m);
@@ -114,33 +103,18 @@ export class EntityLight extends Entity {
                 if (this.light.shouldCastShadow) {
                     gl.activeTexture(gl.TEXTURE1);
                     gl.bindTexture(gl.TEXTURE_2D, this.depthMapTexture);
-                    let shadowMapSamplerId = gl.getUniformLocation(shaderProgram.program, "u_shadowMapSampler");
-                    gl.uniform1i(shadowMapSamplerId, 1);
-
-                    let lightProjectionMatrixId = gl.getUniformLocation(shaderProgram.program, "u_lightProjectionMatrix");
-                    gl.uniformMatrix4fv(lightProjectionMatrixId, false, this.projectionMatrix.m);
-            
-                    let lightViewMatrixId = gl.getUniformLocation(shaderProgram.program, "u_lightViewMatrix");
-                    gl.uniformMatrix4fv(lightViewMatrixId, false, this.viewMatrix.m);
+                    shaderProgram.setInt(gl, "u_shadowMapSampler", 1);
+                    shaderProgram.setMatrix(gl, "u_lightProjectionMatrix", this.projectionMatrix.m);
+                    shaderProgram.setMatrix(gl, "u_lightViewMatrix", this.viewMatrix.m);
                 }
-
                 break;
             }
             case LightKind.Point: {
-                let colorId = gl.getUniformLocation(shaderProgram.program, idPrefix + "color");
-                gl.uniform3fv(colorId, this.light.color.m);
-
-                let intensityId = gl.getUniformLocation(shaderProgram.program, idPrefix + "intensity");
-                gl.uniform1f(intensityId, this.light.intensity);
-
-                let positionId = gl.getUniformLocation(shaderProgram.program, idPrefix + "position");
-                gl.uniform3fv(positionId, this.translationGlobal.m);
-
-                let linearAttenuationId = gl.getUniformLocation(shaderProgram.program, idPrefix + "linearAttenuation");
-                gl.uniform1f(linearAttenuationId, this.light.linearAttenuation);
-
-                let quadaraticAttenuationId = gl.getUniformLocation(shaderProgram.program, idPrefix + "quadaraticAttenuation");
-                gl.uniform1f(quadaraticAttenuationId, this.light.quadaraticAttenuation);
+                shaderProgram.setVector(gl, idPrefix + "color", this.light.color.m);
+                shaderProgram.setFloat(gl, idPrefix + "intensity", this.light.intensity);
+                shaderProgram.setVector(gl, idPrefix + "position", this.translationGlobal.m);
+                shaderProgram.setFloat(gl, idPrefix + "linearAttenuation", this.light.linearAttenuation);
+                shaderProgram.setFloat(gl, idPrefix + "quadaraticAttenuation", this.light.quadaraticAttenuation);
                 break;
             }
         }
@@ -154,10 +128,7 @@ export class EntityLight extends Entity {
         gl.enable(gl.CULL_FACE);
         gl.cullFace(gl.BACK);
 
-        let lightProjectionMatrixId = gl.getUniformLocation(shaderProgram.program, "u_lightProjectionMatrix");
-        gl.uniformMatrix4fv(lightProjectionMatrixId, false, this.projectionMatrix.m);
-
-        let lightViewMatrixId = gl.getUniformLocation(shaderProgram.program, "u_lightViewMatrix");
-        gl.uniformMatrix4fv(lightViewMatrixId, false, this.viewMatrix.m);
+        shaderProgram.setMatrix(gl, "u_lightProjectionMatrix", this.projectionMatrix.m);
+        shaderProgram.setMatrix(gl, "u_lightViewMatrix", this.viewMatrix.m);
     }
 }
