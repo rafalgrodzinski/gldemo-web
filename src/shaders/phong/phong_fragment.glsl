@@ -132,7 +132,8 @@ vec3 spotLightColor(vec3 position, vec3 normal, vec3 cameraPosition, Light light
     float spotIntensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
     
     // Diffuse
-    float diffuseIntensity = spotIntensity * light.intensity * material.diffuseIntensity - shadowIntensity;
+    float normalIntensity = clamp(dot(normal, -direction), 0.0, 1.0);
+    float diffuseIntensity = normalIntensity * spotIntensity * light.intensity * material.diffuseIntensity - shadowIntensity;
     color += material.color * light.color * diffuseIntensity;
 
     // Specular

@@ -55,7 +55,7 @@ export class Scene {
         directionalLightModelEntity.scale = new Vector(0.5, 0.5, 0.5);
         directionalLightNodeEntity.addChild(directionalLightModelEntity);
 
-        let directionaLight = new Light(LightKind.Directional, Data.rgb(1, 1, 1), 1, 0, 0, 0, 0, true)
+        let directionaLight = new Light(LightKind.Directional, Data.rgb(1, 1, 1), 1, 0, 0, 0, 0, false)
         let directionalLightEntity = await EntityLight.create([Phase.PassPhong, Phase.PassShadowMap, Phase.Resize], "Directional Light", gl, directionaLight, coordsOrientation);
         directionalLightNodeEntity.addChild(directionalLightEntity);
 
@@ -92,7 +92,7 @@ export class Scene {
         spotLightModelEntity.scale = new Vector(0.5, 0.5, 0.5);
         spotLightNodeEntity.addChild(spotLightModelEntity);
 
-        let spotLight = new Light(LightKind.Spot, Data.rgb(1, 0.5, 0.5), 1, 0, 0, 1, 0.9, true);
+        let spotLight = new Light(LightKind.Spot, Data.rgb(1, 0.5, 0.5), 1, 0, 0, 0.9, 0.9, true);
         let spotLightEntity = await EntityLight.create([Phase.PassPhong, Phase.PassShadowMap, Phase.Resize], "Spot Light", gl, spotLight, coordsOrientation);
         spotLightNodeEntity.addChild(spotLightEntity);
 

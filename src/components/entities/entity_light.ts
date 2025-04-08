@@ -71,7 +71,15 @@ export class EntityLight extends Entity {
                 this.projectionMatrix = this.projectionMatrix = Matrix.makeOrthographicLeft(1, 100, 100);
                 break;
             case CoordsOrientation.RightHanded:
-                this.projectionMatrix = this.projectionMatrix = Matrix.makeOrthographicRight(1, 100, 100);
+                switch (this.light.kind) {
+                    case LightKind.Directional:
+                        this.projectionMatrix = Matrix.makeOrthographicRight(1, 100, 100);
+                        break;
+                    case LightKind.Spot:
+                        //this.projectionMatrix = Matrix.makeOrthographicRight(1, 100, 100);
+                        this.projectionMatrix = Matrix.makePerspectiveRight(Math.PI/2, 1, 100);
+                        break;   
+                }
                 break;
         }
 

@@ -33,6 +33,10 @@ export class Vector {
     }
 
     // Operations
+    negate(): Vector {
+        return new Vector(-this.x, -this.y, -this.z);
+    }
+
     add(other: Vector): Vector {
         return new Vector(this.x + other.x, this.y + other.y, this.z + other.z);
     }
