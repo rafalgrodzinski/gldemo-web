@@ -26,18 +26,18 @@ export class EntityCamera extends Entity {
 
     get viewMatrix(): Matrix {
         let viewMatrix = Matrix.makeIdentity();
+        viewMatrix = viewMatrix.translate(-this.translationGlobal.x, -this.translationGlobal.y, -this.translationGlobal.z);
 
         switch (this.coordsOrientation) {
             case CoordsOrientation.LeftHanded:
-                viewMatrix = viewMatrix.rotateX(this.rotationGlobal.x);
                 viewMatrix = viewMatrix.rotateY(this.rotationGlobal.y);
+                viewMatrix = viewMatrix.rotateX(this.rotationGlobal.x);
                 break;
             case CoordsOrientation.RightHanded:
-                viewMatrix = viewMatrix.rotateX(-this.rotationGlobal.x);
                 viewMatrix = viewMatrix.rotateY(-this.rotationGlobal.y);
+                viewMatrix = viewMatrix.rotateX(-this.rotationGlobal.x);
                 break;
         }
-        viewMatrix = viewMatrix.translate(-this.translationGlobal.x, -this.translationGlobal.y, -this.translationGlobal.z);
 
         return viewMatrix;
     }
@@ -109,7 +109,7 @@ export class EntityCamera extends Entity {
         this.rotation.y = -yAngle;
 
         // Translation
-        let positionMatrix = Matrix.makeRotationY(-yAngle).rotateX(-xAngle);
+        let positionMatrix = Matrix.makeRotationY(yAngle).rotateX(xAngle);
         let originVector = new Vector(0, 0, new Vector(this.translation.x, this.translation.y, this.translation.z).length());
         originVector.z += input.look.zoom;
         this.translation = originVector.multiply(positionMatrix);

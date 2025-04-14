@@ -81,6 +81,6 @@ export class ShaderProgram {
     setMatrix(gl: WebGL2RenderingContext, uniformLocation: string, value: Array<number>) {
         let uniformId = gl.getUniformLocation(this.program, uniformLocation);
         if (uniformId != null)
-            gl.uniformMatrix4fv(uniformId, false, value);
+            gl.uniformMatrix4fv(uniformId, true, value);
     }
 }

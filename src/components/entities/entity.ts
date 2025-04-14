@@ -33,55 +33,55 @@ export abstract class Entity {
 
     get translationGlobal(): Vector {
         let modelMatrix = this.unscaledModelMatrixGlobal;
-        let x = modelMatrix.r0c3;
-        let y = modelMatrix.r1c3;
-        let z = modelMatrix.r2c3;
+        let x = modelMatrix.r3c0;
+        let y = modelMatrix.r3c1;
+        let z = modelMatrix.r3c2;
         return new Vector(x, y, z);
     }
 
     get rotationGlobal(): Vector {
         if (this.parent != null)
-            return this.parent.rotationGlobal.add(this.rotation);
+            return this.rotation.add(this.parent.rotationGlobal);
         else 
             return this.rotation;
     }
 
     get scaleGlobal(): Vector {
         if (this.parent != null)
-            return this.parent.scaleGlobal.multiply(this.scale);
+            return this.scale.multiply(this.parent.scaleGlobal);
         else 
             return this.scale;
     }
 
     get modelMatrix(): Matrix {
         let modelMatrix = Matrix.makeIdentity();
-        modelMatrix = modelMatrix.translate(this.translation.x, this.translation.y, this.translation.z);
+        modelMatrix = modelMatrix.scale(this.scale.x, this.scale.y, this.scale.z);
         modelMatrix = modelMatrix.rotateX(this.rotation.x);
         modelMatrix = modelMatrix.rotateY(this.rotation.y);
         modelMatrix = modelMatrix.rotateZ(this.rotation.z);
-        modelMatrix = modelMatrix.scale(this.scale.x, this.scale.y, this.scale.z);
+        modelMatrix = modelMatrix.translate(this.translation.x, this.translation.y, this.translation.z);
         return modelMatrix;
     }
 
     get modelMatrixGlobal(): Matrix {
         if (this.parent != null)
-            return this.parent.modelMatrixGlobal.multiply(this.modelMatrix);
+            return this.modelMatrix.multiply(this.parent.modelMatrixGlobal);
         else
             return this.modelMatrix;
     }
 
     get unscaledModelMatrix(): Matrix {
         let modelMatrix = Matrix.makeIdentity();
-        modelMatrix = modelMatrix.translate(this.translation.x, this.translation.y, this.translation.z);
         modelMatrix = modelMatrix.rotateX(this.rotation.x);
         modelMatrix = modelMatrix.rotateY(this.rotation.y);
         modelMatrix = modelMatrix.rotateZ(this.rotation.z);
+        modelMatrix = modelMatrix.translate(this.translation.x, this.translation.y, this.translation.z);
         return modelMatrix;
     }
 
     get unscaledModelMatrixGlobal(): Matrix {
         if (this.parent != null)
-            return this.parent.unscaledModelMatrixGlobal.multiply(this.unscaledModelMatrix);
+            return this.unscaledModelMatrix.multiply(this.parent.unscaledModelMatrixGlobal);
         else
             return this.unscaledModelMatrix;
     }
@@ -90,8 +90,8 @@ export abstract class Entity {
         let direction = new Vector(0, 0, -1);
 
         let rotationMatrix = Matrix.makeIdentity();
-        rotationMatrix = rotationMatrix.rotateX(this.rotation.x);
-        rotationMatrix = rotationMatrix.rotateY(this.rotation.y);
+        rotationMatrix = rotationMatrix.rotateX(-this.rotation.x);
+        rotationMatrix = rotationMatrix.rotateY(-this.rotation.y);
         rotationMatrix = rotationMatrix.rotateZ(this.rotation.z);
 
         return direction.multiply(rotationMatrix);
@@ -101,8 +101,8 @@ export abstract class Entity {
         let direction = new Vector(0, 0, -1);
 
         let rotationMatrix = Matrix.makeIdentity();
-        rotationMatrix = rotationMatrix.rotateX(this.rotationGlobal.x);
-        rotationMatrix = rotationMatrix.rotateY(this.rotationGlobal.y);
+        rotationMatrix = rotationMatrix.rotateX(-this.rotationGlobal.x);
+        rotationMatrix = rotationMatrix.rotateY(-this.rotationGlobal.y);
         rotationMatrix = rotationMatrix.rotateZ(this.rotationGlobal.z);
 
         return direction.multiply(rotationMatrix);

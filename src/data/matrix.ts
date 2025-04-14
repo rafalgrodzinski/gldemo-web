@@ -85,10 +85,10 @@ export class Matrix {
 
     static makeTranslation(x: number, y: number, z: number): Matrix {
         let m = [
-            1, 0, 0, x,
-            0, 1, 0, y,
-            0, 0, 1, z,
-            0, 0, 0, 1
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            x, y, z, 1
         ];
         return new Matrix(m);
     }
@@ -100,8 +100,8 @@ export class Matrix {
     static makeRotationX(angle: number): Matrix {
         let m = [
             1, 0, 0, 0,
-            0, Math.cos(angle), Math.sin(angle), 0,
-            0, -Math.sin(angle), Math.cos(angle), 0,
+            0, Math.cos(angle), -Math.sin(angle), 0,
+            0, Math.sin(angle), Math.cos(angle), 0,
             0, 0, 0, 1
         ];
         return new Matrix(m);
@@ -113,9 +113,9 @@ export class Matrix {
 
     static makeRotationY(angle: number): Matrix {
         let m = [
-            Math.cos(angle), 0, -Math.sin(angle), 0,
+            Math.cos(angle), 0, Math.sin(angle), 0,
             0, 1, 0, 0,
-            Math.sin(angle), 0, Math.cos(angle), 0,
+            -Math.sin(angle), 0, Math.cos(angle), 0,
             0, 0, 0, 1
         ];
         return new Matrix(m);
@@ -127,8 +127,8 @@ export class Matrix {
 
     static makeRotationZ(angle: number): Matrix {
         let m = [
-            Math.cos(angle), Math.sin(angle), 0, 0,
-            -Math.sin(angle), Math.cos(angle), 0, 0,
+            Math.cos(angle), -Math.sin(angle), 0, 0,
+            Math.sin(angle), Math.cos(angle), 0, 0,
             0, 0, 1, 0,
             0, 0, 0, 1
         ];
@@ -198,8 +198,8 @@ export class Matrix {
         let m = [
             1 / (aspect * Math.tan(fieldOfView * 0.5)), 0, 0, 0,
             0, 1 / (Math.tan(fieldOfView * 0.5)), 0, 0,
-            0, 0, (near + far) / (near - far), near * far * 2 / (near - far),
-            0, 0, -1, 0,
+            0, 0, -(far + near) / (far - near), -1,
+            0, 0, -2 * far * near / (far - near), 0,
         ];
         return new Matrix(m);
     }
@@ -208,10 +208,10 @@ export class Matrix {
         let right = new Vector(-direction.x, -direction.y, -direction.z).cross(new Vector(0, 1, 0));
         let up = right.cross(new Vector(-direction.x, -direction.y, -direction.z));
         let m = [
-            -right.x, -right.y, -right.z, -eye.x,
-            -up.x, -up.y, -up.z, -eye.y,
-            -direction.x, -direction.y, -direction.z, -eye.z,
-            0, 0, 0, 1
+            -right.x, -up.x, -direction.x, 0,
+            -right.y, -up.y, -direction.y, 0,
+            -right.z, -up.z, -direction.z, 0,
+            -eye.x, -eye.y, -eye.z, 1
         ];
         return new Matrix(m);
     }
