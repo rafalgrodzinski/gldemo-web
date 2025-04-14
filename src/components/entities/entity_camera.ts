@@ -25,18 +25,20 @@ export class EntityCamera extends Entity {
     }
 
     get viewMatrix(): Matrix {
-        let viewMatrix = Matrix.makeTranslation(-this.translationGlobal.x, -this.translationGlobal.y, -this.translationGlobal.z);
+        let viewMatrix = Matrix.makeIdentity();
 
         switch (this.coordsOrientation) {
             case CoordsOrientation.LeftHanded:
-                viewMatrix = viewMatrix.multiply(Matrix.makeRotationY(this.rotationGlobal.y));
-                viewMatrix = viewMatrix.multiply(Matrix.makeRotationX(this.rotationGlobal.x));
+                viewMatrix = viewMatrix.rotateX(this.rotationGlobal.x);
+                viewMatrix = viewMatrix.rotateY(this.rotationGlobal.y);
                 break;
             case CoordsOrientation.RightHanded:
-                viewMatrix = viewMatrix.multiply(Matrix.makeRotationY(-this.rotationGlobal.y));
-                viewMatrix = viewMatrix.multiply(Matrix.makeRotationX(-this.rotationGlobal.x));
+                viewMatrix = viewMatrix.rotateX(-this.rotationGlobal.x);
+                viewMatrix = viewMatrix.rotateY(-this.rotationGlobal.y);
                 break;
         }
+        viewMatrix = viewMatrix.translate(-this.translationGlobal.x, -this.translationGlobal.y, -this.translationGlobal.z);
+
         return viewMatrix;
     }
 
@@ -107,11 +109,10 @@ export class EntityCamera extends Entity {
         this.rotation.y = -yAngle;
 
         // Translation
-        let positionMatrix = Matrix.makeRotationY(yAngle);
-        positionMatrix = positionMatrix.multiply(Matrix.makeRotationX(xAngle));
+        let positionMatrix = Matrix.makeRotationY(-yAngle).rotateX(-xAngle);
         let originVector = new Vector(0, 0, new Vector(this.translation.x, this.translation.y, this.translation.z).length());
         originVector.z += input.look.zoom;
-        this.translation = positionMatrix.multiplyVector(originVector);
+        this.translation = originVector.multiply(positionMatrix);
     }
 
     private flybyUpdate(elapsedMiliseconds: number, input: Input) {

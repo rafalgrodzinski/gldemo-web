@@ -10,6 +10,6 @@ out vec3 v_texCoords;
 void main() {
     v_texCoords = vec3(a_position.x, a_position.y, -a_position.z);
 
-    vec4 position = u_projectionMatrix * mat4(mat3(u_viewMatrix)) * vec4(a_position, 1.0);
+    vec4 position = vec4(a_position, 1.0) * mat4(mat3(u_viewMatrix)) * u_projectionMatrix; 
     gl_Position = position.xyww;
 }

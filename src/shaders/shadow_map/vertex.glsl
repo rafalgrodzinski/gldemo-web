@@ -18,5 +18,5 @@ void main() {
         position = a_position;
     }
 
-    gl_Position = u_lightProjectionMatrix * u_lightViewMatrix * u_modelMatrix * vec4(position, 1.0);
+    gl_Position =vec4(position, 1.0) * u_modelMatrix * u_lightViewMatrix * u_lightProjectionMatrix;
 }

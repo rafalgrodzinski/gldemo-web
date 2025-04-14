@@ -17,5 +17,5 @@ void main() {
     v_coordsLevel0 = position.xz / 10.0;
     v_coordsLevel1 = position.xz;
     v_coordsLevel2 = position.xz * 10.0;
-    gl_Position = u_projectionMatrix * u_viewMatrix * vec4(position, 1);
+    gl_Position = vec4(position, 1) * u_viewMatrix * u_projectionMatrix;
 }

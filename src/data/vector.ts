@@ -1,4 +1,5 @@
 import { Util } from "utils/util";
+import { Matrix } from "./matrix";
 
 export class Vector {
     m: Array<number>;
@@ -41,8 +42,18 @@ export class Vector {
         return new Vector(this.x + other.x, this.y + other.y, this.z + other.z);
     }
 
-    multiply(other: Vector): Vector {
-        return new Vector(this.x * other.x, this.y * other.y, this.z * other.z);
+    multiply(value: number | Vector | Matrix): Vector {
+        if (value instanceof Vector) {
+            return new Vector(this.x * value.x, this.y * value.y, this.z * value.z);
+        } else if (value instanceof Matrix) {
+            return new Vector(
+                value.r0c0 * this.x + value.r0c1 * this.y + value.r0c2 * this.z,
+                value.r1c0 * this.x + value.r1c1 * this.y + value.r1c2 * this.z,
+                value.r2c0 * this.x + value.r2c1 * this.y + value.r2c2 * this.z
+            );
+        } else {
+            return new Vector(this.x * value, this.y * value, this.z * value)
+        }
     }
 
     length(): number {

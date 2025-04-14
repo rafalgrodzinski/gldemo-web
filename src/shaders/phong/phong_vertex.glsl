@@ -33,11 +33,11 @@ void main() {
         normal = a_normal;
     }
 
-    gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * vec4(position, 1.0);
+    gl_Position = vec4(position, 1.0) * u_modelMatrix * u_viewMatrix * u_projectionMatrix;
 
     v_normal = normalize(mat3(u_modelMatrix) * normal);
-    v_position = vec3(u_modelMatrix * vec4(position, 1.0));
+    v_position = vec3(vec4(position, 1.0) * u_modelMatrix);
     v_texCoords = a_texCoords;
 
-    v_lightSpacePosition = u_lightProjectionMatrix * u_lightViewMatrix * u_modelMatrix * vec4(position, 1.0);
+    v_lightSpacePosition = vec4(position, 1.0) * u_modelMatrix * u_lightViewMatrix * u_lightProjectionMatrix;
 }

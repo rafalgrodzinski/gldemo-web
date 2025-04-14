@@ -578,8 +578,8 @@ export class ModelMdl extends ModelAnimated {
 
                     // Fix orientation so -Z is front and X is right
                     let matrix = Matrix.makeRotationZ(Math.PI/2).multiply(Matrix.makeRotationY(Math.PI/2));
-                    position = matrix.multiplyVector(position)
-                    normal = matrix.multiplyVector(normal);
+                    position = position.multiply(matrix);
+                    normal = normal.multiply(matrix);
 
                     // From z to x to make it CCW
                     let modelVertex = new Vertex(

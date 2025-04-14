@@ -1,8 +1,73 @@
 import { Vector } from "data/vector";
 import { Data3 } from "./data_types";
 
+// Row-major matrix
 export class Matrix {
     m: Array<number>;
+
+    get r0c0(): number {
+        return this.m[4 * 0 + 0];
+    }
+
+    get r0c1(): number {
+        return this.m[4 * 0 + 1];
+    }
+
+    get r0c2(): number {
+        return this.m[4 * 0 + 2];
+    }
+
+    get r0c3(): number {
+        return this.m[4 * 0 + 3];
+    }
+
+    get r1c0(): number {
+        return this.m[4 * 1 + 0];
+    }
+
+    get r1c1(): number {
+        return this.m[4 * 1 + 1];
+    }
+
+    get r1c2(): number {
+        return this.m[4 * 1 + 2];
+    }
+
+    get r1c3(): number {
+        return this.m[4 * 1 + 3];
+    }
+
+    get r2c0(): number {
+        return this.m[4 * 2 + 0];
+    }
+
+    get r2c1(): number {
+        return this.m[4 * 2 + 1];
+    }
+
+    get r2c2(): number {
+        return this.m[4 * 2 + 2];
+    }
+
+    get r2c3(): number {
+        return this.m[4 * 2 + 3];
+    }
+
+    get r3c0(): number {
+        return this.m[4 * 3 + 0];
+    }
+
+    get r3c1(): number {
+        return this.m[4 * 3 + 1];
+    }
+
+    get r3c2(): number {
+        return this.m[4 * 3 + 2];
+    }
+
+    get r3c3(): number {
+        return this.m[4 * 3 + 3];
+    }
 
     constructor(m: Array<number>) {
         this.m = m;
@@ -20,42 +85,58 @@ export class Matrix {
 
     static makeTranslation(x: number, y: number, z: number): Matrix {
         let m = [
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            x, y, z, 1
+            1, 0, 0, x,
+            0, 1, 0, y,
+            0, 0, 1, z,
+            0, 0, 0, 1
         ];
         return new Matrix(m);
+    }
+
+    translate(x: number, y: number, z: number): Matrix {
+        return this.multiply(Matrix.makeTranslation(x, y, z));
     }
 
     static makeRotationX(angle: number): Matrix {
         let m = [
             1, 0, 0, 0,
-            0, Math.cos(angle), -Math.sin(angle), 0,
-            0, Math.sin(angle), Math.cos(angle), 0,
+            0, Math.cos(angle), Math.sin(angle), 0,
+            0, -Math.sin(angle), Math.cos(angle), 0,
             0, 0, 0, 1
         ];
         return new Matrix(m);
+    }
+
+    rotateX(angle: number): Matrix {
+        return this.multiply(Matrix.makeRotationX(angle));
     }
 
     static makeRotationY(angle: number): Matrix {
         let m = [
-            Math.cos(angle), 0, Math.sin(angle), 0,
+            Math.cos(angle), 0, -Math.sin(angle), 0,
             0, 1, 0, 0,
-            -Math.sin(angle), 0, Math.cos(angle), 0,
+            Math.sin(angle), 0, Math.cos(angle), 0,
             0, 0, 0, 1
         ];
         return new Matrix(m);
     }
 
+    rotateY(angle: number): Matrix {
+        return this.multiply(Matrix.makeRotationY(angle));
+    }
+
     static makeRotationZ(angle: number): Matrix {
         let m = [
-            Math.cos(angle), -Math.sin(angle), 0, 0,
-            Math.sin(angle), Math.cos(angle), 0, 0,
+            Math.cos(angle), Math.sin(angle), 0, 0,
+            -Math.sin(angle), Math.cos(angle), 0, 0,
             0, 0, 1, 0,
             0, 0, 0, 1
         ];
         return new Matrix(m);
+    }
+
+    rotateZ(angle: number): Matrix {
+        return this.multiply(Matrix.makeRotationZ(angle));
     }
 
     static makeScale(x: number, y: number, z: number): Matrix {
@@ -68,6 +149,13 @@ export class Matrix {
         return new Matrix(m);
     }
 
+    scale(x: number, y: number | null = null, z: number | null = null): Matrix {
+        if (y != null && z != null)
+            return this.multiply(Matrix.makeScale(x, y, z));
+        else
+            return this.multiply(Matrix.makeScale(x, x, x));
+    }
+
     static makeOrthographicLeft(aspect: number, width: number, depth: number) {
         let height = width / aspect;
         let m = [
@@ -78,6 +166,7 @@ export class Matrix {
         ];
         return new Matrix(m);
     }
+
     static makeOrthographicRight(aspect: number, width: number, depth: number) {
         let height = width / aspect;
         let m = [
@@ -109,8 +198,8 @@ export class Matrix {
         let m = [
             1 / (aspect * Math.tan(fieldOfView * 0.5)), 0, 0, 0,
             0, 1 / (Math.tan(fieldOfView * 0.5)), 0, 0,
-            0, 0, (near + far) / (near - far), -1,
-            0, 0, near * far * 2 / (near - far), 0,
+            0, 0, (near + far) / (near - far), near * far * 2 / (near - far),
+            0, 0, -1, 0,
         ];
         return new Matrix(m);
     }
@@ -119,84 +208,41 @@ export class Matrix {
         let right = new Vector(-direction.x, -direction.y, -direction.z).cross(new Vector(0, 1, 0));
         let up = right.cross(new Vector(-direction.x, -direction.y, -direction.z));
         let m = [
-            -right.x, -up.x, -direction.x, 0,
-            -right.y, -up.y, -direction.y, 0,
-            -right.z, -up.z, -direction.z, 0,
-            -eye.x, -eye.y, -eye.z, 1
+            -right.x, -right.y, -right.z, -eye.x,
+            -up.x, -up.y, -up.z, -eye.y,
+            -direction.x, -direction.y, -direction.z, -eye.z,
+            0, 0, 0, 1
         ];
         return new Matrix(m);
     }
 
     multiply(other: Matrix): Matrix {
-        // This
-        let l00 = this.m[4 * 0 + 0];
-        let l01 = this.m[4 * 0 + 1];
-        let l02 = this.m[4 * 0 + 2];
-        let l03 = this.m[4 * 0 + 3];
+        let r0c0 = this.r0c0 * other.r0c0 + this.r0c1 * other.r1c0 + this.r0c2 * other.r2c0 + this.r0c3 * other.r3c0;
+        let r0c1 = this.r0c0 * other.r0c1 + this.r0c1 * other.r1c1 + this.r0c2 * other.r2c1 + this.r0c3 * other.r3c1;
+        let r0c2 = this.r0c0 * other.r0c2 + this.r0c1 * other.r1c2 + this.r0c2 * other.r2c2 + this.r0c3 * other.r3c2;
+        let r0c3 = this.r0c0 * other.r0c3 + this.r0c1 * other.r1c3 + this.r0c2 * other.r2c3 + this.r0c3 * other.r3c3;
 
-        let l10 = this.m[4 * 1 + 0];
-        let l11 = this.m[4 * 1 + 1];
-        let l12 = this.m[4 * 1 + 2];
-        let l13 = this.m[4 * 1 + 3];
+        let r1c0 = this.r1c0 * other.r0c0 + this.r1c1 * other.r1c0 + this.r1c2 * other.r2c0 + this.r1c3 * other.r3c0;
+        let r1c1 = this.r1c0 * other.r0c1 + this.r1c1 * other.r1c1 + this.r1c2 * other.r2c1 + this.r1c3 * other.r3c1;
+        let r1c2 = this.r1c0 * other.r0c2 + this.r1c1 * other.r1c2 + this.r1c2 * other.r2c2 + this.r1c3 * other.r3c2;
+        let r1c3 = this.r1c0 * other.r0c3 + this.r1c1 * other.r1c3 + this.r1c2 * other.r2c3 + this.r1c3 * other.r3c3;
 
-        let l20 = this.m[4 * 2 + 0];
-        let l21 = this.m[4 * 2 + 1];
-        let l22 = this.m[4 * 2 + 2];
-        let l23 = this.m[4 * 2 + 3];
+        let r2c0 = this.r2c0 * other.r0c0 + this.r2c1 * other.r1c0 + this.r2c2 * other.r2c0 + this.r2c3 * other.r3c0;
+        let r2c1 = this.r2c0 * other.r0c1 + this.r2c1 * other.r1c1 + this.r2c2 * other.r2c1 + this.r2c3 * other.r3c1;
+        let r2c2 = this.r2c0 * other.r0c2 + this.r2c1 * other.r1c2 + this.r2c2 * other.r2c2 + this.r2c3 * other.r3c2;
+        let r2c3 = this.r2c0 * other.r0c3 + this.r2c1 * other.r1c3 + this.r2c2 * other.r2c3 + this.r2c3 * other.r3c3;
 
-        let l30 = this.m[4 * 3 + 0];
-        let l31 = this.m[4 * 3 + 1];
-        let l32 = this.m[4 * 3 + 2];
-        let l33 = this.m[4 * 3 + 3];
-
-        // Other
-        let r00 = other.m[4 * 0 + 0];
-        let r01 = other.m[4 * 0 + 1];
-        let r02 = other.m[4 * 0 + 2];
-        let r03 = other.m[4 * 0 + 3];
-
-        let r10 = other.m[4 * 1 + 0];
-        let r11 = other.m[4 * 1 + 1];
-        let r12 = other.m[4 * 1 + 2];
-        let r13 = other.m[4 * 1 + 3];
-
-        let r20 = other.m[4 * 2 + 0];
-        let r21 = other.m[4 * 2 + 1];
-        let r22 = other.m[4 * 2 + 2];
-        let r23 = other.m[4 * 2 + 3];
-
-        let r30 = other.m[4 * 3 + 0];
-        let r31 = other.m[4 * 3 + 1];
-        let r32 = other.m[4 * 3 + 2];
-        let r33 = other.m[4 * 3 + 3];
+        let r3c0 = this.r3c0 * other.r0c0 + this.r3c1 * other.r1c0 + this.r3c2 * other.r2c0 + this.r3c3 * other.r3c0;
+        let r3c1 = this.r3c0 * other.r0c1 + this.r3c1 * other.r1c1 + this.r3c2 * other.r2c1 + this.r3c3 * other.r3c1;
+        let r3c2 = this.r3c0 * other.r0c2 + this.r3c1 * other.r1c2 + this.r3c2 * other.r2c2 + this.r3c3 * other.r3c2;
+        let r3c3 = this.r3c0 * other.r0c3 + this.r3c1 * other.r1c3 + this.r3c2 * other.r2c3 + this.r3c3 * other.r3c3;
     
         let m = [
-            l00 * r00 + l01 * r10 + l02 * r20 + l03 * r30, l00 * r01 + l01 * r11 + l02 * r21 + l03 * r31, l00 * r02 + l01 * r12 + l02 * r22 + l03 * r32, l00 * r03 + l01 * r13 + l02 * r23 + l03 * r33,
-            l10 * r00 + l11 * r10 + l12 * r20 + l13 * r30, l10 * r01 + l11 * r11 + l12 * r21 + l13 * r31, l10 * r02 + l11 * r12 + l12 * r22 + l13 * r32, l10 * r03 + l11 * r13 + l12 * r23 + l13 * r33,
-            l20 * r00 + l21 * r10 + l22 * r20 + l23 * r30, l20 * r01 + l21 * r11 + l22 * r21 + l23 * r31, l20 * r02 + l21 * r12 + l22 * r22 + l23 * r32, l20 * r03 + l21 * r13 + l22 * r23 + l23 * r33,
-            l30 * r00 + l31 * r10 + l32 * r20 + l33 * r30, l30 * r01 + l31 * r11 + l32 * r21 + l33 * r31, l30 * r02 + l31 * r12 + l32 * r22 + l33 * r32, l30 * r03 + l31 * r13 + l32 * r23 + l33 * r33,
+            r0c0, r0c1, r0c2, r0c3,
+            r1c0, r1c1, r1c2, r1c3,
+            r2c0, r2c1, r2c2, r2c3,
+            r3c0, r3c1, r3c2, r3c3
         ];
         return new Matrix(m);
-    }
-
-    multiplyVector(vector: Vector): Vector {
-        // This
-        let l00 = this.m[4 * 0 + 0];
-        let l01 = this.m[4 * 0 + 1];
-        let l02 = this.m[4 * 0 + 2];
-
-        let l10 = this.m[4 * 1 + 0];
-        let l11 = this.m[4 * 1 + 1];
-        let l12 = this.m[4 * 1 + 2];
-
-        let l20 = this.m[4 * 2 + 0];
-        let l21 = this.m[4 * 2 + 1];
-        let l22 = this.m[4 * 2 + 2];
-
-        return new Vector(
-            l00 * vector.x + l01 * vector.y + l02 * vector.z,
-            l10 * vector.x + l11 * vector.y + l12 * vector.z,
-            l20 * vector.x + l21 * vector.y + l22 * vector.z
-        );
     }
 }

@@ -10,5 +10,5 @@ void main() {
     float y = a_position.y == 0.0 ? 0.01 : a_position.y * 1000.0;
     float z = a_position.z * 1000.0;
 
-    gl_Position = u_projectionMatrix * u_viewMatrix * vec4(x, y, z, 1.0);
+    gl_Position = vec4(x, y, z, 1.0) * u_viewMatrix * u_projectionMatrix;
 }
