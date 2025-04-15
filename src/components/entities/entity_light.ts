@@ -66,29 +66,14 @@ export class EntityLight extends Entity {
     }
 
     resize(width: number, height: number): void {
-        switch (this.coordsOrientation) {
-            case CoordsOrientation.LeftHanded:
-                switch (this.light.kind) {
-                    case LightKind.Directional:
-                        this.projectionMatrix = Matrix.makeOrthographicLH(1, 100, 100);
-                        break;
-                    case LightKind.Spot:
-                        this.projectionMatrix = Matrix.makePerspectiveLH(Math.PI/2, 1, 100);
-                        break;   
-                }
+        switch (this.light.kind) {
+            case LightKind.Directional:
+                this.projectionMatrix = Matrix.makeOrthographic(1, 100, 100);
                 break;
-            case CoordsOrientation.RightHanded:
-                switch (this.light.kind) {
-                    case LightKind.Directional:
-                        this.projectionMatrix = Matrix.makeOrthographicRH(1, 100, 100);
-                        break;
-                    case LightKind.Spot:
-                        this.projectionMatrix = Matrix.makePerspectiveRH(Math.PI/2, 1, 100);
-                        break;   
-                }
+            case LightKind.Spot:
+                this.projectionMatrix = Matrix.makePerspective(Math.PI / 2, 1, 100);
                 break;
         }
-
     }
 
     prepareForDraw(gl: WebGL2RenderingContext, shaderProgram: ShaderProgram) {

@@ -41,14 +41,7 @@ export class EntityCamera extends Entity {
     }
 
     resize(width: number, height: number) {
-        switch (this.coordsOrientation) {
-            case CoordsOrientation.LeftHanded:
-                this.projectionMatrix = Matrix.makePerspectiveLH(Math.PI * 0.5, width/height, 100);
-                break;
-            case CoordsOrientation.RightHanded:
-                this.projectionMatrix = Matrix.makePerspectiveRH(Math.PI * 0.5, width/height, 100);
-                break;
-        }
+        this.projectionMatrix = Matrix.makePerspective(Math.PI * 0.5, width/height, 100);
     }
 
     update(elapsedMiliseconds: number, input: Input ) {
@@ -105,36 +98,27 @@ export class EntityCamera extends Entity {
         yAngle += input.look.horizontal;
 
         // Rotation
-        this.rotation.x = -xAngle;
-        this.rotation.y = -yAngle;
+        this.rotation.x = -xAngle * orientationMultiplier;
+        this.rotation.y = -yAngle * orientationMultiplier;
 
         // Translation
-        let positionMatrix = Matrix.makeRotationZYX(0, yAngle * orientationMultiplier, xAngle * orientationMultiplier);
+        let positionMatrix = Matrix.makeRotationZYX(0, yAngle, xAngle);
         let originVector = new Vector(0, 0, new Vector(this.translation.x, this.translation.y, this.translation.z).length() * orientationMultiplier);
         originVector.z += input.look.zoom * orientationMultiplier;
         this.translation = originVector.multiply(positionMatrix);
     }
 
     private flybyUpdate(elapsedMiliseconds: number, input: Input) {
-        this.rotation.x += input.look.vertical;
-        this.rotation.x = Util.clamp(this.rotation.x, -Math.PI / 2 + 0.01, Math.PI / 2 + 0.01)
-        this.rotation.y += input.look.horizontal;
+        let orientationMultiplier = this.coordsOrientation == CoordsOrientation.RightHanded ? 1 : -1;
 
-        switch (this.coordsOrientation) {
-            case CoordsOrientation.LeftHanded:
-                this.translation.x += input.movement.right * EntityCamera.movementMultiplier * Math.cos(this.rotation.y) +
-                    input.movement.forward * EntityCamera.movementMultiplier * Math.sin(this.rotation.y);
-                this.translation.y += input.movement.up * EntityCamera.movementMultiplier
-                this.translation.z += input.movement.forward * EntityCamera.movementMultiplier * Math.cos(this.rotation.y) * Math.cos(this.rotation.x) -
-                    input.movement.right * EntityCamera.movementMultiplier * Math.sin(this.rotation.y) * Math.cos(this.rotation.x);
-                break;
-            case CoordsOrientation.RightHanded:
-                this.translation.x += input.movement.right * EntityCamera.movementMultiplier * Math.cos(this.rotation.y) -
-                    input.movement.forward * EntityCamera.movementMultiplier * Math.sin(this.rotation.y);
-                this.translation.y += input.movement.up * EntityCamera.movementMultiplier
-                this.translation.z += input.movement.forward * EntityCamera.movementMultiplier * Math.cos(this.rotation.y) * Math.cos(this.rotation.x) +
-                    input.movement.right * EntityCamera.movementMultiplier * Math.sin(this.rotation.y) * Math.cos(this.rotation.x);
-                break;
-        }
+        this.rotation.x += input.look.vertical * orientationMultiplier;
+        this.rotation.x = Util.clamp(this.rotation.x, -Math.PI / 2 + 0.01, Math.PI / 2 + 0.01)
+        this.rotation.y += input.look.horizontal * orientationMultiplier;
+
+        this.translation.x += input.movement.right * EntityCamera.movementMultiplier * Math.cos(this.rotation.y) -
+            input.movement.forward * EntityCamera.movementMultiplier * Math.sin(this.rotation.y);
+        this.translation.y += input.movement.up * EntityCamera.movementMultiplier
+        this.translation.z += input.movement.forward * EntityCamera.movementMultiplier * Math.cos(this.rotation.y) * Math.cos(this.rotation.x) +
+            input.movement.right * EntityCamera.movementMultiplier * Math.sin(this.rotation.y) * Math.cos(this.rotation.x);
     }
 }

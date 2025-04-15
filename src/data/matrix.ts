@@ -4,6 +4,7 @@ import { CoordsOrientation } from "../renderer/renderer";
 
 // Row-major matrix
 export class Matrix {
+    static coordsOrientation: CoordsOrientation;
     m: Array<number>;
 
     get r0c0(): number {
@@ -70,7 +71,16 @@ export class Matrix {
         return this.m[4 * 3 + 3];
     }
 
-    //static coordsOrientation: CoordsOrientation = CoordsOrientation.RightHanded;
+    get direction(): Vector {
+        switch (Matrix.coordsOrientation) {
+            case CoordsOrientation.LeftHanded:
+                return new Vector(this.r2c0, this.r2c1, this.r2c2);
+                break;
+            case CoordsOrientation.RightHanded:
+                return new Vector(-this.r2c0, -this.r2c1, -this.r2c2);
+                break;
+        }
+    }
 
     constructor(m: Array<number>) {
         this.m = m;
@@ -101,12 +111,25 @@ export class Matrix {
     }
 
     static makeRotationX(angle: number): Matrix {
-        let m = [
-            1, 0, 0, 0,
-            0, Math.cos(angle), -Math.sin(angle), 0,
-            0, Math.sin(angle), Math.cos(angle), 0,
-            0, 0, 0, 1
-        ];
+        let m: Array<number>;
+        switch (Matrix.coordsOrientation) {
+            case CoordsOrientation.LeftHanded:
+                m = [
+                    1, 0, 0, 0,
+                    0, Math.cos(angle), Math.sin(angle), 0,
+                    0, -Math.sin(angle), Math.cos(angle), 0,
+                    0, 0, 0, 1
+                ];
+                break;
+            case CoordsOrientation.RightHanded:
+                m = [
+                    1, 0, 0, 0,
+                    0, Math.cos(angle), -Math.sin(angle), 0,
+                    0, Math.sin(angle), Math.cos(angle), 0,
+                    0, 0, 0, 1
+                ];
+                break;
+        }
         return new Matrix(m);
     }
 
@@ -115,12 +138,26 @@ export class Matrix {
     }
 
     static makeRotationY(angle: number): Matrix {
-        let m = [
-            Math.cos(angle), 0, Math.sin(angle), 0,
-            0, 1, 0, 0,
-            -Math.sin(angle), 0, Math.cos(angle), 0,
-            0, 0, 0, 1
-        ];
+        let m: Array<number>;
+        switch (Matrix.coordsOrientation) {
+            case CoordsOrientation.LeftHanded:
+                m = [
+                    Math.cos(angle), 0, -Math.sin(angle), 0,
+                    0, 1, 0, 0,
+                    Math.sin(angle), 0, Math.cos(angle), 0,
+                    0, 0, 0, 1
+                ];
+                break;
+            case CoordsOrientation.RightHanded:
+                m = [
+                    Math.cos(angle), 0, Math.sin(angle), 0,
+                    0, 1, 0, 0,
+                    -Math.sin(angle), 0, Math.cos(angle), 0,
+                    0, 0, 0, 1
+                ];
+                break;
+        }
+
         return new Matrix(m);
     }
 
@@ -129,12 +166,26 @@ export class Matrix {
     }
 
     static makeRotationZ(angle: number): Matrix {
-        let m = [
-            Math.cos(angle), -Math.sin(angle), 0, 0,
-            Math.sin(angle), Math.cos(angle), 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1
-        ];
+        let m: Array<number>;
+        switch (Matrix.coordsOrientation) {
+            case CoordsOrientation.LeftHanded:
+                m = [
+                    Math.cos(angle), Math.sin(angle), 0, 0,
+                    -Math.sin(angle), Math.cos(angle), 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1
+                ];
+                break;
+            case CoordsOrientation.RightHanded:
+                m = [
+                    Math.cos(angle), -Math.sin(angle), 0, 0,
+                    Math.sin(angle), Math.cos(angle), 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1
+                ];
+                break;
+        }
+
         return new Matrix(m);
     }
 
@@ -183,51 +234,54 @@ export class Matrix {
             return this.multiply(Matrix.makeScale(x, x, x));
     }
 
-    static makeOrthographicLH(aspect: number, width: number, depth: number) {
+    static makeOrthographic(aspect: number, width: number, depth: number) {
         let height = width / aspect;
-        let m = [
-            2 / width, 0, 0, 0,
-            0, 2 / height, 0, 0,
-            0, 0, 2 / depth, 0,
-            0, 0, 0, 1
-        ];
+
+        let m: Array<number>;
+        switch (this.coordsOrientation) {
+            case CoordsOrientation.LeftHanded:
+                m = [
+                    2 / width, 0, 0, 0,
+                    0, 2 / height, 0, 0,
+                    0, 0, 2 / depth, 0,
+                    0, 0, 0, 1
+                ];
+                break;
+            case CoordsOrientation.RightHanded:
+                m = [
+                    2 / width, 0, 0, 0,
+                    0, 2 / height, 0, 0,
+                    0, 0, -2 / depth, 0,
+                    0, 0, 0, 1
+                ];
+                break;
+        }
         return new Matrix(m);
     }
 
-    static makeOrthographicRH(aspect: number, width: number, depth: number) {
-        let height = width / aspect;
-        let m = [
-            2 / width, 0, 0, 0,
-            0, 2 / height, 0, 0,
-            0, 0, -2 / depth, 0,
-            0, 0, 0, 1
-        ];
-        return new Matrix(m);
-    }
-
-    static makePerspectiveLH(fieldOfView: number, aspect: number, depth: number): Matrix {
+    static makePerspective(fieldOfView: number, aspect: number, depth: number): Matrix {
         let near = 0.1;
         let far = near + depth;
 
-        let m = [
-            1 / (aspect * Math.tan(fieldOfView * 0.5)), 0, 0, 0,
-            0, 1 / (Math.tan(fieldOfView * 0.5)), 0, 0,
-            0, 0, -(far + near) / (far - near), 1,
-            0, 0, 2 * far * near / (far - near), 0,
-        ];
-        return new Matrix(m);
-    }
-
-    static makePerspectiveRH(fieldOfView: number, aspect: number, depth: number): Matrix {
-        let near = 0.1;
-        let far = near + depth;
-
-        let m = [
-            1 / (aspect * Math.tan(fieldOfView * 0.5)), 0, 0, 0,
-            0, 1 / (Math.tan(fieldOfView * 0.5)), 0, 0,
-            0, 0, -(far + near) / (far - near), -1,
-            0, 0, -2 * far * near / (far - near), 0,
-        ];
+        let m: Array<number>;
+        switch (this.coordsOrientation) {
+            case CoordsOrientation.LeftHanded:
+                m = [
+                    1 / (aspect * Math.tan(fieldOfView * 0.5)), 0, 0, 0,
+                    0, 1 / (Math.tan(fieldOfView * 0.5)), 0, 0,
+                    0, 0, -(far + near) / (far - near), 1,
+                    0, 0, 2 * far * near / (far - near), 0,
+                ];
+                break;
+            case CoordsOrientation.RightHanded:
+                m = [
+                    1 / (aspect * Math.tan(fieldOfView * 0.5)), 0, 0, 0,
+                    0, 1 / (Math.tan(fieldOfView * 0.5)), 0, 0,
+                    0, 0, -(far + near) / (far - near), -1,
+                    0, 0, -2 * far * near / (far - near), 0,
+                ];
+                break;
+        }
         return new Matrix(m);
     }
 

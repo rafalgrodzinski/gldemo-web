@@ -83,21 +83,11 @@ export abstract class Entity {
     }
 
     get direction(): Vector {
-        let direction = new Vector(0, 0, -1);
-
-        let rotationMatrix = Matrix.makeIdentity();
-        rotationMatrix = rotationMatrix.rotateXYZ(-this.rotation.x, -this.rotation.y, this.rotation.z);
-
-        return direction.multiply(rotationMatrix);
+        return this.modelMatrix.direction;
     }
 
     get directionGlobal(): Vector {
-        let direction = new Vector(0, 0, -1);
-
-        let rotationMatrix = Matrix.makeIdentity();
-        rotationMatrix = rotationMatrix.rotateXYZ(-this.rotationGlobal.x, -this.rotationGlobal.y, this.rotationGlobal.z);
-
-        return direction.multiply(rotationMatrix);
+        return this.modelMatrixGlobal.direction;
     }
 
     addChild(child: Entity) {

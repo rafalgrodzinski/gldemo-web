@@ -2,6 +2,7 @@ import { Scene } from "components/scene";
 import { CoordsOrientation, Renderer } from "renderer/renderer";
 import { Config } from "utils/config";
 import { Input } from "utils/input";
+import { Matrix } from "./data/matrix";
 
 class Main {
     private gl!: WebGL2RenderingContext;
@@ -18,6 +19,7 @@ class Main {
     protected async init(args: Array<any>) {
         let canvas = document.querySelector("#gl-view") as HTMLCanvasElement;
 
+        Matrix.coordsOrientation = this.coordsOrientation;
         this.gl = canvas.getContext("webgl2")!;
         this.scene = await Scene.create(this.gl, this.coordsOrientation);
         this.renderer = await Renderer.create(this.gl, this.scene, this.coordsOrientation);
