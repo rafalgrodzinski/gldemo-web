@@ -156,7 +156,7 @@ export class Matrix {
             return this.multiply(Matrix.makeScale(x, x, x));
     }
 
-    static makeOrthographicLeft(aspect: number, width: number, depth: number) {
+    static makeOrthographicLH(aspect: number, width: number, depth: number) {
         let height = width / aspect;
         let m = [
             2 / width, 0, 0, 0,
@@ -167,7 +167,7 @@ export class Matrix {
         return new Matrix(m);
     }
 
-    static makeOrthographicRight(aspect: number, width: number, depth: number) {
+    static makeOrthographicRH(aspect: number, width: number, depth: number) {
         let height = width / aspect;
         let m = [
             2 / width, 0, 0, 0,
@@ -178,20 +178,20 @@ export class Matrix {
         return new Matrix(m);
     }
 
-    static makePerspectiveLeft(fieldOfView: number, aspect: number, depth: number): Matrix {
+    static makePerspectiveLH(fieldOfView: number, aspect: number, depth: number): Matrix {
         let near = 0.1;
         let far = near + depth;
 
         let m = [
             1 / (aspect * Math.tan(fieldOfView * 0.5)), 0, 0, 0,
-            0, 1 / Math.tan(fieldOfView * 0.5), 0, 0,
-            0, 0, (-near - far) / (near - far), 1,
-            0, 0, near * far * 2 / (near - far), 0,
+            0, 1 / (Math.tan(fieldOfView * 0.5)), 0, 0,
+            0, 0, -(far + near) / (far - near), 1,
+            0, 0, 2 * far * near / (far - near), 0,
         ];
         return new Matrix(m);
     }
 
-    static makePerspectiveRight(fieldOfView: number, aspect: number, depth: number): Matrix {
+    static makePerspectiveRH(fieldOfView: number, aspect: number, depth: number): Matrix {
         let near = 0.1;
         let far = near + depth;
 

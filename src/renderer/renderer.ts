@@ -84,9 +84,13 @@ export class Renderer {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         switch (this.coordsOrientation) {
             case CoordsOrientation.LeftHanded:
+                gl.clearDepth(0);
+                gl.depthFunc(gl.GEQUAL);
                 gl.frontFace(gl.CW);
                 break;
             case CoordsOrientation.RightHanded:
+                gl.clearDepth(1);
+                gl.depthFunc(gl.LEQUAL);
                 gl.frontFace(gl.CCW);
                 break;
         }

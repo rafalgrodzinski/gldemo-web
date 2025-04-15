@@ -45,10 +45,10 @@ export class EntityCamera extends Entity {
     resize(width: number, height: number) {
         switch (this.coordsOrientation) {
             case CoordsOrientation.LeftHanded:
-                this.projectionMatrix = Matrix.makePerspectiveLeft(Math.PI * 0.5, width/height, 100);
+                this.projectionMatrix = Matrix.makePerspectiveLH(Math.PI * 0.5, width/height, 100);
                 break;
             case CoordsOrientation.RightHanded:
-                this.projectionMatrix = Matrix.makePerspectiveRight(Math.PI * 0.5, width/height, 100);
+                this.projectionMatrix = Matrix.makePerspectiveRH(Math.PI * 0.5, width/height, 100);
                 break;
         }
     }
@@ -68,6 +68,8 @@ export class EntityCamera extends Entity {
     }
 
     private arcballUpdate(input: Input) {
+        let orientationMultiplier = this.coordsOrientation == CoordsOrientation.RightHanded ? 1 : -1;
+
         // X Angle
         let xAngle = this.rotation.x;
         if (this.translation.x != 0 || this.translation.y != 0 || this.translation.z != 0) {
@@ -91,7 +93,7 @@ export class EntityCamera extends Entity {
         let yAngle = this.rotation.y;
         if (this.translation.x != 0 || this.translation.y != 0 || this.translation.z != 0) {
             yAngle = Math.acos(
-                new Vector(0, 0, 1)
+                new Vector(0, 0, orientationMultiplier)
                     .dot(
                         new Vector(this.translation.x, 0, this.translation.z)
                             .normalize()
@@ -109,9 +111,9 @@ export class EntityCamera extends Entity {
         this.rotation.y = -yAngle;
 
         // Translation
-        let positionMatrix = Matrix.makeRotationY(yAngle).rotateX(xAngle);
-        let originVector = new Vector(0, 0, new Vector(this.translation.x, this.translation.y, this.translation.z).length());
-        originVector.z += input.look.zoom;
+        let positionMatrix = Matrix.makeRotationY(yAngle * orientationMultiplier).rotateX(xAngle * orientationMultiplier);
+        let originVector = new Vector(0, 0, new Vector(this.translation.x, this.translation.y, this.translation.z).length() * orientationMultiplier);
+        originVector.z += input.look.zoom * orientationMultiplier;
         this.translation = originVector.multiply(positionMatrix);
     }
 

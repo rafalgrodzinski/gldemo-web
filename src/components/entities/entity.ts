@@ -90,9 +90,9 @@ export abstract class Entity {
         let direction = new Vector(0, 0, -1);
 
         let rotationMatrix = Matrix.makeIdentity();
-        rotationMatrix = rotationMatrix.rotateX(-this.rotation.x);
-        rotationMatrix = rotationMatrix.rotateY(-this.rotation.y);
         rotationMatrix = rotationMatrix.rotateZ(this.rotation.z);
+        rotationMatrix = rotationMatrix.rotateY(-this.rotation.y);
+        rotationMatrix = rotationMatrix.rotateX(-this.rotation.x);
 
         return direction.multiply(rotationMatrix);
     }
@@ -101,9 +101,9 @@ export abstract class Entity {
         let direction = new Vector(0, 0, -1);
 
         let rotationMatrix = Matrix.makeIdentity();
-        rotationMatrix = rotationMatrix.rotateX(-this.rotationGlobal.x);
-        rotationMatrix = rotationMatrix.rotateY(-this.rotationGlobal.y);
         rotationMatrix = rotationMatrix.rotateZ(this.rotationGlobal.z);
+        rotationMatrix = rotationMatrix.rotateY(-this.rotationGlobal.y);
+        rotationMatrix = rotationMatrix.rotateX(-this.rotationGlobal.x);
 
         return direction.multiply(rotationMatrix);
     }
