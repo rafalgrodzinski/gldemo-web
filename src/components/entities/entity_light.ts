@@ -71,7 +71,8 @@ export class EntityLight extends Entity {
                 this.projectionMatrix = Matrix.makeOrthographic(1, 100, 100);
                 break;
             case LightKind.Spot:
-                this.projectionMatrix = Matrix.makePerspective(Math.PI / 2, 1, 100);
+                //this.projectionMatrix = Matrix.makePerspective(Math.PI / 2, 1, 100);
+                this.projectionMatrix = Matrix.makeOrthographic(1, 100, 100);
                 break;
         }
     }

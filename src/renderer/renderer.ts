@@ -52,7 +52,7 @@ export class Renderer {
         this.renderPasses = await Promise.all([
             await RenderPassSkybox.create(gl, skyboxTexture),
             await RenderPassShadowMap.create(gl),
-            await RenderPassPhong.create(gl),
+            await RenderPassPhong.create(gl, coordsOrientation),
             //await RenderPassDebugNormals.create(gl),
             await RenderPassGrid.create(gl),
             await RenderPassAxis.create(gl)
