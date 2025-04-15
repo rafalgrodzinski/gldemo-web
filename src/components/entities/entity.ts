@@ -56,9 +56,7 @@ export abstract class Entity {
     get modelMatrix(): Matrix {
         let modelMatrix = Matrix.makeIdentity();
         modelMatrix = modelMatrix.scale(this.scale.x, this.scale.y, this.scale.z);
-        modelMatrix = modelMatrix.rotateX(this.rotation.x);
-        modelMatrix = modelMatrix.rotateY(this.rotation.y);
-        modelMatrix = modelMatrix.rotateZ(this.rotation.z);
+        modelMatrix = modelMatrix.rotateXYZ(this.rotation.x, this.rotation.y, this.rotation.z);
         modelMatrix = modelMatrix.translate(this.translation.x, this.translation.y, this.translation.z);
         return modelMatrix;
     }
@@ -72,9 +70,7 @@ export abstract class Entity {
 
     get unscaledModelMatrix(): Matrix {
         let modelMatrix = Matrix.makeIdentity();
-        modelMatrix = modelMatrix.rotateX(this.rotation.x);
-        modelMatrix = modelMatrix.rotateY(this.rotation.y);
-        modelMatrix = modelMatrix.rotateZ(this.rotation.z);
+        modelMatrix = modelMatrix.rotateXYZ(this.rotation.x, this.rotation.y, this.rotation.z);
         modelMatrix = modelMatrix.translate(this.translation.x, this.translation.y, this.translation.z);
         return modelMatrix;
     }
@@ -90,9 +86,7 @@ export abstract class Entity {
         let direction = new Vector(0, 0, -1);
 
         let rotationMatrix = Matrix.makeIdentity();
-        rotationMatrix = rotationMatrix.rotateZ(this.rotation.z);
-        rotationMatrix = rotationMatrix.rotateY(-this.rotation.y);
-        rotationMatrix = rotationMatrix.rotateX(-this.rotation.x);
+        rotationMatrix = rotationMatrix.rotateXYZ(-this.rotation.x, -this.rotation.y, this.rotation.z);
 
         return direction.multiply(rotationMatrix);
     }
@@ -101,9 +95,7 @@ export abstract class Entity {
         let direction = new Vector(0, 0, -1);
 
         let rotationMatrix = Matrix.makeIdentity();
-        rotationMatrix = rotationMatrix.rotateZ(this.rotationGlobal.z);
-        rotationMatrix = rotationMatrix.rotateY(-this.rotationGlobal.y);
-        rotationMatrix = rotationMatrix.rotateX(-this.rotationGlobal.x);
+        rotationMatrix = rotationMatrix.rotateXYZ(-this.rotationGlobal.x, -this.rotationGlobal.y, this.rotationGlobal.z);
 
         return direction.multiply(rotationMatrix);
     }

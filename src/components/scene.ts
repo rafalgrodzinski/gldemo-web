@@ -35,7 +35,10 @@ export class Scene {
         );
         cameraEntity.translation.y = 4;
         cameraEntity.translation.z = 4;
-        this.rootEntity.addChild(cameraEntity);
+
+        let cameraNodeEntity = await EntityNode.create("Camera Node");
+        cameraNodeEntity.addChild(cameraEntity);
+        this.rootEntity.addChild(cameraNodeEntity);
 
         // Ambient light
         let ambientLight = await EntityLight.create([Phase.PassPhong], "Ambient light", gl, new Light(LightKind.Ambient, Data.rgb(1, 1, 1), 1, 0, 0, 0, 0, false), coordsOrientation);

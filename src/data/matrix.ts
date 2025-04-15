@@ -1,5 +1,6 @@
 import { Vector } from "data/vector";
 import { Data3 } from "./data_types";
+import { CoordsOrientation } from "../renderer/renderer";
 
 // Row-major matrix
 export class Matrix {
@@ -69,6 +70,8 @@ export class Matrix {
         return this.m[4 * 3 + 3];
     }
 
+    //static coordsOrientation: CoordsOrientation = CoordsOrientation.RightHanded;
+
     constructor(m: Array<number>) {
         this.m = m;
     }
@@ -137,6 +140,30 @@ export class Matrix {
 
     rotateZ(angle: number): Matrix {
         return this.multiply(Matrix.makeRotationZ(angle));
+    }
+
+    static makeRotationXYZ(xAngle: number, yAngle: number, zAngle: number): Matrix {
+        let rotationY = Matrix.makeRotationY(yAngle);
+        let rotationX = Matrix.makeRotationX(xAngle);
+        let rotationZ = Matrix.makeRotationZ(zAngle);
+
+        return rotationX.multiply(rotationY).multiply(rotationZ);
+    }
+
+    rotateXYZ(xAngle: number, yAngle: number, zAngle: number): Matrix {
+        return this.multiply(Matrix.makeRotationXYZ(xAngle, yAngle, zAngle));
+    }
+
+    static makeRotationZYX(zAngle: number, yAngle: number, xAngle: number): Matrix {
+        let rotationY = Matrix.makeRotationY(yAngle);
+        let rotationX = Matrix.makeRotationX(xAngle);
+        let rotationZ = Matrix.makeRotationZ(zAngle);
+
+        return rotationZ.multiply(rotationY).multiply(rotationX);
+    }
+
+    rotateZYX(zAngle: number, yAngle: number, xAngle: number): Matrix {
+        return this.multiply(Matrix.makeRotationZYX(zAngle, yAngle, xAngle));
     }
 
     static makeScale(x: number, y: number, z: number): Matrix {
