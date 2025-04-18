@@ -4,7 +4,7 @@ import { RenderPassGrid } from "renderer/render_pass_grid";
 import { RenderPassDebugNormals } from "renderer/render_pass_debug_normals";
 import { Scene } from "components/scene";
 import { Input } from "utils/input";
-import { RenderPassShadowMap } from "renderer/render_pass_shadow";
+import { RenderPassShadowMap } from "./render_pass_shadow_map";
 import { RenderPassSkybox } from "renderer/render_pass_skybox";
 import { TextureCube } from "../data/texture/texture_cube";
 import { RenderPassAxis } from "./render_pass_axis";
