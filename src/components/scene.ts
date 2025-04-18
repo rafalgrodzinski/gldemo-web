@@ -45,7 +45,7 @@ export class Scene {
         this.rootEntity.addChild(ambientLight);
 
         // Directional Light
-        let directionalLightNodeEntity = await EntityNode.create("Directional Light Node");
+        /*let directionalLightNodeEntity = await EntityNode.create("Directional Light Node");
         directionalLightNodeEntity.translation.y = 5;
         directionalLightNodeEntity.translation.z = 5;
         directionalLightNodeEntity.rotation.x = Math.PI/4;
@@ -58,12 +58,12 @@ export class Scene {
         directionalLightModelEntity.scale = new Vector(0.5, 0.5, 0.5);
         directionalLightNodeEntity.addChild(directionalLightModelEntity);
 
-        let directionaLight = new Light(LightKind.Directional, Data.rgb(1, 1, 1), 1, 0, 0, 0, 0, false)
+        let directionaLight = new Light(LightKind.Directional, Data.rgb(1, 1, 1), 1, 0, 0, 0, 0, true)
         let directionalLightEntity = await EntityLight.create([Phase.PassPhong, Phase.PassShadowMap, Phase.Resize], "Directional Light", gl, directionaLight, coordsOrientation);
-        directionalLightNodeEntity.addChild(directionalLightEntity);
+        directionalLightNodeEntity.addChild(directionalLightEntity);*/
 
         // Point light
-        let pointLightNodeEntity = await EntityNode.create("Point Light Node");
+        /*let pointLightNodeEntity = await EntityNode.create("Point Light Node");
         pointLightNodeEntity.translation.x = 5;
         pointLightNodeEntity.translation.y = 5;
         pointLightNodeEntity.translation.z = 5;
@@ -77,7 +77,7 @@ export class Scene {
 
         let pointLight = new Light(LightKind.Point, Data.rgb(0.5, 0.5, 1), 1, 0.07, 0.017, 0, 0, false);
         let pointLightEntity = await EntityLight.create([Phase.PassPhong], "Point light", gl, pointLight, coordsOrientation);
-        pointLightNodeEntity.addChild(pointLightEntity);
+        pointLightNodeEntity.addChild(pointLightEntity);*/
 
         // Spot light
         let spotLightNodeEntity = await EntityNode.create("Spot Light Node");
@@ -95,7 +95,7 @@ export class Scene {
         spotLightModelEntity.scale = new Vector(0.5, 0.5, 0.5);
         spotLightNodeEntity.addChild(spotLightModelEntity);
 
-        let spotLight = new Light(LightKind.Spot, Data.rgb(1, 0.5, 0.5), 1, 0, 0, 0.9, 0.9, true);
+        let spotLight = new Light(LightKind.Spot, Data.rgb(1, 0.5, 0.5), 1, 0, 0, 0.9, 0.8, true);
         let spotLightEntity = await EntityLight.create([Phase.PassPhong, Phase.PassShadowMap, Phase.Resize], "Spot Light", gl, spotLight, coordsOrientation);
         spotLightNodeEntity.addChild(spotLightEntity);
 

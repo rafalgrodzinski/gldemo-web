@@ -68,7 +68,7 @@ float shadow(vec4 lightSpacePosition, vec3 normal, Light light, sampler2D shadow
         for (int y=-2; y<=2; y++) {
             vec2 offset = vec2(x, y) / texelSize;
             float shadowMapDepth = texture(shadowMapSampler, lightSpaceNormalizedPosition.xy + offset).x;
-            shadowIntensity += fragmentDepth + 0.005 > shadowMapDepth ? offValue : onValue;
+            shadowIntensity += fragmentDepth > shadowMapDepth ? offValue : onValue;
         }
     }
     return shadowIntensity / 16.0;
@@ -136,14 +136,16 @@ vec3 spotLightColor(vec3 position, vec3 normal, vec3 cameraPosition, Light light
     
     // Diffuse
     float normalIntensity = clamp(dot(normal, -direction), 0.0, 1.0);
-    float diffuseIntensity = normalIntensity * spotIntensity * light.intensity * material.diffuseIntensity - shadowIntensity;
+    float diffuseIntensity = (normalIntensity * light.intensity * material.diffuseIntensity - shadowIntensity) * spotIntensity ;
+    diffuseIntensity = clamp(diffuseIntensity, 0.0, 1.0);
     color += material.color * light.color * diffuseIntensity;
 
     // Specular
     if (material.specularIntensity > 0.0) {
         vec3 cameraDirection = normalize(cameraPosition - position);
         vec3 reflected = reflect(direction, normal);
-        float specularIntensity = clamp(dot(cameraDirection, reflected), 0.0, 1.0);
+        float specularIntensity = dot(cameraDirection, reflected) - shadowIntensity;
+        specularIntensity = clamp(specularIntensity, 0.0, 1.0);
         color += light.color * pow(specularIntensity, material.specularIntensity) * spotIntensity * specularIntensity * light.intensity * material.roughnessIntensity;
     }
 

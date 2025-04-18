@@ -270,7 +270,7 @@ export class Matrix {
                     1 / (aspect * Math.tan(fieldOfView * 0.5)), 0, 0, 0,
                     0, 1 / (Math.tan(fieldOfView * 0.5)), 0, 0,
                     0, 0, -(far + near) / (far - near), 1,
-                    0, 0, 2 * far * near / (far - near), 0,
+                    0, 0, 2 * far * near / (far - near), 1,
                 ];
                 break;
             case CoordsOrientation.RightHanded:
@@ -278,7 +278,7 @@ export class Matrix {
                     1 / (aspect * Math.tan(fieldOfView * 0.5)), 0, 0, 0,
                     0, 1 / (Math.tan(fieldOfView * 0.5)), 0, 0,
                     0, 0, -(far + near) / (far - near), -1,
-                    0, 0, -2 * far * near / (far - near), 0,
+                    0, 0, -2 * far * near / (far - near), 1,
                 ];
                 break;
         }

@@ -14,7 +14,7 @@ export class RenderPassShadowMap extends RenderPass {
     protected async init(args: Array<any>): Promise<this> {
         let [gl] = args as [WebGL2RenderingContext];
         await super.init([Phase.PassShadowMap]);
-        this.shaderProgram = await ShaderProgram.create(gl, "src/shaders/shadow_map/vertex.glsl", "src/shaders/shadow_map/fragment.glsl");
+        this.shaderProgram = await ShaderProgram.create(gl, "src/shaders/shadow_map/shadow_map_vertex.glsl", "src/shaders/shadow_map/shadow_map_fragment.glsl");
 
         return this;
     }

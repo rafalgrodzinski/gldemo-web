@@ -3,7 +3,6 @@ import { Entity, EntityKind } from "components/entities/entity";
 import { Light, LightKind } from "data/light";
 import { ShaderProgram } from "components/shader_program";
 import { Matrix } from "data/matrix";
-import { Data } from "data/data_types";
 
 export class EntityLight extends Entity {
     private static MAX_LIGHTS: number = 8;
@@ -62,7 +61,19 @@ export class EntityLight extends Entity {
     }
 
     get viewMatrix(): Matrix {
-        return Matrix.makeLookAt(Data.vector(this.translationGlobal), Data.vector(this.directionGlobal));
+        let viewMatrix = Matrix.makeIdentity();
+        viewMatrix = viewMatrix.translate(-this.translationGlobal.x, -this.translationGlobal.y, -this.translationGlobal.z);
+
+        switch (this.coordsOrientation) {
+            case CoordsOrientation.LeftHanded:
+                viewMatrix = viewMatrix.rotateZYX(0, -this.rotationGlobal.y, -this.rotationGlobal.x);
+                break;
+            case CoordsOrientation.RightHanded:
+                viewMatrix = viewMatrix.rotateZYX(0, -this.rotationGlobal.y, -this.rotationGlobal.x);
+                break;
+        }
+
+        return viewMatrix;
     }
 
     resize(width: number, height: number): void {
@@ -71,8 +82,7 @@ export class EntityLight extends Entity {
                 this.projectionMatrix = Matrix.makeOrthographic(1, 100, 100);
                 break;
             case LightKind.Spot:
-                //this.projectionMatrix = Matrix.makePerspective(Math.PI / 2, 1, 100);
-                this.projectionMatrix = Matrix.makeOrthographic(1, 100, 100);
+                this.projectionMatrix = Matrix.makePerspective(Math.PI / 2, 1, 100);
                 break;
         }
     }
@@ -142,9 +152,6 @@ export class EntityLight extends Entity {
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.depthMapFramebuffer);
         gl.viewport(0, 0, EntityLight.SHADOW_MAP_SIZE, EntityLight.SHADOW_MAP_SIZE);
         gl.clear(gl.DEPTH_BUFFER_BIT);
-        gl.enable(gl.DEPTH_TEST);
-        gl.enable(gl.CULL_FACE);
-        gl.cullFace(gl.BACK);
 
         shaderProgram.setMatrix(gl, "u_lightProjectionMatrix", this.projectionMatrix.m);
         shaderProgram.setMatrix(gl, "u_lightViewMatrix", this.viewMatrix.m);
