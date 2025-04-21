@@ -45,11 +45,10 @@ uniform sampler2D u_shadowMapSampler;
 uniform Light u_lights[8];
 uniform Material u_material;
 uniform vec3 u_cameraPosition;
-uniform bool u_hasPositiveDepth;
 
 out vec4 o_color;
 
-float shadow(vec4 lightSpacePosition, vec3 normal, Light light, sampler2D shadowMapSampler, bool hasPositiveDepth) {
+float shadow(vec4 lightSpacePosition, vec3 normal, Light light, sampler2D shadowMapSampler) {
     vec3 lightSpaceNormalizedPosition = lightSpacePosition.xyz / lightSpacePosition.w;
     lightSpaceNormalizedPosition = lightSpaceNormalizedPosition * 0.5 + 0.5;
 
@@ -62,13 +61,11 @@ float shadow(vec4 lightSpacePosition, vec3 normal, Light light, sampler2D shadow
     float fragmentDepth = lightSpaceNormalizedPosition.z;
     float shadowIntensity = 0.0;
     vec2 texelSize = vec2(textureSize(shadowMapSampler, 0).xy);
-    float onValue = hasPositiveDepth ? 0.25 : 0.0;
-    float offValue = 0.25 - onValue;
     for (int x=-2; x<=2; x++) {
         for (int y=-2; y<=2; y++) {
             vec2 offset = vec2(x, y) / texelSize;
             float shadowMapDepth = texture(shadowMapSampler, lightSpaceNormalizedPosition.xy + offset).x;
-            shadowIntensity += fragmentDepth > shadowMapDepth ? offValue : onValue;
+            shadowIntensity += fragmentDepth > shadowMapDepth ? 0.25 : 0.0;
         }
     }
     return shadowIntensity / 16.0;
@@ -181,7 +178,7 @@ void main() {
         for (int i=0; i<8; i++) {
             float shadowIntensity = 0.0;
             if (u_lights[i].shouldCastShadow)
-                shadowIntensity = shadow(v_lightSpacePosition, v_normal, u_lights[i], u_shadowMapSampler, u_hasPositiveDepth);
+                shadowIntensity = shadow(v_lightSpacePosition, v_normal, u_lights[i], u_shadowMapSampler);
 
             if (u_lights[i].kind == LightKindAmbient) {
                 color += ambientLightColor(u_lights[i], material);

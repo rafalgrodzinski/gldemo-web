@@ -52,7 +52,7 @@ export class Renderer {
         this.renderPasses = await Promise.all([
             await RenderPassSkybox.create(gl, skyboxTexture),
             await RenderPassShadowMap.create(gl),
-            await RenderPassPhong.create(gl, coordsOrientation),
+            await RenderPassPhong.create(gl),
             //await RenderPassDebugNormals.create(gl),
             await RenderPassGrid.create(gl),
             await RenderPassAxis.create(gl)
@@ -84,13 +84,9 @@ export class Renderer {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         switch (this.coordsOrientation) {
             case CoordsOrientation.LeftHanded:
-                gl.clearDepth(0);
-                gl.depthFunc(gl.GEQUAL);
                 gl.frontFace(gl.CW);
                 break;
             case CoordsOrientation.RightHanded:
-                gl.clearDepth(1);
-                gl.depthFunc(gl.LEQUAL);
                 gl.frontFace(gl.CCW);
                 break;
         }

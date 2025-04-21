@@ -244,7 +244,7 @@ export class Matrix {
                     2 / width, 0, 0, 0,
                     0, 2 / height, 0, 0,
                     0, 0, 2 / depth, 0,
-                    0, 0, 0, 1
+                    0, 0, -1, 1
                 ];
                 break;
             case CoordsOrientation.RightHanded:
@@ -252,7 +252,7 @@ export class Matrix {
                     2 / width, 0, 0, 0,
                     0, 2 / height, 0, 0,
                     0, 0, -2 / depth, 0,
-                    0, 0, 0, 1
+                    0, 0, -1, 1
                 ];
                 break;
         }
@@ -269,16 +269,16 @@ export class Matrix {
                 m = [
                     1 / (aspect * Math.tan(fieldOfView * 0.5)), 0, 0, 0,
                     0, 1 / (Math.tan(fieldOfView * 0.5)), 0, 0,
-                    0, 0, -(far + near) / (far - near), 1,
-                    0, 0, 2 * far * near / (far - near), 1,
+                    0, 0, -(2 * far) / (near - far) - 1, 1,
+                    0, 0, (2 * near * far) / (near - far), 1,
                 ];
                 break;
             case CoordsOrientation.RightHanded:
                 m = [
                     1 / (aspect * Math.tan(fieldOfView * 0.5)), 0, 0, 0,
                     0, 1 / (Math.tan(fieldOfView * 0.5)), 0, 0,
-                    0, 0, -(far + near) / (far - near), -1,
-                    0, 0, -2 * far * near / (far - near), 1,
+                    0, 0, (far - near) / (-far - near), -1,
+                    0, 0, (2 * near * far) / (-far - near), 1,
                 ];
                 break;
         }

@@ -10,7 +10,7 @@ class Main {
     private renderer!: Renderer;
     private input!: Input;
     private config!: Config;
-    private coordsOrientation = CoordsOrientation.RightHanded;
+    private coordsOrientation = CoordsOrientation.LeftHanded;
 
     static async create() {
         return await new Main().init([]);

@@ -42,13 +42,7 @@ export class RenderPassAxis extends RenderPass {
             return this;
         }
     
-        draw(gl: WebGL2RenderingContext, entities: Array<Entity>) {
-            gl.depthMask(true);
-            gl.enable(gl.DEPTH_TEST);
-    
-            gl.enable(gl.BLEND);
-            gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    
+        draw(gl: WebGL2RenderingContext, entities: Array<Entity>) {    
             // Axis
             gl.useProgram(this.shaderProgram.program);
             entities.forEach(entity => {
