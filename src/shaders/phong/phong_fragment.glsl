@@ -83,7 +83,7 @@ vec3 directionalLightColor(vec3 position, vec3 normal, vec3 cameraPosition, Ligh
     vec3 color = vec3(0);
     
     // Diffuse
-    float diffuseIntensity = dot(normal, -light.direction) * light.intensity * material.diffuseIntensity - shadowIntensity;
+    float diffuseIntensity = (light.intensity * material.diffuseIntensity - shadowIntensity) * dot(normal, -light.direction);
     diffuseIntensity = clamp(diffuseIntensity, 0.0, 1.0);
     color += material.color * light.color * diffuseIntensity;
 
