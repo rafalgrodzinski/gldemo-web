@@ -13,6 +13,7 @@ struct Light {
     float innerCutOff;
     float outerCutOff;
     bool shouldCastShadow;
+    sampler2D shadowMapSampler;
 };
 
 struct Material {
@@ -36,19 +37,18 @@ in vec3 v_position;
 in vec3 v_normal;
 in vec2 v_texCoords;
 
-in vec4 v_lightSpacePosition;
+in vec4 v_lightSpacePosition[8];
 
 uniform sampler2D u_diffuseSampler;
 uniform sampler2D u_roughnessSampler;
 uniform samplerCube u_environmentSampler;
-uniform sampler2D u_shadowMapSampler;
 uniform Light u_lights[8];
 uniform Material u_material;
 uniform vec3 u_cameraPosition;
 
 out vec4 o_color;
 
-float shadow(vec4 lightSpacePosition, vec3 normal, Light light, sampler2D shadowMapSampler) {
+float shadow(vec4 lightSpacePosition, vec3 normal, Light light) {
     vec3 lightSpaceNormalizedPosition = lightSpacePosition.xyz / lightSpacePosition.w;
     lightSpaceNormalizedPosition = lightSpaceNormalizedPosition * 0.5 + 0.5;
 
@@ -60,12 +60,12 @@ float shadow(vec4 lightSpacePosition, vec3 normal, Light light, sampler2D shadow
 
     float fragmentDepth = lightSpaceNormalizedPosition.z;
     float shadowIntensity = 0.0;
-    vec2 texelSize = vec2(textureSize(shadowMapSampler, 0).xy);
+    vec2 texelSize = vec2(textureSize(light.shadowMapSampler, 0).xy);
     for (int x=-2; x<=2; x++) {
         for (int y=-2; y<=2; y++) {
             vec2 offset = vec2(x, y) / texelSize;
-            float shadowMapDepth = texture(shadowMapSampler, lightSpaceNormalizedPosition.xy + offset).x;
-            shadowIntensity += fragmentDepth > shadowMapDepth ? 0.25 : 0.0;
+            float shadowMapDepth = texture(light.shadowMapSampler, lightSpaceNormalizedPosition.xy + offset).x;
+            shadowIntensity += fragmentDepth > shadowMapDepth ? 0.5 : 0.0;
         }
     }
     return shadowIntensity / 16.0;
@@ -178,7 +178,7 @@ void main() {
         for (int i=0; i<8; i++) {
             float shadowIntensity = 0.0;
             if (u_lights[i].shouldCastShadow)
-                shadowIntensity = shadow(v_lightSpacePosition, v_normal, u_lights[i], u_shadowMapSampler);
+                shadowIntensity = shadow(v_lightSpacePosition[i], v_normal, u_lights[i]);
 
             if (u_lights[i].kind == LightKindAmbient) {
                 color += ambientLightColor(u_lights[i], material);

@@ -10,8 +10,8 @@ uniform mat4 u_projectionMatrix;
 uniform mat4 u_viewMatrix;
 uniform mat4 u_modelMatrix;
 
-uniform mat4 u_lightProjectionMatrix;
-uniform mat4 u_lightViewMatrix;
+uniform mat4 u_lightProjectionMatrix[8];
+uniform mat4 u_lightViewMatrix[8];
 
 uniform bool u_isAnimated;
 uniform float u_tweenFactor;
@@ -20,7 +20,7 @@ out vec3 v_position;
 out vec3 v_normal;
 out vec2 v_texCoords;
 
-out vec4 v_lightSpacePosition;
+out vec4 v_lightSpacePosition[8];
 
 void main() {
     vec3 position;
@@ -39,5 +39,6 @@ void main() {
     v_position = vec3(vec4(position, 1.0) * u_modelMatrix);
     v_texCoords = a_texCoords;
 
-    v_lightSpacePosition = vec4(position, 1.0) * u_modelMatrix * u_lightViewMatrix * u_lightProjectionMatrix;
+    for (int i=0; i<8; i++)
+        v_lightSpacePosition[i] = vec4(position, 1.0) * u_modelMatrix * u_lightViewMatrix[i] * u_lightProjectionMatrix[i];
 }

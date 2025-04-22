@@ -7,13 +7,15 @@ import { Matrix } from "data/matrix";
 export class EntityLight extends Entity {
     private static MAX_LIGHTS: number = 8;
     private static lightsCount: number = 0;
+    private static shadowMapsCount: number = 0;
     private static SHADOW_MAP_SIZE = 2048;
     private coordsOrientation!: CoordsOrientation
 
     light!: Light;
     private depthMapFramebuffer!: WebGLFramebuffer;
     private depthMapTexture!: WebGLTexture;
-    private index!: number;
+    private indexLight!: number;
+    private indexShadowMap!: number;
     private projectionMatrix!: Matrix;
 
     static async create(phases: Array<Phase>, name: string, gl: WebGL2RenderingContext, light: Light, coordsOrientation: CoordsOrientation): Promise<EntityLight> {
@@ -29,7 +31,7 @@ export class EntityLight extends Entity {
             throw new Error();
         }
 
-        this.index = EntityLight.lightsCount;
+        this.indexLight = EntityLight.lightsCount;
         EntityLight.lightsCount++;
 
         this.light = light;
@@ -37,6 +39,9 @@ export class EntityLight extends Entity {
         this.projectionMatrix = Matrix.makeIdentity();
 
         if (light.shouldCastShadow) {
+            this.indexShadowMap = EntityLight.shadowMapsCount;
+            EntityLight.shadowMapsCount++;
+
             this.depthMapTexture = gl.createTexture();
             gl.bindTexture(gl.TEXTURE_2D, this.depthMapTexture);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT32F, EntityLight.SHADOW_MAP_SIZE, EntityLight.SHADOW_MAP_SIZE, 0, gl.DEPTH_COMPONENT, gl.FLOAT, null);
@@ -88,7 +93,7 @@ export class EntityLight extends Entity {
     }
 
     prepareForDraw(gl: WebGL2RenderingContext, shaderProgram: ShaderProgram) {
-        let idPrefix = `u_lights[${this.index}].`;
+        let idPrefix = `u_lights[${this.indexLight}].`;
 
         shaderProgram.setInt(gl, idPrefix + "kind", this.light.kind);
 
@@ -104,18 +109,12 @@ export class EntityLight extends Entity {
                 shaderProgram.setFloat(gl, idPrefix + "intensity", this.light.intensity)
                 shaderProgram.setBool(gl, idPrefix + "shouldCastShadow", this.light.shouldCastShadow);
 
-                /*let lightProjectionMatrixId = gl.getUniformLocation(shaderProgram.program, idPrefix + "projectionMatrix");
-                gl.uniformMatrix4fv(lightProjectionMatrixId, false, this.projectionMatrix.m);
-
-                let lightViewMatrixId = gl.getUniformLocation(shaderProgram.program, idPrefix + "viewMatrix");
-                gl.uniformMatrix4fv(lightViewMatrixId, false, this.viewMatrix.m);*/
-
                 if (this.light.shouldCastShadow) {
-                    gl.activeTexture(gl.TEXTURE1);
+                    gl.activeTexture(gl.TEXTURE8 + this.indexShadowMap);
                     gl.bindTexture(gl.TEXTURE_2D, this.depthMapTexture);
-                    shaderProgram.setInt(gl, "u_shadowMapSampler", 1);
-                    shaderProgram.setMatrix(gl, "u_lightProjectionMatrix", this.projectionMatrix.m);
-                    shaderProgram.setMatrix(gl, "u_lightViewMatrix", this.viewMatrix.m);
+                    shaderProgram.setInt(gl, idPrefix + "shadowMapSampler", 8 + this.indexShadowMap);
+                    shaderProgram.setMatrix(gl, `u_lightProjectionMatrix[${this.indexLight}]`, this.projectionMatrix.m);
+                    shaderProgram.setMatrix(gl, `u_lightViewMatrix[${this.indexLight}]`, this.viewMatrix.m);
                 }
                 break;
             }
@@ -137,11 +136,11 @@ export class EntityLight extends Entity {
                 shaderProgram.setBool(gl, idPrefix + "shouldCastShadow", this.light.shouldCastShadow);
 
                 if (this.light.shouldCastShadow) {
-                    gl.activeTexture(gl.TEXTURE1);
+                    gl.activeTexture(gl.TEXTURE8 + this.indexShadowMap);
                     gl.bindTexture(gl.TEXTURE_2D, this.depthMapTexture);
-                    shaderProgram.setInt(gl, "u_shadowMapSampler", 1);
-                    shaderProgram.setMatrix(gl, "u_lightProjectionMatrix", this.projectionMatrix.m);
-                    shaderProgram.setMatrix(gl, "u_lightViewMatrix", this.viewMatrix.m);
+                    shaderProgram.setInt(gl, idPrefix + "shadowMapSampler", 8 + this.indexShadowMap);
+                    shaderProgram.setMatrix(gl, `u_lightProjectionMatrix[${this.indexLight}]`, this.projectionMatrix.m);
+                    shaderProgram.setMatrix(gl, `u_lightViewMatrix[${this.indexLight}]`, this.viewMatrix.m);
                 }
                 break;
             }
