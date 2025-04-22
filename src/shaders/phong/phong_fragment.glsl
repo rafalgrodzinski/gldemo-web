@@ -4,16 +4,16 @@ precision highp float;
 
 struct Light {
     int kind;
-    vec3 color; // ambient, directional, point
-    vec3 direction; // directional
-    float intensity; // ambient, directional, point
-    vec3 position; // point
+    vec3 color; // ambient, directional, spot, point
+    vec3 direction; // directional, spot
+    float intensity; // ambient, directional, spot, point
+    vec3 position; // spot, point
     float linearAttenuation; // point
     float quadraticAttenuation; // point
-    float innerCutOff;
-    float outerCutOff;
-    bool shouldCastShadow;
-    sampler2D shadowMapSampler;
+    float innerCutOff; // spot
+    float outerCutOff; // spot
+    bool shouldCastShadow; // directional, spot
+    sampler2D shadowMapSampler; // directional, spot
 };
 
 struct Material {

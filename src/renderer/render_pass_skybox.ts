@@ -1,5 +1,5 @@
 import { Entity } from "components/entities/entity";
-import { ShaderAttribute, ShaderProgram } from "components/shader_program";
+import { ShaderAttribute, ShaderProgram, TextureIndex } from "components/shader_program";
 import { Data } from "data/data_types";
 import { Material } from "data/material";
 import { Model } from "data/model/model";
@@ -53,11 +53,12 @@ export class RenderPassSkybox extends RenderPass {
         entities.forEach(entity => {
             entity.prepareForDraw(gl, this.shaderProgram);
         });
-
+        
         gl.bindVertexArray(this.vertexArray);
-        gl.activeTexture(gl.TEXTURE0);
+
+        this.shaderProgram.setInt(gl, "u_sampler", TextureIndex.Environment);
+        gl.activeTexture(gl.TEXTURE0 + TextureIndex.Environment);
         gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.texture.texture);
-        this.shaderProgram.setInt(gl, "u_sampler", 0);
 
         gl.drawArrays(gl.TRIANGLES, 0, this.model.verticesCount);
     }

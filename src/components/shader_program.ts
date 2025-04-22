@@ -8,6 +8,13 @@ export enum ShaderAttribute {
     TexCoords = 2
 }
 
+export enum TextureIndex {
+    Diffuse = 0,
+    Roughness = 1,
+    Environment = 2,
+    ShadowMap0 = 8
+}
+
 export class ShaderProgram {
     program!: WebGLProgram;
 

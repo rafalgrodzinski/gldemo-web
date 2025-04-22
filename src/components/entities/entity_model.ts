@@ -1,4 +1,4 @@
-import { ShaderAttribute, ShaderProgram } from "components/shader_program";
+import { ShaderAttribute, ShaderProgram, TextureIndex } from "components/shader_program";
 import { Entity } from "components/entities/entity";
 import { Vertex } from "data/vertex";
 import { Phase } from "renderer/renderer";
@@ -46,26 +46,26 @@ export class EntityModel extends Entity {
         shaderProgram.setFloat(gl, "u_material.diffuseIntensity", this.model.material.diffuseIntensity);
         shaderProgram.setFloat(gl, "u_material.specularIntensity", this.model.material.specularIntensity);
         shaderProgram.setBool(gl, "u_material.isUnshaded", this.model.material.isUnshaded);
+        
         shaderProgram.setBool(gl, "u_material.hasDiffuseTexture", this.model.material.diffuseTexture != null);
-        shaderProgram.setBool(gl, "u_material.hasRoughnessTexture", this.model.material.roughnessTexture != null);
-        shaderProgram.setBool(gl, "u_material.hasEnvironmentTexture", this.model.material.environmentTexture != null);
-
+        shaderProgram.setInt(gl, "u_diffuseSampler", TextureIndex.Diffuse);
         if (this.model.material.diffuseTexture != null) {
-            gl.activeTexture(gl.TEXTURE0);
+            gl.activeTexture(gl.TEXTURE0 + TextureIndex.Diffuse);
             gl.bindTexture(gl.TEXTURE_2D, this.model.material.diffuseTexture.texture);
-            shaderProgram.setInt(gl, "u_diffuseSampler", 0);
         }
-
+        
+        shaderProgram.setBool(gl, "u_material.hasRoughnessTexture", this.model.material.roughnessTexture != null);
+        shaderProgram.setInt(gl, "u_roughnessSampler", TextureIndex.Roughness);
         if (this.model.material.roughnessTexture != null) {
-            gl.activeTexture(gl.TEXTURE2);
+            gl.activeTexture(gl.TEXTURE0 + TextureIndex.Roughness);
             gl.bindTexture(gl.TEXTURE_2D, this.model.material.roughnessTexture.texture);
-            shaderProgram.setInt(gl, "u_roughnessSampler", 2);
         }
-
+        
+        shaderProgram.setBool(gl, "u_material.hasEnvironmentTexture", this.model.material.environmentTexture != null);
+        shaderProgram.setInt(gl, "u_environmentSampler", TextureIndex.Environment);
         if (this.model.material.environmentTexture != null) {
-            gl.activeTexture(gl.TEXTURE3);
+            gl.activeTexture(gl.TEXTURE0 + TextureIndex.Environment);
             gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.model.material.environmentTexture.texture);
-            shaderProgram.setInt(gl, "u_environmentSampler", 3);
         }
 
         shaderProgram.setBool(gl, "u_isAnimated", false);
