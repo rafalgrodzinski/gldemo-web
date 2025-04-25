@@ -43,7 +43,6 @@ export class EntityCamera extends Entity {
     }
 
     resize(width: number, height: number) {
-        //this.projectionMatrix = Matrix.makePerspective(Math.PI * 0.5, width/height, 100);
         switch (this.camera.projectionKind) {
             case CameraProjectionKind.Ortographic:
                 this.projectionMatrix = Matrix.makeOrthographic(width/height, this.camera.width, this.camera.depth);

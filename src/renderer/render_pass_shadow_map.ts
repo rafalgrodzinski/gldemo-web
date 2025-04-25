@@ -23,7 +23,6 @@ export class RenderPassShadowMap extends RenderPass {
         gl.enable(gl.DEPTH_TEST);
         gl.enable(gl.CULL_FACE);
         gl.cullFace(gl.FRONT);
-        let viewportSize = gl.getParameter(gl.VIEWPORT) as Array<number>;
 
         let lightEntities = entities.map((entity) => {
             return (entity instanceof EntityLight && entity.light.shouldCastShadow) ? entity : null
@@ -40,6 +39,6 @@ export class RenderPassShadowMap extends RenderPass {
         });
 
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-        gl.viewport(viewportSize[0], viewportSize[1], viewportSize[2], viewportSize[3]);
+        gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
     }
 }
