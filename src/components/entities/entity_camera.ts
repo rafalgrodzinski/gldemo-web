@@ -5,20 +5,22 @@ import { Util } from "utils/util";
 import { CoordsOrientation, Phase } from "renderer/renderer";
 import { ShaderProgram } from "components/shader_program";
 import { Input } from "utils/input";
+import { Camera, CameraProjectionKind } from "../../data/camera";
 
 export class EntityCamera extends Entity {
+    camera!: Camera;
     private static movementMultiplier = 20;
     private coordsOrientation!: CoordsOrientation
-
     private projectionMatrix!: Matrix;
 
-    static async create(phases: Array<Phase>, name: string, coordsOrientation: CoordsOrientation): Promise<EntityCamera> {
-        return await new EntityCamera().init([phases, name, coordsOrientation]);
+    static async create(phases: Array<Phase>, name: string, camera: Camera, coordsOrientation: CoordsOrientation): Promise<EntityCamera> {
+        return await new EntityCamera().init([phases, name, camera, coordsOrientation]);
     }
 
     protected async init(args: Array<any>): Promise<this> {
-        let [phases, name, coordsOrientation] = args as [Array<Phase>, string, CoordsOrientation];
+        let [phases, name, camera, coordsOrientation] = args as [Array<Phase>, string, Camera, CoordsOrientation];
         await super.init([phases, name, EntityKind.Camera]);
+        this.camera = camera;
         this.coordsOrientation = coordsOrientation;
         this.projectionMatrix = Matrix.makeIdentity();
         return this;
@@ -41,7 +43,15 @@ export class EntityCamera extends Entity {
     }
 
     resize(width: number, height: number) {
-        this.projectionMatrix = Matrix.makePerspective(Math.PI * 0.5, width/height, 100);
+        //this.projectionMatrix = Matrix.makePerspective(Math.PI * 0.5, width/height, 100);
+        switch (this.camera.projectionKind) {
+            case CameraProjectionKind.Ortographic:
+                this.projectionMatrix = Matrix.makeOrthographic(width/height, this.camera.width, this.camera.depth);
+                break;
+            case CameraProjectionKind.Perspective:
+                this.projectionMatrix = Matrix.makePerspective(this.camera.angle, width/height, this.camera.depth);
+                break;
+        }
     }
 
     update(elapsedSeconds: number, input: Input ) {

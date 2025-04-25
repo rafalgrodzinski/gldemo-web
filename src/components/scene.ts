@@ -14,6 +14,7 @@ import { ModelMdl } from "../data/model/model_mdl";
 import { Texture2D } from "../data/texture/texture_2d";
 import { EntityModelAnimated } from "./entities/entity_model_animated";
 import { TextureCube } from "../data/texture/texture_cube";
+import { Camera } from "../data/camera";
 
 export class Scene {
     rootEntity!: Entity;
@@ -31,6 +32,7 @@ export class Scene {
         let cameraEntity = await EntityCamera.create(
             [Phase.Resize, Phase.Update, Phase.PassPhong, Phase.PassGrid, Phase.PassAxis, Phase.PassDebugNormals, Phase.PassSkybox],
             "Camera",
+            Camera.makePerspective(Math.PI/2, 100),
             coordsOrientation
         );
         cameraEntity.translation.y = 4;
