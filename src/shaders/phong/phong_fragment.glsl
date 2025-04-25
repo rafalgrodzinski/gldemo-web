@@ -46,6 +46,10 @@ uniform Light u_lights[8];
 uniform Material u_material;
 uniform vec3 u_cameraPosition;
 
+uniform float u_fogNear;
+uniform float u_fogFar;
+uniform vec3 u_fogColor;
+
 out vec4 o_color;
 
 float shadow(vec4 lightSpacePosition, vec3 normal, Light light) {
@@ -191,6 +195,10 @@ void main() {
             }
         }
     }
+
+    // Apply fog
+    float fogAmount = smoothstep(u_fogNear, u_fogFar, length(v_position - u_cameraPosition));
+    color = mix(color, u_fogColor, fogAmount);
 
     o_color = vec4(color, 1.0);
 }

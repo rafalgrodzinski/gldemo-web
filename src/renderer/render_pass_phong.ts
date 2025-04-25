@@ -2,6 +2,7 @@ import { RenderPass } from "renderer/render_pass";
 import { ShaderProgram } from "components/shader_program";
 import { Entity } from "components/entities/entity";
 import { Phase } from "./renderer";
+import { Data } from "../data/data_types";
 
 export class RenderPassPhong extends RenderPass {
     private shaderProgram!: ShaderProgram;
@@ -23,6 +24,10 @@ export class RenderPassPhong extends RenderPass {
         gl.cullFace(gl.BACK);
 
         gl.useProgram(this.shaderProgram.program);
+
+        this.shaderProgram.setFloat(gl, "u_fogNear", 10);
+        this.shaderProgram.setFloat(gl, "u_fogFar", 40);
+        this.shaderProgram.setVector(gl, "u_fogColor", Data.rgb(0.5, 0.5, 0.5).m);
 
         entities.forEach(entity => {
             entity.prepareForDraw(gl, this.shaderProgram);

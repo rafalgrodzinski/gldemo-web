@@ -7,7 +7,7 @@ import { ShaderProgram } from "components/shader_program";
 import { Input } from "utils/input";
 
 export class EntityCamera extends Entity {
-    private static movementMultiplier = 0.1;
+    private static movementMultiplier = 20;
     private coordsOrientation!: CoordsOrientation
 
     private projectionMatrix!: Matrix;
@@ -115,10 +115,8 @@ export class EntityCamera extends Entity {
         this.rotation.x = Util.clamp(this.rotation.x, -Math.PI / 2 + 0.01, Math.PI / 2 + 0.01)
         this.rotation.y += input.look.horizontal * orientationMultiplier;
 
-        this.translation.x += input.movement.right * EntityCamera.movementMultiplier * Math.cos(this.rotation.y) -
-            input.movement.forward * EntityCamera.movementMultiplier * Math.sin(this.rotation.y) * elapsedSeconds;
+        this.translation.x += (input.movement.right * Math.cos(this.rotation.y) - input.movement.forward * Math.sin(this.rotation.y)) * EntityCamera.movementMultiplier * elapsedSeconds;
         this.translation.y += input.movement.up * EntityCamera.movementMultiplier * elapsedSeconds;
-        this.translation.z += input.movement.forward * EntityCamera.movementMultiplier * Math.cos(this.rotation.y) * Math.cos(this.rotation.x) +
-            input.movement.right * EntityCamera.movementMultiplier * Math.sin(this.rotation.y) * Math.cos(this.rotation.x) * elapsedSeconds;
+        this.translation.z += (input.movement.forward * Math.cos(this.rotation.y) * Math.cos(this.rotation.x) + input.movement.right * Math.sin(this.rotation.y) * Math.cos(this.rotation.x)) * EntityCamera.movementMultiplier * elapsedSeconds;
     }
 }
