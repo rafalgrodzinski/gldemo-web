@@ -59,7 +59,7 @@ class Main {
             let elapsed = timestamp - oldTimestamp;
             oldTimestamp = timestamp;
 
-            this.renderer.update(elapsed, this.input);
+            this.renderer.update(elapsed / 1000, this.input);
             this.renderer.draw(this.gl);
 
             requestAnimationFrame(nextFrame);

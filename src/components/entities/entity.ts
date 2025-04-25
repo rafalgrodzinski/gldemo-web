@@ -109,7 +109,7 @@ export abstract class Entity {
     }
 
     resize(width:number , height: number) { }
-    update(elapsedMiliseconds: number, input: Input) { }
+    update(elapsedSeconds: number, input: Input) { }
     prepareForDraw(gl: WebGL2RenderingContext, shaderProgram: ShaderProgram) { }
     draw(gl: WebGL2RenderingContext, shaderProgram: ShaderProgram) { }
 }

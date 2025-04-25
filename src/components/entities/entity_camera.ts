@@ -44,11 +44,11 @@ export class EntityCamera extends Entity {
         this.projectionMatrix = Matrix.makePerspective(Math.PI * 0.5, width/height, 100);
     }
 
-    update(elapsedMiliseconds: number, input: Input ) {
+    update(elapsedSeconds: number, input: Input ) {
         if (input.actions.primary) {
             this.arcballUpdate(input);
         } else if (!input.actions.primary && !input.actions.secondary) {
-            this.flybyUpdate(elapsedMiliseconds, input);
+            this.flybyUpdate(elapsedSeconds, input);
         }
     }
 
@@ -108,7 +108,7 @@ export class EntityCamera extends Entity {
         this.translation = originVector.multiply(positionMatrix);
     }
 
-    private flybyUpdate(elapsedMiliseconds: number, input: Input) {
+    private flybyUpdate(elapsedSeconds: number, input: Input) {
         let orientationMultiplier = this.coordsOrientation == CoordsOrientation.RightHanded ? 1 : -1;
 
         this.rotation.x += input.look.vertical * orientationMultiplier;
@@ -116,9 +116,9 @@ export class EntityCamera extends Entity {
         this.rotation.y += input.look.horizontal * orientationMultiplier;
 
         this.translation.x += input.movement.right * EntityCamera.movementMultiplier * Math.cos(this.rotation.y) -
-            input.movement.forward * EntityCamera.movementMultiplier * Math.sin(this.rotation.y);
-        this.translation.y += input.movement.up * EntityCamera.movementMultiplier
+            input.movement.forward * EntityCamera.movementMultiplier * Math.sin(this.rotation.y) * elapsedSeconds;
+        this.translation.y += input.movement.up * EntityCamera.movementMultiplier * elapsedSeconds;
         this.translation.z += input.movement.forward * EntityCamera.movementMultiplier * Math.cos(this.rotation.y) * Math.cos(this.rotation.x) +
-            input.movement.right * EntityCamera.movementMultiplier * Math.sin(this.rotation.y) * Math.cos(this.rotation.x);
+            input.movement.right * EntityCamera.movementMultiplier * Math.sin(this.rotation.y) * Math.cos(this.rotation.x) * elapsedSeconds;
     }
 }

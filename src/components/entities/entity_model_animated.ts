@@ -56,8 +56,8 @@ export class EntityModelAnimated extends Entity {
         return this;
     }
 
-    update(elapsedMiliseconds: number, input: Input) {
-        this.currentTime += elapsedMiliseconds / 1000;
+    update(elapsedSeconds: number, input: Input) {
+        this.currentTime += elapsedSeconds;
     }
 
     draw(gl: WebGL2RenderingContext, shaderProgram: ShaderProgram) {

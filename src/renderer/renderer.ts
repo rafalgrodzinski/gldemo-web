@@ -71,10 +71,10 @@ export class Renderer {
         this.draw(gl);
     }
 
-    update(elapsedMiliseconds: number, input: Input) {
+    update(elapsedSeconds: number, input: Input) {
         let entities = this.scene.rootEntity.entitiesForPhase(Phase.Update);
         entities.forEach(entity => {
-            entity.update(elapsedMiliseconds, input);
+            entity.update(elapsedSeconds, input);
         });
         input.resetState();
     }
