@@ -17,6 +17,7 @@ export enum TextureIndex {
 
 export class ShaderProgram {
     program!: WebGLProgram;
+    private uniformLocationIds: Map<String, WebGLUniformLocation | null> = new Map();
 
     static async create(gl: WebGL2RenderingContext, vertexShaderFileName: string, fragmentShaderFileName: string) {
         return await new ShaderProgram().init([gl, vertexShaderFileName, fragmentShaderFileName]);
@@ -61,32 +62,41 @@ export class ShaderProgram {
         return program;
     }
 
-    setBool(gl: WebGL2RenderingContext, uniformLocation: string, value: boolean) {
+    private uniformId(gl: WebGL2RenderingContext, uniformLocation: string): WebGLUniformLocation | null {
+        if (uniformLocation in this.uniformLocationIds)
+            return this.uniformLocationIds[uniformLocation];
+
         let uniformId = gl.getUniformLocation(this.program, uniformLocation);
+        this.uniformLocationIds[uniformLocation] = uniformId;
+        return uniformId;
+    }
+
+    setBool(gl: WebGL2RenderingContext, uniformLocation: string, value: boolean) {
+        let uniformId = this.uniformId(gl, uniformLocation);
         if (uniformId != null)
             gl.uniform1i(uniformId, value ? 1 : 0);
     }
 
     setInt(gl: WebGL2RenderingContext, uniformLocation: string, value: number) {
-        let uniformId = gl.getUniformLocation(this.program, uniformLocation);
+        let uniformId = this.uniformId(gl, uniformLocation);
         if (uniformId != null)
             gl.uniform1i(uniformId, value);
     }
 
     setFloat(gl: WebGL2RenderingContext, uniformLocation: string, value: number) {
-        let uniformId = gl.getUniformLocation(this.program, uniformLocation);
+        let uniformId = this.uniformId(gl, uniformLocation);
         if (uniformId != null)
             gl.uniform1f(uniformId, value);
     }
 
     setVector(gl: WebGL2RenderingContext, uniformLocation: string, value: Array<number>) {
-        let uniformId = gl.getUniformLocation(this.program, uniformLocation);
+        let uniformId = this.uniformId(gl, uniformLocation);
         if (uniformId != null)
             gl.uniform3fv(uniformId, value);
     }
 
     setMatrix(gl: WebGL2RenderingContext, uniformLocation: string, value: Array<number>) {
-        let uniformId = gl.getUniformLocation(this.program, uniformLocation);
+        let uniformId = this.uniformId(gl, uniformLocation);
         if (uniformId != null)
             gl.uniformMatrix4fv(uniformId, true, value);
     }
