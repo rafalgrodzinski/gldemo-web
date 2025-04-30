@@ -16,10 +16,6 @@ export abstract class Entity {
     name!: string;
     kind!: EntityKind;
 
-    translation = Data.xyz(0);
-    rotation = Data.xyz(0);
-    scale = Data.xyz(1);
-
     parent: Entity | null = null;
     children: Array<Entity> = [];
 
@@ -31,68 +27,149 @@ export abstract class Entity {
         return this;
     }
 
+    #translation = Data.xyz(0);
+    get translation(): Data3 {
+        this.updateMatricesIfNeeded();
+        return this.#translation;
+    }
+    set translation(newValue: Data3) {
+        this.#translation = newValue;
+        this.updateMatrices();
+    }
+    #translationGlobal = Data.xyz(0);
     get translationGlobal(): Data3 {
-        let modelMatrix = this.unscaledModelMatrixGlobal;
-        let x = modelMatrix.r3c0;
-        let y = modelMatrix.r3c1;
-        let z = modelMatrix.r3c2;
-        return Data.xyz(x, y, z);
+        this.updateMatricesIfNeeded();
+        return this.#translationGlobal;
     }
 
+    #rotation = Data.xyz(0);
+    get rotation(): Data3 {
+        this.updateMatricesIfNeeded();
+        return this.#rotation;
+    }
+    set rotation(newValue: Data3) {
+        this.#rotation = newValue;
+        this.updateMatrices();
+    }
+    #rotationGlobal = Data.xyz(0);
     get rotationGlobal(): Data3 {
-        if (this.parent != null)
-            return this.rotation.vector.add(this.parent.rotationGlobal.vector).data;
-        else 
-            return this.rotation;
+        this.updateMatricesIfNeeded();
+        return this.#rotationGlobal;
     }
 
+    #scale = Data.xyz(1);
+    get scale(): Data3 {
+        this.updateMatricesIfNeeded();
+        return this.#scale;
+    }
+    set scale(newValue: Data3) {
+        this.#scale = newValue;
+        this.updateMatrices();
+    }
+    #scaleGlobal = Data.xyz(1);
     get scaleGlobal(): Data3 {
-        if (this.parent != null)
-            return this.scale.vector.multiply(this.parent.scaleGlobal.vector).data;
-        else 
-            return this.scale;
+        this.updateMatricesIfNeeded();
+        return this.#scaleGlobal;
     }
 
+    #modelMatrix: Matrix = Matrix.makeIdentity();
     get modelMatrix(): Matrix {
-        let modelMatrix = Matrix.makeIdentity();
-        modelMatrix = modelMatrix.scale(this.scale.x, this.scale.y, this.scale.z);
-        modelMatrix = modelMatrix.rotateXYZ(this.rotation.x, this.rotation.y, this.rotation.z);
-        modelMatrix = modelMatrix.translate(this.translation.x, this.translation.y, this.translation.z);
-        return modelMatrix;
+        this.updateMatricesIfNeeded();
+        return this.#modelMatrix;
     }
-
+    #modelMatrixGlobal: Matrix = Matrix.makeIdentity();
     get modelMatrixGlobal(): Matrix {
-        if (this.parent != null)
-            return this.modelMatrix.multiply(this.parent.modelMatrixGlobal);
-        else
-            return this.modelMatrix;
+        this.updateMatricesIfNeeded();
+        return this.#modelMatrixGlobal;
     }
 
+    #unscaledModelMatrix: Matrix = Matrix.makeIdentity();
     get unscaledModelMatrix(): Matrix {
-        let modelMatrix = Matrix.makeIdentity();
-        modelMatrix = modelMatrix.rotateXYZ(this.rotation.x, this.rotation.y, this.rotation.z);
-        modelMatrix = modelMatrix.translate(this.translation.x, this.translation.y, this.translation.z);
-        return modelMatrix;
+        this.updateMatricesIfNeeded();
+        return this.#unscaledModelMatrix;
     }
-
+    #unscaledModelMatrixGlobal: Matrix = Matrix.makeIdentity();
     get unscaledModelMatrixGlobal(): Matrix {
-        if (this.parent != null)
-            return this.unscaledModelMatrix.multiply(this.parent.unscaledModelMatrixGlobal);
-        else
-            return this.unscaledModelMatrix;
+        this.updateMatricesIfNeeded();
+        return this.#unscaledModelMatrixGlobal;
     }
 
+    #direction = Data.xyz(0);
     get direction(): Data3 {
-        return this.modelMatrix.direction.data;
+        this.updateMatricesIfNeeded();
+        return this.#direction;
+    }
+    #directionGlobal = Data.xyz(0);
+    get directionGlobal(): Data3 {
+        this.updateMatricesIfNeeded();
+        return this.#directionGlobal;
     }
 
-    get directionGlobal(): Data3 {
-        return this.modelMatrixGlobal.direction.data;
+    protected updateMatricesIfNeeded() {
+        if (this.#translation.isDirty || this.#rotation.isDirty || this.#scale.isDirty) {
+            this.#translation.isDirty = false;
+            this.#rotation.isDirty = false;
+            this.#scale.isDirty = false;
+            this.updateMatrices();
+        }
+    }
+
+    updateMatrices() {
+        // Model matrix
+        let modelMatrix = Matrix.makeIdentity();
+        modelMatrix = modelMatrix.scale(this.#scale.x, this.#scale.y, this.#scale.z);
+        modelMatrix = modelMatrix.rotateXYZ(this.#rotation.x, this.#rotation.y, this.#rotation.z);
+        modelMatrix = modelMatrix.translate(this.#translation.x, this.#translation.y, this.#translation.z);
+        this.#modelMatrix = modelMatrix;
+
+        if (this.parent != null)
+            this.#modelMatrixGlobal = modelMatrix.multiply(this.parent.modelMatrixGlobal);
+        else
+            this.#modelMatrixGlobal = modelMatrix;
+
+        // Unscaled model matrix
+        let unscaledModelMatrix = Matrix.makeIdentity();
+        unscaledModelMatrix = unscaledModelMatrix.rotateXYZ(this.#rotation.x, this.#rotation.y, this.#rotation.z);
+        unscaledModelMatrix = unscaledModelMatrix.translate(this.#translation.x, this.#translation.y, this.#translation.z);
+        this.#unscaledModelMatrix = unscaledModelMatrix;
+
+        if (this.parent != null)
+            this.#unscaledModelMatrixGlobal = unscaledModelMatrix.multiply(this.parent.unscaledModelMatrixGlobal);
+        else
+            this.#unscaledModelMatrixGlobal = unscaledModelMatrix;
+
+        // Direction
+        this.#direction = modelMatrix.direction.data;
+        this.#directionGlobal = this.#modelMatrixGlobal.direction.data;
+
+        // Translation global
+        let globalX = this.#unscaledModelMatrixGlobal.r3c0;
+        let globalY = this.#unscaledModelMatrixGlobal.r3c1;
+        let globalZ = this.#unscaledModelMatrixGlobal.r3c2;
+        this.#translationGlobal = Data.xyz(globalX, globalY, globalZ);
+
+        // Rotation global
+        if (this.parent != null)
+            this.#rotationGlobal = this.#rotation.vector.add(this.parent.rotationGlobal.vector).data;
+        else
+            this.#rotationGlobal = this.#rotation;
+
+        // Scale global
+        if (this.parent != null)
+            this.#scaleGlobal = this.#scale.vector.multiply(this.parent.scaleGlobal.vector).data;
+        else
+            this.#scaleGlobal = this.#scale;
+
+        // Update children
+        this.children.forEach(child => {
+            child.updateMatrices();
+        });
     }
 
     addChild(child: Entity) {
         child.parent = this;
         this.children.push(child);
+        child.updateMatrices();
     }
 
     entitiesForPhase(phase: Phase) {

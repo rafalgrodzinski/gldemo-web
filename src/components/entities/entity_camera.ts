@@ -26,7 +26,15 @@ export class EntityCamera extends Entity {
         return this;
     }
 
+    #viewMatrix: Matrix = Matrix.makeIdentity();
     get viewMatrix(): Matrix {
+        this.updateMatricesIfNeeded();
+        return this.#viewMatrix;
+    }
+
+    updateMatrices() {
+        super.updateMatrices();
+
         let viewMatrix = Matrix.makeIdentity();
         viewMatrix = viewMatrix.translate(-this.translationGlobal.x, -this.translationGlobal.y, -this.translationGlobal.z);
 
@@ -39,7 +47,7 @@ export class EntityCamera extends Entity {
                 break;
         }
 
-        return viewMatrix;
+        this.#viewMatrix = viewMatrix;
     }
 
     resize(width: number, height: number) {
