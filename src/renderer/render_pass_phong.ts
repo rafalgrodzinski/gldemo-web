@@ -27,7 +27,7 @@ export class RenderPassPhong extends RenderPass {
 
         this.shaderProgram.setFloat(gl, "u_fogNear", 10);
         this.shaderProgram.setFloat(gl, "u_fogFar", 40);
-        this.shaderProgram.setVector(gl, "u_fogColor", Data.rgb(0.5, 0.5, 0.5).m);
+        this.shaderProgram.setData3(gl, "u_fogColor", Data.rgb(0.5, 0.5, 0.5));
 
         entities.forEach(entity => {
             entity.prepareForDraw(gl, this.shaderProgram);

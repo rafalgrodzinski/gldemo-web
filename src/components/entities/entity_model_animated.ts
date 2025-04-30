@@ -61,8 +61,8 @@ export class EntityModelAnimated extends Entity {
     }
 
     draw(gl: WebGL2RenderingContext, shaderProgram: ShaderProgram) {
-        shaderProgram.setMatrix(gl, "u_modelMatrix", this.modelMatrixGlobal.m);
-        shaderProgram.setVector(gl, "u_material.color", this.modelAnimated.material.color.m);
+        shaderProgram.setMatrix(gl, "u_modelMatrix", this.modelMatrixGlobal);
+        shaderProgram.setData3(gl, "u_material.color", this.modelAnimated.material.color);
         shaderProgram.setFloat(gl, "u_material.ambientIntensity", this.modelAnimated.material.ambientIntensity);
         shaderProgram.setFloat(gl, "u_material.diffuseIntensity", this.modelAnimated.material.diffuseIntensity);
         shaderProgram.setFloat(gl, "u_material.specularIntensity", this.modelAnimated.material.specularIntensity);

@@ -5,16 +5,15 @@ export class Data {
         return new Data2(s, t);
     }
 
-    static xyz(x: number, y: number, z: number): Data3 {
-        return new Data3(x, y, z)
+    static xyz(x: number, y: number | null = null, z: number | null = null): Data3 {
+        if (y != null && z != null)
+            return new Data3(x, y, z)
+        else
+            return new Data3(x, x, x);
     }
 
     static rgb(r: number, g: number, b: number): Data3 {
         return new Data3(r, g, b)
-    }
-
-    static vector(vector: Vector): Data3 {
-        return new Data3(vector.x, vector.y, vector.z);
     }
 }
 
@@ -62,9 +61,15 @@ export class Data2 {
 
 export class Data3 {
     m: Array<number>;
+    isDirty: boolean = false;
 
     constructor(d0: number, d1: number, d2: number) {
         this.m = [d0, d1, d2];
+    }
+
+    // Vector
+    get vector(): Vector {
+        return Vector.xyz(this.x, this.y, this.z);
     }
 
     // XYZ
@@ -73,6 +78,7 @@ export class Data3 {
     }
 
     set x(value: number) {
+        this.isDirty = true;
         this.m[0] = value;
     }
 
@@ -81,6 +87,7 @@ export class Data3 {
     }
 
     set y(value: number) {
+        this.isDirty = true;
         this.m[1] = value;
     }
 
@@ -89,6 +96,14 @@ export class Data3 {
     }
 
     set z(value: number) {
+        this.isDirty = true;
+        this.m[2] = value;
+    }
+
+    set xyz(value: number) {
+        this.isDirty = true;
+        this.m[0] = value;
+        this.m[1] = value;
         this.m[2] = value;
     }
 
@@ -98,6 +113,7 @@ export class Data3 {
     }
 
     set r(value: number) {
+        this.isDirty = true;
         this.m[0] = value;
     }
 
@@ -106,6 +122,7 @@ export class Data3 {
     }
 
     set g(value: number) {
+        this.isDirty = true;
         this.m[1] = value;
     }
 
@@ -114,6 +131,14 @@ export class Data3 {
     }
 
     set b(value: number) {
+        this.isDirty = true;
+        this.m[2] = value;
+    }
+
+    set rgb(value: number) {
+        this.isDirty = true;
+        this.m[0] = value;
+        this.m[1] = value;
         this.m[2] = value;
     }
 };

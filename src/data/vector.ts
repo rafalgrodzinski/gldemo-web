@@ -1,36 +1,24 @@
 import { Util } from "utils/util";
 import { Matrix } from "./matrix";
+import { Data, Data3 } from "./data_types";
 
 export class Vector {
-    m: Array<number>;
+    x: number;
+    y: number;
+    z: number;
 
-    constructor(x: number, y: number, z: number) {
-        this.m = [x, y, z];
+    get data(): Data3 {
+        return Data.xyz(this.x, this.y, this.z);
     }
 
-    // XYZ
-    get x(): number {
-        return this.m[0];
+    static xyz(x: number, y: number, z: number): Vector {
+        return new Vector(x, y, z);
     }
 
-    set x(value: number) {
-        this.m[0] = value;
-    }
-
-    get y(): number {
-        return this.m[1];
-    }
-
-    set y(value: number) {
-        this.m[1] = value;
-    }
-
-    get z(): number {
-        return this.m[2];
-    }
-
-    set z(value: number) {
-        this.m[2] = value;
+    private constructor(x: number, y: number, z: number) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     // Operations

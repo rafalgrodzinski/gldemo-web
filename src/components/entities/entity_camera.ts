@@ -62,9 +62,9 @@ export class EntityCamera extends Entity {
     }
 
     prepareForDraw(gl: WebGL2RenderingContext, shaderProgram: ShaderProgram) {
-        shaderProgram.setMatrix(gl, "u_projectionMatrix", this.projectionMatrix.m);
-        shaderProgram.setMatrix(gl,"u_viewMatrix", this.viewMatrix.m);
-        shaderProgram.setVector(gl, "u_cameraPosition", this.translationGlobal.m);
+        shaderProgram.setMatrix(gl, "u_projectionMatrix", this.projectionMatrix);
+        shaderProgram.setMatrix(gl,"u_viewMatrix", this.viewMatrix);
+        shaderProgram.setData3(gl, "u_cameraPosition", this.translationGlobal);
     }
 
     private arcballUpdate(input: Input) {
@@ -74,10 +74,10 @@ export class EntityCamera extends Entity {
         let xAngle = this.rotation.x;
         if (this.translation.x != 0 || this.translation.y != 0 || this.translation.z != 0) {
             xAngle = Math.acos(
-                new Vector(this.translation.x, 0, this.translation.z)
+                Vector.xyz(this.translation.x, 0, this.translation.z)
                     .normalize()
                     .dot(
-                        new Vector(this.translation.x, this.translation.y, this.translation.z)
+                        Vector.xyz(this.translation.x, this.translation.y, this.translation.z)
                             .normalize()
                     )
             );
@@ -93,9 +93,9 @@ export class EntityCamera extends Entity {
         let yAngle = this.rotation.y;
         if (this.translation.x != 0 || this.translation.y != 0 || this.translation.z != 0) {
             yAngle = Math.acos(
-                new Vector(0, 0, orientationMultiplier)
+                Vector.xyz(0, 0, orientationMultiplier)
                     .dot(
-                        new Vector(this.translation.x, 0, this.translation.z)
+                        Vector.xyz(this.translation.x, 0, this.translation.z)
                             .normalize()
                     )
             );
@@ -112,9 +112,9 @@ export class EntityCamera extends Entity {
 
         // Translation
         let positionMatrix = Matrix.makeRotationZYX(0, yAngle, xAngle);
-        let originVector = new Vector(0, 0, new Vector(this.translation.x, this.translation.y, this.translation.z).length() * orientationMultiplier);
+        let originVector = Vector.xyz(0, 0, Vector.xyz(this.translation.x, this.translation.y, this.translation.z).length() * orientationMultiplier);
         originVector.z += input.look.zoom * orientationMultiplier;
-        this.translation = originVector.multiply(positionMatrix);
+        this.translation = originVector.multiply(positionMatrix).data;
     }
 
     private flybyUpdate(elapsedSeconds: number, input: Input) {

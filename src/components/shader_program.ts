@@ -1,4 +1,6 @@
 import { Util } from "utils/util"
+import { Data3 } from "../data/data_types";
+import { Matrix } from "../data/matrix";
 
 export enum ShaderAttribute {
     Position = 0,
@@ -89,15 +91,15 @@ export class ShaderProgram {
             gl.uniform1f(uniformId, value);
     }
 
-    setVector(gl: WebGL2RenderingContext, uniformLocation: string, value: Array<number>) {
+    setData3(gl: WebGL2RenderingContext, uniformLocation: string, value: Data3) {
         let uniformId = this.uniformId(gl, uniformLocation);
         if (uniformId != null)
-            gl.uniform3fv(uniformId, value);
+            gl.uniform3fv(uniformId, value.m);
     }
 
-    setMatrix(gl: WebGL2RenderingContext, uniformLocation: string, value: Array<number>) {
+    setMatrix(gl: WebGL2RenderingContext, uniformLocation: string, value: Matrix) {
         let uniformId = this.uniformId(gl, uniformLocation);
         if (uniformId != null)
-            gl.uniformMatrix4fv(uniformId, true, value);
+            gl.uniformMatrix4fv(uniformId, true, value.m);
     }
 }

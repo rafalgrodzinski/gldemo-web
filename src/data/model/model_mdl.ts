@@ -4,10 +4,8 @@ import { Data, Data2, Data3 } from "../data_types";
 import { Material } from "../material";
 import { Matrix } from "../matrix";
 import { Texture2D } from "../texture/texture_2d";
-import { Vector } from "../vector";
 import { Vertex } from "../vertex";
 import { Anim } from "./anim";
-import { Model } from "./model";
 import { ModelAnimated } from "./model_animated";
 
 type MdlCoord = {isOnSeam: number, coord: Data2};
@@ -564,13 +562,13 @@ export class ModelMdl extends ModelAnimated {
                         texCoordSOffset = textureSize.x / 2;
 
                     // Fix orientation (because X is forward and Z is up)
-                    let position = new Vector(
+                    let position = Data.xyz(
                         vertex.vertex.x * scale.x + translate.x,
                         vertex.vertex.y * scale.y + translate.y,
                         vertex.vertex.z * scale.z + translate.z,
                     );
 
-                    let normal = new Vector(
+                    let normal = Data.xyz(
                         ModelMdl.normals[vertex.normalIndex].x,
                         ModelMdl.normals[vertex.normalIndex].y,
                         ModelMdl.normals[vertex.normalIndex].z,
@@ -578,21 +576,12 @@ export class ModelMdl extends ModelAnimated {
 
                     // Fix orientation so -Z is front and X is right
                     let matrix = Matrix.makeRotationZ(Math.PI/2).multiply(Matrix.makeRotationY(Math.PI/2));
-                    position = position.multiply(matrix);
-                    normal = normal.multiply(matrix);
+                    position = position.vector.multiply(matrix).data;
+                    normal = normal.vector.multiply(matrix).data;
 
-                    // From z to x to make it CCW
                     let modelVertex = new Vertex(
-                        Data.xyz(
-                            position.x,
-                            position.y,
-                            position.z,
-                        ),
-                        Data.xyz(
-                            normal.x,
-                            normal.y,
-                            normal.z,
-                        ),
+                        position,
+                        normal,
                         Data.st(
                             (coord.coord.s + texCoordSOffset + 0.5) / textureSize.x,
                             (coord.coord.t + 0.5) / textureSize.y,

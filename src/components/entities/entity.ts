@@ -1,8 +1,8 @@
 import { Input } from "utils/input";
 import { ShaderProgram } from "shader_program";
 import { Phase } from "renderer/renderer";
-import { Vector } from "data/vector";
 import { Matrix } from "data/matrix";
+import { Data, Data3 } from "../../data/data_types";
 
 export enum EntityKind {
     Node,
@@ -16,9 +16,9 @@ export abstract class Entity {
     name!: string;
     kind!: EntityKind;
 
-    translation: Vector = new Vector(0, 0, 0);
-    rotation: Vector = new Vector(0, 0, 0);
-    scale: Vector = new Vector(1, 1, 1);
+    translation = Data.xyz(0);
+    rotation = Data.xyz(0);
+    scale = Data.xyz(1);
 
     parent: Entity | null = null;
     children: Array<Entity> = [];
@@ -31,24 +31,24 @@ export abstract class Entity {
         return this;
     }
 
-    get translationGlobal(): Vector {
+    get translationGlobal(): Data3 {
         let modelMatrix = this.unscaledModelMatrixGlobal;
         let x = modelMatrix.r3c0;
         let y = modelMatrix.r3c1;
         let z = modelMatrix.r3c2;
-        return new Vector(x, y, z);
+        return Data.xyz(x, y, z);
     }
 
-    get rotationGlobal(): Vector {
+    get rotationGlobal(): Data3 {
         if (this.parent != null)
-            return this.rotation.add(this.parent.rotationGlobal);
+            return this.rotation.vector.add(this.parent.rotationGlobal.vector).data;
         else 
             return this.rotation;
     }
 
-    get scaleGlobal(): Vector {
+    get scaleGlobal(): Data3 {
         if (this.parent != null)
-            return this.scale.multiply(this.parent.scaleGlobal);
+            return this.scale.vector.multiply(this.parent.scaleGlobal.vector).data;
         else 
             return this.scale;
     }
@@ -82,12 +82,12 @@ export abstract class Entity {
             return this.unscaledModelMatrix;
     }
 
-    get direction(): Vector {
-        return this.modelMatrix.direction;
+    get direction(): Data3 {
+        return this.modelMatrix.direction.data;
     }
 
-    get directionGlobal(): Vector {
-        return this.modelMatrixGlobal.direction;
+    get directionGlobal(): Data3 {
+        return this.modelMatrixGlobal.direction.data;
     }
 
     addChild(child: Entity) {

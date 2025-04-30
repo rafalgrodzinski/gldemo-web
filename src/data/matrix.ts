@@ -74,11 +74,9 @@ export class Matrix {
     get direction(): Vector {
         switch (Matrix.coordsOrientation) {
             case CoordsOrientation.LeftHanded:
-                return new Vector(this.r2c0, this.r2c1, this.r2c2);
-                break;
+                return Vector.xyz(this.r2c0, this.r2c1, this.r2c2);
             case CoordsOrientation.RightHanded:
-                return new Vector(-this.r2c0, -this.r2c1, -this.r2c2);
-                break;
+                return Vector.xyz(-this.r2c0, -this.r2c1, -this.r2c2);
         }
     }
 
@@ -286,8 +284,8 @@ export class Matrix {
     }
 
     static makeLookAt(eye: Data3, direction: Data3): Matrix {
-        let right = new Vector(-direction.x, -direction.y, -direction.z).cross(new Vector(0, 1, 0));
-        let up = right.cross(new Vector(-direction.x, -direction.y, -direction.z));
+        let right = Vector.xyz(-direction.x, -direction.y, -direction.z).cross(Vector.xyz(0, 1, 0));
+        let up = right.cross(Vector.xyz(-direction.x, -direction.y, -direction.z));
         let m = [
             -right.x, -up.x, -direction.x, 0,
             -right.y, -up.y, -direction.y, 0,

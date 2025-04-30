@@ -138,10 +138,10 @@ export class ModelProcedural extends Model {
                 let z3 = Math.sin(iy / segments * Math.PI) * Math.cos((ix + 1) / segments * Math.PI * 2);
                 let z4 = Math.sin(iy / segments * Math.PI) * Math.cos(ix / segments * Math.PI * 2);
 
-                let n1 = new Vector(x1, y1, z1).normalize();
-                let n2 = new Vector(x2, y2, z2).normalize();
-                let n3 = new Vector(x3, y3, z3).normalize();
-                let n4 = new Vector(x4, y4, z4).normalize();
+                let n1 = Vector.xyz(x1, y1, z1).normalize().data;
+                let n2 = Vector.xyz(x2, y2, z2).normalize().data;
+                let n3 = Vector.xyz(x3, y3, z3).normalize().data;
+                let n4 = Vector.xyz(x4, y4, z4).normalize().data;
 
                 let s1 = ix / segments;
                 let s2 = (ix + 1) / segments;

@@ -40,8 +40,8 @@ export class EntityModel extends Entity {
     }
 
     draw(gl: WebGL2RenderingContext, shaderProgram: ShaderProgram) {
-        shaderProgram.setMatrix(gl, "u_modelMatrix", this.modelMatrixGlobal.m);
-        shaderProgram.setVector(gl, "u_material.color", this.model.material.color.m);
+        shaderProgram.setMatrix(gl, "u_modelMatrix", this.modelMatrixGlobal);
+        shaderProgram.setData3(gl, "u_material.color", this.model.material.color);
         shaderProgram.setFloat(gl, "u_material.ambientIntensity", this.model.material.ambientIntensity);
         shaderProgram.setFloat(gl, "u_material.diffuseIntensity", this.model.material.diffuseIntensity);
         shaderProgram.setFloat(gl, "u_material.specularIntensity", this.model.material.specularIntensity);

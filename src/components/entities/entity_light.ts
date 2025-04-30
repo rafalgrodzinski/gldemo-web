@@ -99,13 +99,13 @@ export class EntityLight extends Entity {
 
         switch (this.light.kind) {
             case LightKind.Ambient: {
-                shaderProgram.setVector(gl, idPrefix + "color", this.light.color.m);
+                shaderProgram.setData3(gl, idPrefix + "color", this.light.color);
                 shaderProgram.setFloat(gl, idPrefix + "intensity", this.light.intensity)
                 break;
             }
             case LightKind.Directional: {
-                shaderProgram.setVector(gl, idPrefix + "color", this.light.color.m);
-                shaderProgram.setVector(gl, idPrefix + "direction", this.directionGlobal.m);
+                shaderProgram.setData3(gl, idPrefix + "color", this.light.color);
+                shaderProgram.setData3(gl, idPrefix + "direction", this.directionGlobal);
                 shaderProgram.setFloat(gl, idPrefix + "intensity", this.light.intensity)
                 shaderProgram.setBool(gl, idPrefix + "shouldCastShadow", this.light.shouldCastShadow);
 
@@ -113,24 +113,24 @@ export class EntityLight extends Entity {
                     gl.activeTexture(gl.TEXTURE8 + this.indexShadowMap);
                     gl.bindTexture(gl.TEXTURE_2D, this.depthMapTexture);
                     shaderProgram.setInt(gl, idPrefix + "shadowMapSampler", 8 + this.indexShadowMap);
-                    shaderProgram.setMatrix(gl, `u_lightProjectionMatrix[${this.indexLight}]`, this.projectionMatrix.m);
-                    shaderProgram.setMatrix(gl, `u_lightViewMatrix[${this.indexLight}]`, this.viewMatrix.m);
+                    shaderProgram.setMatrix(gl, `u_lightProjectionMatrix[${this.indexLight}]`, this.projectionMatrix);
+                    shaderProgram.setMatrix(gl, `u_lightViewMatrix[${this.indexLight}]`, this.viewMatrix);
                 }
                 break;
             }
             case LightKind.Point: {
-                shaderProgram.setVector(gl, idPrefix + "color", this.light.color.m);
+                shaderProgram.setData3(gl, idPrefix + "color", this.light.color);
                 shaderProgram.setFloat(gl, idPrefix + "intensity", this.light.intensity);
-                shaderProgram.setVector(gl, idPrefix + "position", this.translationGlobal.m);
+                shaderProgram.setData3(gl, idPrefix + "position", this.translationGlobal);
                 shaderProgram.setFloat(gl, idPrefix + "linearAttenuation", this.light.linearAttenuation);
                 shaderProgram.setFloat(gl, idPrefix + "quadaraticAttenuation", this.light.quadaraticAttenuation);
                 break;
             }
             case LightKind.Spot: {
-                shaderProgram.setVector(gl, idPrefix + "color", this.light.color.m);
-                shaderProgram.setVector(gl, idPrefix + "direction", this.directionGlobal.m);
+                shaderProgram.setData3(gl, idPrefix + "color", this.light.color);
+                shaderProgram.setData3(gl, idPrefix + "direction", this.directionGlobal);
                 shaderProgram.setFloat(gl, idPrefix + "intensity", this.light.intensity);
-                shaderProgram.setVector(gl, idPrefix + "position", this.translationGlobal.m);
+                shaderProgram.setData3(gl, idPrefix + "position", this.translationGlobal);
                 shaderProgram.setFloat(gl, idPrefix + "innerCutOff", this.light.innerCutOff);
                 shaderProgram.setFloat(gl, idPrefix + "outerCutOff", this.light.outerCutOff);
                 shaderProgram.setBool(gl, idPrefix + "shouldCastShadow", this.light.shouldCastShadow);
@@ -139,8 +139,8 @@ export class EntityLight extends Entity {
                     gl.activeTexture(gl.TEXTURE8 + this.indexShadowMap);
                     gl.bindTexture(gl.TEXTURE_2D, this.depthMapTexture);
                     shaderProgram.setInt(gl, idPrefix + "shadowMapSampler", 8 + this.indexShadowMap);
-                    shaderProgram.setMatrix(gl, `u_lightProjectionMatrix[${this.indexLight}]`, this.projectionMatrix.m);
-                    shaderProgram.setMatrix(gl, `u_lightViewMatrix[${this.indexLight}]`, this.viewMatrix.m);
+                    shaderProgram.setMatrix(gl, `u_lightProjectionMatrix[${this.indexLight}]`, this.projectionMatrix);
+                    shaderProgram.setMatrix(gl, `u_lightViewMatrix[${this.indexLight}]`, this.viewMatrix);
                 }
                 break;
             }
@@ -152,7 +152,7 @@ export class EntityLight extends Entity {
         gl.viewport(0, 0, EntityLight.SHADOW_MAP_SIZE, EntityLight.SHADOW_MAP_SIZE);
         gl.clear(gl.DEPTH_BUFFER_BIT);
 
-        shaderProgram.setMatrix(gl, "u_lightProjectionMatrix", this.projectionMatrix.m);
-        shaderProgram.setMatrix(gl, "u_lightViewMatrix", this.viewMatrix.m);
+        shaderProgram.setMatrix(gl, "u_lightProjectionMatrix", this.projectionMatrix);
+        shaderProgram.setMatrix(gl, "u_lightViewMatrix", this.viewMatrix);
     }
 }

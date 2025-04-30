@@ -4,7 +4,6 @@ import { EntityNode } from "entities/entity_node";
 import { EntityModel } from "components/entities/entity_model";
 import { EntityCamera } from "components/entities/entity_camera";
 import { EntityLight } from "components/entities/entity_light"
-import { Vector } from "data/vector";
 import { Material } from "data/material";
 import { Light, LightKind } from "data/light";
 import { ModelProcedural, ModelProceduralKind } from "data/model/model_procedural";
@@ -58,7 +57,7 @@ export class Scene {
         let directionalLightModel = await ModelProcedural.create(ModelProceduralKind.Pyramid, directionalLightMaterial);
         let directionalLightModelEntity = await EntityModel.create([Phase.PassPhong], "Directional Light Model", gl, directionalLightModel);
         directionalLightModelEntity.rotation.x = Math.PI / 2;
-        directionalLightModelEntity.scale = new Vector(0.5, 0.5, 0.5);
+        directionalLightModelEntity.scale = Data.xyz(0.5);
         directionalLightNodeEntity.addChild(directionalLightModelEntity);
 
         let directionaLight = Light.makeDirectional(Data.rgb(0.5, 1, 0.5), 1, true);
@@ -75,7 +74,7 @@ export class Scene {
         let pointLightMaterial = new Material(Data.rgb(0.5, 0.5, 1), 0, 0, 0, true, null, null, null);
         let pointLightModel = await ModelProcedural.create(ModelProceduralKind.Cube, pointLightMaterial);
         let pointLightModelEntity = await EntityModel.create([Phase.PassPhong], "Point light model", gl, pointLightModel);
-        pointLightModelEntity.scale = new Vector(0.5, 0.5, 0.5);
+        pointLightModelEntity.scale = Data.xyz(0.5);
         pointLightNodeEntity.addChild(pointLightModelEntity);
 
         let pointLight = Light.makePoint(Data.rgb(0.5, 0.5, 1), 1, 0.07, 0.017);
@@ -95,7 +94,7 @@ export class Scene {
         let spotLightModel = await ModelProcedural.create(ModelProceduralKind.Pyramid, spotLightMaterial);
         let spotLightModelEntity = await EntityModel.create([Phase.PassPhong], "Spot Light Model", gl, spotLightModel);
         spotLightModelEntity.rotation.x = Math.PI / 2;
-        spotLightModelEntity.scale = new Vector(0.5, 0.5, 0.5);
+        spotLightModelEntity.scale = Data.xyz(0.5);
         spotLightNodeEntity.addChild(spotLightModelEntity);
 
         let spotLight = Light.makeSpot(Data.rgb(1, 0.5, 0.5), 1, 0.9, 0.8, true);
