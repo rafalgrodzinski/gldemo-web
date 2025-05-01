@@ -8,6 +8,8 @@ import { RenderPassShadowMap } from "./render_pass_shadow_map";
 import { RenderPassSkybox } from "renderer/render_pass_skybox";
 import { TextureCube } from "../data/texture/texture_cube";
 import { RenderPassAxis } from "./render_pass_axis";
+import { RenderPassId } from "./render_pass_id";
+import { Entity } from "../components/entities/entity";
 
 export enum CoordsOrientation {
     LeftHanded,
@@ -22,13 +24,16 @@ export enum Phase{
         PassAxis,
         PassDebugNormals,
         PassShadowMap,
-        PassSkybox
+        PassSkybox,
+        PassId
 }
 
 export class Renderer {
     scene!: Scene;
     private renderPasses: Array<RenderPass> = [];
     private coordsOrientation!: CoordsOrientation;
+    private renderPassId!: RenderPassId;
+    private selectedEntity: Entity | null = null;
 
      static async create(gl: WebGL2RenderingContext, scene: Scene, coordsOrientation: CoordsOrientation) {
         return await new Renderer().init([gl, scene, coordsOrientation]);
@@ -49,13 +54,16 @@ export class Renderer {
             "skybox_top.png"
         );
 
+        this.renderPassId = await RenderPassId.create(gl);
+
         this.renderPasses = await Promise.all([
             await RenderPassSkybox.create(gl, skyboxTexture),
             await RenderPassShadowMap.create(gl),
             await RenderPassPhong.create(gl),
             //await RenderPassDebugNormals.create(gl),
             await RenderPassGrid.create(gl),
-            await RenderPassAxis.create(gl)
+            await RenderPassAxis.create(gl),
+            this.renderPassId,
         ]);
 
         return this;
@@ -71,11 +79,15 @@ export class Renderer {
         this.draw(gl);
     }
 
-    update(elapsedSeconds: number, input: Input) {
+    update(gl: WebGL2RenderingContext, elapsedSeconds: number, input: Input) {
         let entities = this.scene.rootEntity.entitiesForPhase(Phase.Update);
         entities.forEach(entity => {
             entity.update(elapsedSeconds, input);
         });
+
+        let selectedEntityId = this.renderPassId.idForInput(gl, input);
+        this.selectedEntity = (selectedEntityId > 0) ? this.scene.rootEntity.entityForId(selectedEntityId) : null;
+
         input.resetState();
     }
 

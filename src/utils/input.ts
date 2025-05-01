@@ -4,6 +4,7 @@ import { CoordsOrientation } from "../renderer/renderer";
 export type InputMovement = {forward: number, right: number, up: number};
 export type InputActions = {primary: boolean, secondary: boolean};
 export type InputLook = {horizontal: number, vertical: number, zoom: number};
+export type InputPointer = {x: number, y: number};
 
 export class Input {
     private static forwardKey = "KeyW";
@@ -27,6 +28,8 @@ export class Input {
     private mouseLook: InputLook = {horizontal: 0, vertical: 0, zoom: 0};
     private gamepadLook: InputLook = {horizontal: 0, vertical: 0, zoom: 0};
     private touchLook: InputLook = {horizontal: 0, vertical: 0, zoom: 0};
+
+    private mousePointer: InputPointer = {x: -1, y: -1};
 
     private shouldReleaseOnMouseUp: boolean = false;
     private shouldIgnoreClick: boolean = false;
@@ -92,6 +95,10 @@ export class Input {
             values.zoom = this.gamepadLook.zoom
 
         return values;
+    }
+
+    get pointer(): InputPointer {
+        return this.mousePointer;
     }
 
     static async create(container: HTMLElement, coordsOrientation: CoordsOrientation): Promise<Input> {
@@ -208,11 +215,19 @@ export class Input {
             if (this.mouseActions.primary && !document.pointerLockElement) {
                 this.mouseLook.horizontal += event.movementX / 500;
                 this.mouseLook.vertical += event.movementY / 500;
+                this.mousePointer.x = -1;
+                this.mousePointer.y = -1;
                 this.shouldReleaseOnMouseUp = true;
                 container.requestPointerLock();
             } else if (document.pointerLockElement == container) {
                 this.mouseLook.horizontal += event.movementX / 500;
                 this.mouseLook.vertical += event.movementY / 500;
+                this.mousePointer.x = -1;
+                this.mousePointer.y = -1;
+            } else {
+                let containerRect = container.getBoundingClientRect();
+                this.mousePointer.x = (event.clientX - containerRect.left) / containerRect.width;
+                this.mousePointer.y = (event.clientY - containerRect.top) / containerRect.height;
             }
         });
 

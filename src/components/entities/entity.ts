@@ -12,9 +12,12 @@ export enum EntityKind {
 }
 
 export abstract class Entity {
+    private static entitiesCount = 0;
+
     phases!: Array<Phase>;
     name!: string;
     kind!: EntityKind;
+    id!: number;
 
     parent: Entity | null = null;
     children: Array<Entity> = [];
@@ -24,6 +27,7 @@ export abstract class Entity {
         this.phases = phases ?? [];
         this.name = name;
         this.kind = kind;
+        this.id = ++Entity.entitiesCount;
         return this;
     }
 
@@ -183,6 +187,19 @@ export abstract class Entity {
         });
 
         return entities;
+    }
+
+    entityForId(id: number): Entity | null {
+        if (this.id == id)
+            return this;
+
+        for (let child of this.children) {
+            let entity = child.entityForId(id);
+            if (entity != null)
+                return entity;
+        }
+
+        return null;
     }
 
     resize(width:number , height: number) { }

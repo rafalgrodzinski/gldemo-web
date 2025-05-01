@@ -29,7 +29,7 @@ export class Scene {
 
         // Camera
         let cameraEntity = await EntityCamera.create(
-            [Phase.Resize, Phase.Update, Phase.PassPhong, Phase.PassGrid, Phase.PassAxis, Phase.PassDebugNormals, Phase.PassSkybox],
+            [Phase.Resize, Phase.Update, Phase.PassPhong, Phase.PassGrid, Phase.PassAxis, Phase.PassDebugNormals, Phase.PassSkybox, Phase.PassId],
             "Camera",
             Camera.makePerspective(Math.PI/2, 100),
             coordsOrientation
@@ -115,7 +115,7 @@ export class Scene {
         );
         let cubeMaterial = new Material(Data.rgb(1, 1, 1), 0.1, 1, 8, false, cubeTexture, cubeSpecularTexture, cubeEnvironmentTexture);
         let cubeModel = await ModelProcedural.create(ModelProceduralKind.Cube, cubeMaterial);
-        let cubeEntity = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadowMap], "Cube", gl, cubeModel);
+        let cubeEntity = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadowMap, Phase.PassId], "Cube", gl, cubeModel);
         cubeEntity.translation.z = -5;
         cubeEntity.translation.y = 1;
         this.rootEntity.addChild(cubeEntity);
@@ -124,7 +124,7 @@ export class Scene {
         let bearTexture = await Texture2D.create(gl, "bear.png");
         let bearMaterial = new Material(Data.rgb(1, 1, 1), 0.1, 1, 8, false, bearTexture, bearTexture, cubeEnvironmentTexture);
         let bearModel = await ModelObj.create("bear.obj", bearMaterial);
-        let bearEntity = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadowMap], "Bear", gl, bearModel);
+        let bearEntity = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadowMap, Phase.PassId], "Bear", gl, bearModel);
         bearEntity.translation.z = -4;
         bearEntity.translation.x = 4;
         bearEntity.scale.x = bearEntity.scale.y = bearEntity.scale.z = 0.2;
@@ -134,7 +134,7 @@ export class Scene {
         let sphereTexture = await Texture2D.create(gl, "box.jpg");
         let sphereMaterial = new Material(Data.rgb(1, 0.5, 0.5), 0.1, 0.5, 2, false, sphereTexture, null, null);
         let sphereModel = await ModelProcedural.create(ModelProceduralKind.Sphere, sphereMaterial);
-        let sphereEntity = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadowMap], "Sphere", gl, sphereModel);
+        let sphereEntity = await EntityModel.create([Phase.PassPhong, Phase.PassDebugNormals, Phase.PassShadowMap, Phase.PassId], "Sphere", gl, sphereModel);
         sphereEntity.translation.x += 3;
         sphereEntity.translation.y += 2;
         sphereEntity.translation.z += 1;
